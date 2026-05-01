@@ -1,1004 +1,754 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rutty · Sistema de Entregas UCALSA</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rutty">
+<meta name="theme-color" content="#152E54">
+<title>Rutty · UCALSA</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root {
-  --azul:#1A3F6F;--azul-mid:#2563A8;--azul-claro:#EEF4FB;--azul-nav:#152E54;
-  --dorado:#D4920A;--dorado-bright:#F0A800;--dorado-bg:#FFF8EC;
-  --rojo:#C93030;--rojo-bg:#FEF0F0;--naranja:#D4600A;--naranja-bg:#FFF3EC;
-  --verde:#1A7A4A;--verde-bg:#EEF9F4;
-  --gris:#F0F2F7;--gris-mid:#8A95A3;--gris-dark:#5A6475;
-  --texto:#0D1825;--borde:#DDE3EC;--blanco:#fff;
-}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Outfit',sans-serif;background:var(--gris);color:var(--texto);min-height:100vh;}
+:root{--az:#1A3F6F;--azm:#2563A8;--azc:#EEF4FB;--azn:#152E54;--do:#D4920A;--db:#F0A800;--dob:#FFF8EC;--ro:#C93030;--rob:#FEF0F0;--ve:#1A7A4A;--veb:#EEF9F4;--gr:#F0F2F7;--gm:#8A95A3;--gd:#5A6475;--tx:#0D1825;--bo:#DDE3EC;--bl:#fff;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;color:var(--tx);}
+body{background:var(--azn);}
 
-/* TOPBAR */
-.topbar{background:var(--azul-nav);padding:0 1.5rem;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:2px solid var(--dorado-bright);}
-.topbar-logo{display:flex;align-items:center;gap:10px;color:white;}
-.topbar-logo img{width:42px;height:42px;object-fit:contain;border-radius:50%;border:2px solid var(--dorado-bright);}
-.tab-nav{display:flex;gap:4px;}
-.tab-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:rgba(255,255,255,0.6);cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;padding:7px 16px;transition:all 0.2s;}
-.tab-btn.active{background:rgba(255,255,255,0.2);color:white;border-color:rgba(255,255,255,0.3);}
-.tab-btn:hover{background:rgba(255,255,255,0.13);color:white;}
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;transition:opacity .35s,transform .35s;background:var(--gr);}
+.screen.off{opacity:0;pointer-events:none;transform:translateY(24px);}
 
-/* BANNER */
-.banner{background:var(--dorado-bg);border-bottom:1px solid #F0D080;padding:9px 1.5rem;font-size:13px;color:var(--dorado);font-weight:500;display:flex;align-items:center;gap:8px;}
-.banner-dot{color:var(--dorado-bright);font-size:16px;}
+/* ── BIENVENIDA ── */
+#sw{background:linear-gradient(160deg,var(--azn) 0%,var(--az) 100%);align-items:center;justify-content:center;}
+.wc{display:flex;flex-direction:column;align-items:center;padding:2rem 1.5rem;text-align:center;width:100%;max-width:400px;}
+.wi{width:130px;height:130px;object-fit:contain;margin-bottom:1.25rem;filter:drop-shadow(0 8px 28px rgba(0,0,0,.4));animation:fl 3s ease-in-out infinite;}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.wt{font-size:30px;font-weight:800;color:#fff;margin-bottom:6px;}.wt span{color:var(--db);}
+.ws{font-size:14px;color:rgba(255,255,255,.6);margin-bottom:2rem;line-height:1.5;}
+.wl{font-size:12px;color:rgba(255,255,255,.45);margin-bottom:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;}
+.rsel{width:100%;display:flex;flex-direction:column;gap:8px;margin-bottom:1.25rem;}
+.rb{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;text-align:left;}
+.rb:active{background:rgba(255,255,255,.22);border-color:var(--db);}
+.rav{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;}
+.rn{font-size:15px;font-weight:600;color:#fff;}.rs{font-size:12px;color:rgba(255,255,255,.5);margin-top:2px;}
+.rar{margin-left:auto;color:rgba(255,255,255,.35);font-size:20px;}
+.sl{font-size:12px;color:rgba(255,255,255,.3);cursor:pointer;text-decoration:underline;margin-top:.5rem;}
 
-/* VIEWS */
-.view{display:none;}.view.active{display:block;}
+/* ── TOPBAR ── */
+.tb{background:var(--azn);padding:env(safe-area-inset-top,0) 1rem 0;flex-shrink:0;border-bottom:2px solid var(--db);}
+.tbi{height:54px;display:flex;align-items:center;justify-content:space-between;}
+.tbl{display:flex;align-items:center;gap:8px;}
+.tbl img{width:32px;height:32px;object-fit:contain;border-radius:50%;border:1.5px solid var(--db);}
+.tbn{font-size:15px;font-weight:700;color:#fff;}.tbsub{font-size:10px;color:rgba(255,255,255,.4);}
+.tbu{display:flex;align-items:center;gap:8px;}
+.tbpts{font-size:12px;font-weight:700;color:var(--db);}
+.tbav{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid var(--db);cursor:pointer;transition:all .2s;}
 
-/* SUB-TABS SUPERVISOR */
-.sv-subtabs{display:flex;border-bottom:1px solid var(--borde);background:var(--blanco);padding:0 2rem;overflow-x:auto;}
-.sv-subtab{background:none;border:none;border-bottom:2px solid transparent;color:var(--gris-mid);cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;padding:12px 16px;transition:all 0.2s;margin-bottom:-1px;white-space:nowrap;}
-.sv-subtab.active{border-bottom-color:var(--azul);color:var(--azul);}
-.sv-subview{display:none;}.sv-subview.active{display:block;}
+/* ── VBANNERS ── */
+.vb{margin:8px 1rem;border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:10px;color:#fff;position:relative;overflow:hidden;flex-shrink:0;}
+.vb.motivacional{background:var(--azn);border:1px solid rgba(255,255,255,.12);}
+.vb.responsabilidad{background:#7a1a1a;}
+.vb.protocolo{background:var(--az);}
+.vbt{font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;opacity:.6;margin-bottom:3px;}
+.vbtx{font-size:12px;line-height:1.4;font-style:italic;}
+.vbar{position:absolute;bottom:0;left:0;height:3px;background:var(--db);animation:sh linear forwards;}
+@keyframes sh{from{width:100%}to{width:0%}}
+.vcd{display:flex;align-items:center;gap:8px;margin:0 1rem 6px;padding:6px 11px;background:var(--dob);border:1px solid #F0D080;border-radius:10px;font-size:11px;color:var(--do);flex-shrink:0;}
+.vcdb{flex:1;height:3px;background:#e0d0a0;border-radius:3px;overflow:hidden;}
+.vcdf{height:100%;background:var(--db);border-radius:3px;transition:width 1s linear;}
 
-/* HERO SUPERVISOR */
-.sv-hero{background:var(--azul-nav);padding:1.5rem 2rem;display:flex;align-items:center;gap:1.5rem;border-bottom:2px solid var(--dorado-bright);}
-.sv-hero img{width:72px;height:72px;object-fit:contain;border-radius:50%;border:2px solid var(--dorado-bright);flex-shrink:0;}
-.sv-hero-text h1{color:white;font-size:22px;font-weight:700;margin-bottom:4px;}
-.sv-hero-text h1 span{color:var(--dorado-bright);}
-.sv-hero-text p{color:rgba(255,255,255,0.65);font-size:14px;line-height:1.5;}
-.sv-hero-stats{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
-.sv-stat{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:5px 12px;color:white;font-size:12px;}
-.sv-stat strong{color:var(--dorado-bright);}
+/* ── SCROLL + NAV ── */
+.sc{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:72px;}
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--bl);border-top:1px solid var(--bo);display:flex;padding-bottom:env(safe-area-inset-bottom,0);z-index:50;}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:9px 4px;cursor:pointer;border:none;background:none;}
+.nb.on .ni{color:var(--az);}.nb.on .nl{color:var(--az);font-weight:600;}
+.ni{font-size:22px;color:var(--gm);margin-bottom:1px;}.nl{font-size:10px;color:var(--gm);font-family:'Outfit',sans-serif;}
 
-.sv-wrap{max-width:920px;margin:0 auto;padding:1.5rem 1rem 3rem;}
-.btn-primary{background:var(--azul);border:none;border-radius:8px;color:white;cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;padding:10px 20px;transition:background 0.2s;}
-.btn-primary:hover{background:var(--azul-mid);}
-.btn-secondary{background:var(--blanco);border:1px solid var(--borde);border-radius:8px;color:var(--gris-dark);cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;padding:10px 20px;transition:all 0.2s;}
-.btn-secondary:hover{border-color:var(--azul-mid);color:var(--azul-mid);}
-.btn-row{display:flex;gap:10px;margin-bottom:1.5rem;flex-wrap:wrap;}
+/* ── TAB VIEWS ── */
+.tv{display:none;padding:1rem;}.tv.on{display:block;}
 
-/* RANKING */
-.ranking-wrap{max-width:920px;margin:0 auto;padding:1.5rem 1rem 3rem;}
-.top3-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:2rem;}
-.top3-card{background:var(--blanco);border:0.5px solid var(--borde);border-radius:16px;padding:1.5rem 1rem 1.25rem;text-align:center;position:relative;}
-.top3-card.pos1{border:2px solid #F0A800;}
-.top3-card.pos2{border:2px solid #C0C8D4;}
-.top3-card.pos3{border:2px solid #C86820;}
-.top3-pos{position:absolute;top:-14px;left:50%;transform:translateX(-50%);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
-.top3-pos.p1{background:#F0A800;color:#412402;}
-.top3-pos.p2{background:#C0C8D4;color:#2C2C2A;}
-.top3-pos.p3{background:#C86820;color:#412402;}
-.top3-avatar{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;margin:0 auto 8px;}
-.top3-nombre{font-size:15px;font-weight:600;margin-bottom:4px;}
-.top3-pts{font-size:22px;font-weight:700;margin-bottom:4px;}
-.top3-zona{font-size:12px;color:var(--gris-mid);margin-bottom:8px;}
-.medalla-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;margin-bottom:8px;}
-.medalla-oro{background:#FFF8EC;color:#633806;border:1px solid #F0A800;}
-.medalla-plata{background:#F4F6F8;color:#444441;border:1px solid #C0C8D4;}
-.medalla-bronce{background:#FFF3EC;color:#412402;border:1px solid #C86820;}
-.medalla-rookie{background:#EEEDFE;color:#26215C;border:1px solid #7F77DD;}
-.pts-bar-bg{background:var(--gris);border-radius:20px;height:8px;overflow:hidden;}
-.pts-bar-fill{height:8px;border-radius:20px;background:linear-gradient(90deg,#F0A800,#C8820A);}
-.pts-label{font-size:11px;color:var(--gris-mid);margin-top:4px;}
-.ranking-tabla{background:var(--blanco);border:0.5px solid var(--borde);border-radius:14px;overflow:hidden;}
-.rk-header{display:grid;grid-template-columns:40px 1fr 80px 100px 120px;background:var(--gris);padding:10px 16px;font-size:12px;font-weight:600;color:var(--gris-dark);text-transform:uppercase;letter-spacing:0.05em;}
-.rk-row{display:grid;grid-template-columns:40px 1fr 80px 100px 120px;padding:12px 16px;border-top:0.5px solid var(--borde);font-size:13px;align-items:center;}
-.rk-row:hover{background:var(--gris);}
+/* ── HOME ── */
+.hh{background:linear-gradient(135deg,var(--azn),var(--az));border-radius:18px;padding:1.1rem 1.25rem;margin-bottom:.9rem;display:flex;align-items:center;gap:.9rem;border-bottom:3px solid var(--db);}
+.hh img{width:64px;height:64px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 3px 12px rgba(0,0,0,.35));}
+.hht h2{color:#fff;font-size:18px;font-weight:700;}.hht h2 span{color:var(--db);}
+.hht p{color:rgba(255,255,255,.6);font-size:12px;margin-top:3px;line-height:1.5;}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.9rem;}
+.ch{border-radius:20px;padding:5px 12px;font-size:12px;font-weight:500;cursor:pointer;border:none;font-family:'Outfit',sans-serif;}
+.ch-b{background:var(--azc);color:var(--azm);}.ch-g{background:var(--dob);color:var(--do);}.ch-v{background:var(--veb);color:var(--ve);}
+.asl{font-size:11px;color:var(--gm);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px;}
+.asbts{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.9rem;}
+.ab{background:var(--bl);border:1px solid var(--bo);border-radius:20px;color:var(--gd);cursor:pointer;font-family:'Outfit',sans-serif;font-size:12px;padding:6px 13px;transition:all .2s;}
+.ab:active{background:var(--azc);border-color:var(--az);}
+.msgs{display:flex;flex-direction:column;gap:8px;margin-bottom:.9rem;min-height:50px;}
+.mu{display:flex;justify-content:flex-end;}.mr{display:flex;gap:7px;align-items:flex-start;}
+.bu{background:var(--az);color:#fff;padding:9px 13px;border-radius:16px 16px 4px 16px;font-size:13px;max-width:82%;line-height:1.5;}
+.br{background:var(--bl);border:.5px solid var(--bo);padding:9px 13px;border-radius:16px 16px 16px 4px;font-size:13px;max-width:82%;line-height:1.6;color:var(--tx);}
+.mav{width:28px;height:28px;object-fit:contain;flex-shrink:0;margin-top:2px;}
+.ib{background:var(--bl);border:1.5px solid var(--bo);border-radius:16px;padding:9px 11px;display:flex;align-items:center;gap:9px;box-shadow:0 2px 10px rgba(26,63,111,.08);}
+.ib input{flex:1;border:none;outline:none;font-family:'Outfit',sans-serif;font-size:14px;color:var(--tx);background:transparent;}
+.ib input::placeholder{color:var(--gm);}
+.bmic{width:38px;height:38px;border-radius:50%;background:var(--azc);border:none;cursor:pointer;font-size:17px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.bmic.on{background:#FEF0F0;border:2px solid var(--ro);}
+.bsend{width:38px;height:38px;border-radius:50%;background:var(--az);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 
-/* PREMIOS SUPERVISOR */
-.premio-sv-item{background:var(--blanco);border:0.5px solid var(--borde);border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
-.premio-sv-item.inactivo{opacity:0.5;}
+/* CIERRE BTN */
+.cbtn{width:100%;padding:17px;background:linear-gradient(135deg,var(--ve),#1A9A5A);color:#fff;border:none;border-radius:16px;font-family:'Outfit',sans-serif;font-size:17px;font-weight:700;cursor:pointer;margin-top:1rem;box-shadow:0 4px 18px rgba(26,122,74,.3);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px;}
+.cbtn:active{transform:scale(.97);}
 
-/* REPORTES */
-.rep-item{background:var(--blanco);border:0.5px solid var(--borde);border-radius:12px;padding:14px 16px;margin-bottom:10px;}
-.rep-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px;}
-.rep-name{font-size:14px;font-weight:600;}
-.rep-body{font-size:13px;color:var(--gris-dark);margin-bottom:10px;line-height:1.6;}
-.rep-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-.rep-approve{padding:7px 16px;background:var(--verde);color:#fff;border:none;border-radius:8px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
-.rep-reject{padding:7px 16px;background:var(--rojo-bg);color:var(--rojo);border:1px solid #f5c0c0;border-radius:8px;font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;}
-.rep-pts-inp{width:70px;padding:6px 8px;border:1.5px solid var(--borde);border-radius:8px;font-size:13px;font-weight:600;text-align:center;color:var(--texto);outline:none;font-family:'Outfit',sans-serif;}
-.status-badge{display:inline-block;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;}
-.sb-pend{background:var(--dorado-bg);color:var(--dorado);}
-.sb-ok{background:var(--verde-bg);color:var(--verde);}
-.sb-rej{background:var(--rojo-bg);color:var(--rojo);}
+/* RESUMEN */
+.rsc{background:linear-gradient(135deg,var(--ve),#1A9A5A);border-radius:16px;padding:1.25rem;color:#fff;text-align:center;margin-bottom:.9rem;}
+.rsn{font-size:44px;font-weight:800;}.rsl{font-size:13px;opacity:.8;}
+.rsg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:.9rem;}
+.rss{background:var(--bl);border-radius:12px;padding:11px;text-align:center;}
+.rssn{font-size:20px;font-weight:700;color:var(--az);}.rssL{font-size:11px;color:var(--gm);}
 
-/* MENSAJES VOZ SUPERVISOR */
-.vmsg-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--gris);border-radius:10px;margin-bottom:8px;}
-.vmsg-tipo{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;flex-shrink:0;margin-top:2px;}
-.vt-mot{background:var(--verde-bg);color:var(--verde);}
-.vt-res{background:var(--rojo-bg);color:var(--rojo);}
-.vt-pro{background:var(--azul-claro);color:var(--azul-mid);}
-.vmsg-del{border:none;background:none;cursor:pointer;font-size:18px;color:var(--gris-mid);}
+/* ── RANKING ── */
+.pb{border-radius:14px;padding:1.1rem;text-align:center;margin-bottom:.9rem;color:#fff;}
+.pbn{font-size:40px;font-weight:800;letter-spacing:-1px;}
+.pbl{font-size:12px;opacity:.8;margin-top:2px;}
+.pbm{margin-top:8px;display:inline-flex;align-items:center;gap:7px;background:rgba(0,0,0,.15);border-radius:20px;padding:4px 13px;font-size:13px;font-weight:600;}
+.rc{background:var(--bl);border:.5px solid var(--bo);border-radius:14px;overflow:hidden;margin-bottom:.9rem;}
+.rr{display:flex;align-items:center;gap:11px;padding:11px 13px;border-bottom:.5px solid var(--bo);}
+.rr:last-child{border-bottom:none;}.rr.yo{background:var(--azc);}
+.rpos{font-size:20px;width:26px;text-align:center;flex-shrink:0;}
+.rava{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.ri{flex:1;}.rin{font-size:14px;font-weight:600;}.ris{font-size:11px;color:var(--gm);}
+.rpt{font-size:15px;font-weight:700;flex-shrink:0;}
+.bb{height:4px;background:var(--gr);border-radius:4px;overflow:hidden;margin-top:4px;}
+.bf{height:100%;border-radius:4px;}
 
-/* FORMS */
-.form-field{margin-bottom:12px;}
-.form-field label{display:block;font-size:12px;font-weight:600;color:var(--gris-dark);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.04em;}
-.form-field input,.form-field select,.form-field textarea{width:100%;background:var(--gris);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-family:'Outfit',sans-serif;font-size:14px;padding:9px 12px;transition:border-color 0.2s;}
-.form-field input:focus,.form-field select:focus,.form-field textarea:focus{outline:none;border-color:var(--azul-mid);}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+/* ── PREMIOS ── */
+.phero{background:linear-gradient(135deg,#F0A800,#C8820A);border-radius:14px;padding:1.1rem;text-align:center;margin-bottom:.9rem;color:#fff;}
+.pi{background:var(--bl);border:.5px solid var(--bo);border-radius:14px;padding:13px;margin-bottom:9px;display:flex;align-items:center;gap:11px;}
+.pi.av{border:2px solid var(--db);background:var(--dob);}
+.piico{width:48px;height:48px;border-radius:11px;background:var(--gr);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
+.piin{flex:1;min-width:0;}.pin{font-size:14px;font-weight:600;}.pid{font-size:12px;color:var(--gm);margin-top:2px;}
+.pipc{text-align:right;flex-shrink:0;}.pip{font-size:14px;font-weight:700;color:var(--do);}.pil{font-size:11px;color:var(--gm);}
+.prb{margin-top:7px;padding:4px 11px;background:var(--do);color:#fff;border:none;border-radius:8px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;}
 
-/* stat cards */
-.stat-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.5rem;}
-.stat-card{background:var(--blanco);border:0.5px solid var(--borde);border-radius:12px;padding:1rem;text-align:center;}
-.stat-num{font-size:28px;font-weight:700;color:var(--azul);margin-bottom:4px;}
-.stat-label{font-size:12px;color:var(--gris-mid);}
+/* ── SUPERVISOR ── */
+#ss{background:var(--gr);overflow-y:auto;}
+.stb{background:var(--azn);padding:env(safe-area-inset-top,0) 1rem 0;border-bottom:2px solid var(--db);}
+.stbi{height:52px;display:flex;align-items:center;justify-content:space-between;}
+.stabs{display:flex;overflow-x:auto;background:var(--bl);border-bottom:1px solid var(--bo);padding:0 1rem;}
+.stab{background:none;border:none;border-bottom:2px solid transparent;color:var(--gm);cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;padding:11px 13px;white-space:nowrap;transition:all .2s;margin-bottom:-1px;}
+.stab.on{border-bottom-color:var(--az);color:var(--az);}
+.sv{display:none;padding:1rem;}.sv.on{display:block;}
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:.9rem;}
+.ssc{background:var(--bl);border:.5px solid var(--bo);border-radius:12px;padding:11px;text-align:center;}
+.sscn{font-size:24px;font-weight:700;color:var(--az);}.sscl{font-size:11px;color:var(--gm);}
+.scard{background:var(--bl);border:.5px solid var(--bo);border-radius:14px;padding:1rem;margin-bottom:.9rem;}
+.ff{margin-bottom:9px;}.ff label{display:block;font-size:11px;font-weight:600;color:var(--gd);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;}
+.ff input,.ff select,.ff textarea{width:100%;background:var(--gr);border:1px solid var(--bo);border-radius:8px;color:var(--tx);font-family:'Outfit',sans-serif;font-size:14px;padding:8px 11px;}
+.ff input:focus,.ff select:focus{outline:none;border-color:var(--azm);}
+.bp{background:var(--az);border:none;border-radius:8px;color:#fff;cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;padding:10px 16px;width:100%;transition:background .2s;}
+.bp:hover{background:var(--azm);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.vmi{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:var(--gr);border-radius:10px;margin-bottom:7px;}
+.vmt{font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700;flex-shrink:0;margin-top:2px;}
+.vtm{background:var(--veb);color:var(--ve);}.vtr{background:var(--rob);color:var(--ro);}.vtp{background:var(--azc);color:var(--azm);}
+.sa{padding:5px 11px;background:var(--ve);color:#fff;border:none;border-radius:8px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;}
+.sr{padding:5px 11px;background:var(--rob);color:var(--ro);border:1px solid #f5c0c0;border-radius:8px;font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;}
+.sbi{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;}
+.sbp{background:var(--dob);color:var(--do);}.sbok{background:var(--veb);color:var(--ve);}.sbr{background:var(--rob);color:var(--ro);}
+.pinp{width:60px;padding:5px 7px;border:1.5px solid var(--bo);border-radius:7px;font-size:13px;font-weight:600;text-align:center;color:var(--tx);outline:none;font-family:'Outfit',sans-serif;}
 
-/* ============ VISTA REPARTIDOR ============ */
-.rv-page{min-height:calc(100vh - 64px);display:flex;flex-direction:column;align-items:center;padding:1.5rem 2rem 3rem;}
+/* ── CELEBRACIÓN ── */
+#cel{position:fixed;inset:0;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(21,46,84,.92);opacity:0;pointer-events:none;transition:opacity .4s;}
+#cel.on{opacity:1;pointer-events:all;}
+.cc{background:var(--bl);border-radius:24px;padding:2rem 1.5rem;text-align:center;width:90%;max-width:340px;position:relative;}
+.ce{font-size:60px;margin-bottom:10px;animation:pop .5s cubic-bezier(.17,.67,.27,1.5);}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+.ct{font-size:21px;font-weight:800;color:var(--azn);margin-bottom:6px;}
+.cs{font-size:14px;color:var(--gd);line-height:1.5;margin-bottom:1.25rem;white-space:pre-line;}
+.ccbtn{width:100%;padding:12px;background:linear-gradient(135deg,var(--db),var(--do));color:#fff;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;cursor:pointer;}
 
-/* HERO REPARTIDOR — igual que el original */
-.rv-intro-card{background:var(--blanco);border:0.5px solid var(--borde);border-radius:18px;padding:1.25rem 1.5rem;width:100%;max-width:860px;margin-bottom:1rem;display:flex;align-items:flex-start;gap:1rem;}
-.rv-intro-img{width:90px;height:90px;object-fit:contain;flex-shrink:0;}
-.rv-intro-h2{font-size:20px;font-weight:700;color:var(--texto);margin-bottom:6px;}
-.rv-intro-h2 span{color:var(--dorado);}
-.rv-intro-p{font-size:13px;color:var(--gris-dark);line-height:1.6;margin-bottom:12px;}
-.chip-row{display:flex;flex-wrap:wrap;gap:6px;}
-.chip{border-radius:20px;padding:5px 12px;font-size:12px;font-weight:500;display:inline-block;}
-.chip-blue{background:#EEF4FB;color:#2563A8;}
-.chip-gold{background:#FFF8EC;color:#D4920A;}
-.chip-green{background:#EEF9F4;color:#1A7A4A;}
+/* ── PIN ── */
+.ov{position:fixed;inset:0;background:rgba(21,46,84,.88);display:flex;align-items:center;justify-content:center;z-index:900;}
+.pbox{background:var(--bl);border-radius:20px;padding:1.75rem;width:min(300px,90vw);text-align:center;}
+.pinput{width:120px;text-align:center;font-size:24px;letter-spacing:8px;border:2px solid var(--bo);border-radius:10px;padding:10px;font-family:'Outfit',sans-serif;outline:none;background:var(--gr);}
+.pinput:focus{border-color:var(--az);}
 
-/* TABS REPARTIDOR */
-.rv-tabs{display:flex;gap:4px;width:100%;max-width:860px;margin-bottom:1rem;background:var(--blanco);border:0.5px solid var(--borde);border-radius:12px;padding:4px;}
-.rv-tab{flex:1;background:none;color:var(--gris-mid);border:none;border-radius:8px;padding:7px 4px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;}
-.rv-tab.active{background:var(--azul);color:white;font-weight:600;}
-
-/* VOICE BANNER automático */
-.voice-notif{width:100%;max-width:860px;border-radius:14px;padding:14px 16px;margin-bottom:12px;display:flex;align-items:flex-start;gap:12px;position:relative;overflow:hidden;}
-.voice-notif.motivacional{background:var(--azul-nav);color:#fff;}
-.voice-notif.responsabilidad{background:#7a1a1a;color:#fff;}
-.voice-notif.protocolo{background:var(--azul);color:#fff;}
-.voice-tipo{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;opacity:.7;margin-bottom:4px;}
-.voice-txt{font-size:13px;line-height:1.5;font-style:italic;}
-.voice-bar-anim{position:absolute;bottom:0;left:0;height:3px;background:var(--dorado-bright);animation:shrink linear forwards;}
-@keyframes shrink{from{width:100%}to{width:0%}}
-
-/* COUNTDOWN BAR */
-.vcd-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--dorado-bg);border:1px solid #F0D080;border-radius:10px;margin-bottom:10px;width:100%;max-width:860px;font-size:12px;color:var(--dorado);}
-.vcd-prog{flex:1;height:4px;background:#e0d0a0;border-radius:4px;overflow:hidden;}
-.vcd-fill{height:100%;background:var(--dorado-bright);border-radius:4px;transition:width 1s linear;}
-
-/* PREGÚNTAME */
-.ask-label{font-size:12px;color:var(--gris-mid);font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px;width:100%;max-width:860px;}
-.ask-btns{display:flex;flex-wrap:wrap;gap:8px;width:100%;max-width:860px;margin-bottom:1rem;}
-.ask-btn{background:var(--blanco);border:1px solid var(--borde);border-radius:20px;color:var(--gris-dark);cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;padding:7px 16px;transition:all 0.2s;}
-.ask-btn:hover{border-color:var(--azul-mid);color:var(--azul-mid);background:var(--azul-claro);}
-
-/* CHAT */
-.chat-wrap{width:100%;max-width:860px;}
-.chat-msgs{display:flex;flex-direction:column;gap:10px;margin-bottom:1rem;min-height:80px;}
-.chat-msg-u{display:flex;justify-content:flex-end;}
-.chat-msg-r{display:flex;justify-content:flex-start;align-items:flex-start;gap:8px;}
-.bubble-u{background:var(--azul);color:white;padding:10px 14px;border-radius:16px 16px 4px 16px;font-size:14px;max-width:80%;line-height:1.5;}
-.bubble-r{background:var(--blanco);border:0.5px solid var(--borde);padding:10px 14px;border-radius:16px 16px 16px 4px;font-size:14px;max-width:80%;line-height:1.6;color:var(--texto);}
-.chat-avatar{width:32px;height:32px;object-fit:contain;flex-shrink:0;margin-top:2px;}
-
-/* INPUT BAR — igual que original */
-.rv-input-bar{background:var(--blanco);border:1.5px solid var(--borde);border-radius:16px;padding:10px 12px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(26,63,111,0.1);}
-.rv-input-bar input{flex:1;border:none;outline:none;font-family:'Outfit',sans-serif;font-size:14px;color:var(--texto);background:transparent;}
-.rv-input-bar input::placeholder{color:var(--gris-mid);}
-.btn-mic{width:42px;height:42px;border-radius:50%;background:var(--azul-claro);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;transition:all 0.2s;}
-.btn-mic.active{background:#FEF0F0;border:2px solid #C93030;}
-.btn-send{width:42px;height:42px;border-radius:50%;background:var(--azul);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.2s;}
-.btn-send:hover{background:var(--azul-mid);}
-
-/* RANKING REPARTIDOR */
-.rv-rank-card{background:var(--blanco);border:0.5px solid var(--borde);border-radius:14px;overflow:hidden;margin-bottom:10px;}
-.rv-rank-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:0.5px solid var(--borde);}
-.rv-rank-row:last-child{border-bottom:none;}
-.rv-rank-row.yo{background:var(--azul-claro);}
-.rv-rank-pos{font-size:20px;width:30px;text-align:center;flex-shrink:0;}
-.rv-rank-info{flex:1;}
-.rv-rank-name{font-size:14px;font-weight:600;}
-.rv-rank-sub{font-size:12px;color:var(--gris-mid);}
-.rv-rank-pts{font-size:16px;font-weight:700;text-align:right;flex-shrink:0;}
-
-/* PREMIOS REPARTIDOR */
-.pts-hero{background:linear-gradient(135deg,#F0A800,#C8820A);border-radius:14px;padding:1.25rem;text-align:center;margin-bottom:1rem;color:white;}
-.pts-hero-icon{font-size:28px;margin-bottom:6px;}
-.pts-hero-title{font-size:17px;font-weight:700;}
-.pts-hero-sub{font-size:13px;opacity:.85;}
-.premio-rv-item{background:var(--blanco);border-radius:14px;border:0.5px solid var(--borde);padding:1rem;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
-.premio-rv-item.available{border:2px solid var(--dorado-bright);}
-.premio-icon-wrap{width:48px;height:48px;border-radius:12px;background:var(--gris);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
-.premio-info{flex:1;}
-.premio-name{font-size:14px;font-weight:600;}
-.premio-desc{font-size:12px;color:var(--gris-mid);margin-top:2px;}
-.premio-bar-bg{height:4px;background:var(--gris);border-radius:4px;overflow:hidden;margin-top:6px;}
-.premio-bar-fill{height:100%;border-radius:4px;}
-.premio-pts-col{text-align:right;flex-shrink:0;}
-.premio-pts-num{font-size:15px;font-weight:700;color:var(--dorado);}
-.premio-pts-lbl{font-size:11px;color:var(--gris-mid);}
-
-/* REPORTE FIN DE DÍA */
-.report-card{background:var(--blanco);border:0.5px solid var(--borde);border-radius:18px;padding:1.25rem 1.5rem;width:100%;max-width:860px;margin-bottom:1rem;}
-.inc-chip{display:inline-block;padding:6px 12px;border-radius:20px;font-size:12px;border:1.5px solid var(--borde);cursor:pointer;background:var(--blanco);color:var(--gris-dark);transition:all .2s;margin:3px;}
-.inc-chip.sel{border-color:var(--rojo);background:var(--rojo-bg);color:var(--rojo);}
-.inc-chip.sel-ok{border-color:var(--verde);background:var(--verde-bg);color:var(--verde);}
-.submit-report{width:100%;padding:13px;background:var(--azul);color:#fff;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .2s;margin-top:6px;}
-.submit-report:hover{opacity:.88;}
-
-/* PERFIL */
-.rv-perfil{background:var(--blanco);border:0.5px solid var(--borde);border-radius:18px;padding:1.25rem;width:100%;max-width:860px;margin-bottom:1rem;}
-.rv-perfil-top{display:flex;align-items:center;gap:14px;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--borde);}
-.rv-perfil-avatar{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0;}
-.rv-perfil-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1rem;}
-.rv-perfil-stat{background:var(--gris);border-radius:10px;padding:8px;text-align:center;}
-.rv-perfil-stat-num{font-size:20px;font-weight:700;color:var(--azul);}
-.rv-perfil-stat-label{font-size:11px;color:var(--gris-mid);}
-
-/* PIN OVERLAY */
-.overlay{position:fixed;inset:0;background:rgba(21,46,84,0.85);display:flex;align-items:center;justify-content:center;z-index:9999;}
-.pinbox{background:var(--blanco);border-radius:20px;padding:2rem;width:300px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
-.pinput{width:120px;text-align:center;font-size:24px;letter-spacing:8px;border:2px solid var(--borde);border-radius:10px;padding:10px;font-family:'Outfit',sans-serif;outline:none;}
-.pinput:focus{border-color:var(--azul);}
-
-@keyframes wave{0%,100%{transform:scaleY(0.3)}50%{transform:scaleY(1)}}
-@media(max-width:600px){.top3-grid{grid-template-columns:1fr;}.rk-header,.rk-row{grid-template-columns:40px 1fr 80px;}.rk-header div:nth-child(n+4),.rk-row div:nth-child(n+4){display:none;}.rv-page{padding:1rem 0.75rem 2rem;}.g2{grid-template-columns:1fr;}}
+@media(min-width:540px){.sc,.bnav{max-width:500px;left:50%;transform:translateX(-50%);right:auto;width:100%;}#sw .wc{padding:2rem;}.bnav{transform:translateX(-50%);}}
 </style>
 </head>
 <body>
 
-<!-- PIN OVERLAY -->
-<div id="pinOv" class="overlay" style="display:none">
-  <div class="pinbox">
-    <img src="https://Aka625.b-cdn.net/Varios/rutty.png" style="width:60px;height:60px;object-fit:contain;margin-bottom:1rem;border-radius:50%;border:2px solid var(--dorado-bright);">
-    <h2 style="font-size:18px;font-weight:700;color:var(--azul-nav);margin-bottom:6px;">Área de supervisor</h2>
-    <p style="font-size:13px;color:var(--gris-mid);margin-bottom:1.25rem;">Introduce el PIN de acceso</p>
-    <input class="pinput" id="pinIn" type="password" maxlength="4" inputmode="numeric" placeholder="••••" oninput="if(this.value.length===4)chkPin()">
-    <div id="pinErr" style="color:var(--rojo);font-size:13px;height:18px;margin:8px 0;"></div>
-    <button onclick="chkPin()" class="btn-primary" style="width:100%;margin-bottom:10px;">Entrar</button>
-    <button onclick="document.getElementById('pinOv').style.display='none'" style="background:none;border:none;color:var(--gris-mid);font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;">Cancelar</button>
+<!-- ══ BIENVENIDA ══ -->
+<div class="screen" id="sw">
+  <div class="wc">
+    <img class="wi" src="https://Aka625.b-cdn.net/Varios/rutty.png" alt="Rutty" onerror="this.style.opacity=.4">
+    <h1 class="wt">Hola, soy <span>Rutty</span> 👋</h1>
+    <p class="ws">Tu compañera de equipo en UCALSA.<br>Selecciona tu nombre para empezar.</p>
+    <div class="wl">¿Quién eres tú hoy?</div>
+    <div class="rsel" id="rsel"></div>
+    <span class="sl" onclick="abrirPin()">Acceso supervisor →</span>
   </div>
 </div>
 
-<!-- TOPBAR -->
-<div class="topbar">
-  <div class="topbar-logo">
-    <img src="https://Aka625.b-cdn.net/Varios/rutty.png" alt="Rutty" onerror="this.style.display='none'">
-    <div>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <span style="font-size:18px;font-weight:700;color:white;">Rutty</span>
-        <span style="font-size:12px;color:rgba(255,255,255,0.45);">by Jota Santos</span>
-      </div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.45);">Tu compañera de ruta — protocolos, alérgenos e incidencias 24/7</div>
+<!-- ══ APP REPARTIDOR ══ -->
+<div class="screen off" id="sa">
+  <div class="tb"><div class="tbi">
+    <div class="tbl">
+      <img src="https://Aka625.b-cdn.net/Varios/rutty.png" alt="R" onerror="this.style.display='none'">
+      <div><div class="tbn">Rutty <span style="font-weight:400;font-size:11px;color:rgba(255,255,255,.35);">· UCALSA</span></div><div class="tbsub">Tu compañera de ruta 24/7</div></div>
     </div>
-  </div>
-  <div style="display:flex;align-items:center;gap:8px;">
-    <div class="tab-nav">
-      <button class="tab-btn" id="btn-sup" onclick="goTab('sup')">Panel supervisor</button>
-      <button class="tab-btn active" id="btn-rep" onclick="goTab('rep')">Vista repartidor</button>
+    <div class="tbu">
+      <div class="tbpts" id="topPts">0 pts</div>
+      <div class="tbav" id="topAv" onclick="volver()" title="Cambiar repartidor">A</div>
     </div>
-    <div style="display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:5px 12px;">
-      <div style="width:7px;height:7px;border-radius:50%;background:#2ECC71;"></div>
-      <span style="color:var(--dorado-bright);font-size:11px;font-weight:700;letter-spacing:0.05em;">DEMO · LAZTAN ACADEMY</span>
-    </div>
-  </div>
-</div>
+  </div></div>
 
-<div class="banner">
-  <span class="banner-dot">✦</span>
-  <strong>Demostración del asistente especializado para el equipo de reparto de UCALSA</strong>
-  <span> — Voz activada · Protocolos reales integrados</span>
-</div>
-
-<!-- ===== SUPERVISOR ===== -->
-<div class="view" id="view-sup">
-  <div class="sv-hero">
-    <img src="https://Aka625.b-cdn.net/Varios/rutty.png" alt="Rutty" onerror="this.style.display='none'">
-    <div class="sv-hero-text">
-      <h1>Panel de <span>Supervisor</span></h1>
-      <p>Aprueba reportes diarios, gestiona premios, configura los mensajes de voz y sigue el ranking del equipo.</p>
-      <div class="sv-hero-stats">
-        <div class="sv-stat">📦 <strong id="s-total">0</strong> reportes hoy</div>
-        <div class="sv-stat">✅ <strong id="s-aprov">0</strong> aprobados</div>
-        <div class="sv-stat">⏳ <strong id="s-pend">0</strong> pendientes</div>
-      </div>
-    </div>
-  </div>
-  <div class="sv-subtabs">
-    <button class="sv-subtab active" onclick="showSub('reportes',this)">📋 Reportes del día</button>
-    <button class="sv-subtab" onclick="showSub('ranking',this)">🏆 Ranking</button>
-    <button class="sv-subtab" onclick="showSub('premios-sv',this)">🎁 Definir premios</button>
-    <button class="sv-subtab" onclick="showSub('voz-sv',this)">🔊 Mensajes de voz</button>
-    <button class="sv-subtab" onclick="showSub('reps-sv',this)">👥 Repartidores</button>
+  <div id="vbArea" style="display:none"></div>
+  <div class="vcd" id="vcd" style="display:none">
+    <span>🔔</span><span id="vcdT">—</span>
+    <div class="vcdb"><div class="vcdf" id="vcdf" style="width:100%"></div></div>
   </div>
 
-  <!-- REPORTES -->
-  <div class="sv-subview active" id="sv-reportes">
-    <div class="sv-wrap">
-      <div class="stat-cards">
-        <div class="stat-card"><div class="stat-num" id="sc-total">0</div><div class="stat-label">Reportes totales</div></div>
-        <div class="stat-card"><div class="stat-num" id="sc-aprov" style="color:var(--verde)">0</div><div class="stat-label">Aprobados</div></div>
-        <div class="stat-card"><div class="stat-num" id="sc-pend" style="color:var(--dorado)">0</div><div class="stat-label">Pendientes</div></div>
-        <div class="stat-card"><div class="stat-num" id="sc-rej" style="color:var(--rojo)">0</div><div class="stat-label">Rechazados</div></div>
-      </div>
-      <div id="reportes-list"><div style="text-align:center;padding:2.5rem;color:var(--gris-mid);font-size:14px;">Aún no hay reportes de hoy. Los repartidores los envían al cierre de jornada.</div></div>
-    </div>
-  </div>
-
-  <!-- RANKING SUPERVISOR -->
-  <div class="sv-subview" id="sv-ranking">
-    <div class="ranking-wrap">
-      <div class="top3-grid" id="top3-sv"></div>
-      <div class="ranking-tabla">
-        <div class="rk-header"><div>#</div><div>Repartidor</div><div>Medalla</div><div>Entregas</div><div>Puntos del mes</div></div>
-        <div id="rk-body-sv"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- PREMIOS SUPERVISOR -->
-  <div class="sv-subview" id="sv-premios-sv">
-    <div class="sv-wrap">
-      <div style="background:var(--azul-nav);border-radius:14px;padding:1rem 1.5rem;margin-bottom:1.5rem;color:white;font-size:14px;border-left:4px solid var(--dorado-bright);">
-        🎁 Define el catálogo de premios que verán los repartidores. Activa o desactiva según disponibilidad.
-      </div>
-      <div id="premios-sv-list" style="margin-bottom:1rem;"></div>
-      <div style="background:var(--blanco);border:0.5px solid var(--borde);border-radius:14px;padding:1.25rem;">
-        <div style="font-size:14px;font-weight:600;margin-bottom:1rem;">➕ Añadir premio</div>
-        <div style="display:grid;grid-template-columns:60px 1fr 1fr;gap:10px;margin-bottom:10px;">
-          <div class="form-field" style="margin:0"><input id="np-emoji" placeholder="🎁" maxlength="2" style="text-align:center;font-size:20px;"></div>
-          <div class="form-field" style="margin:0"><input id="np-nombre" placeholder="Nombre del premio"></div>
-          <div class="form-field" style="margin:0"><input id="np-pts" type="number" placeholder="Puntos necesarios"></div>
+  <div class="sc">
+    <!-- HOME -->
+    <div class="tv on" id="tv-home">
+      <div class="hh">
+        <img src="https://Aka625.b-cdn.net/Varios/rutty.png" alt="Rutty" onerror="this.style.display='none'">
+        <div class="hht">
+          <h2>¡Hola! Soy <span>Rutty</span> 👋</h2>
+          <p id="heroSub">Tu asistente en ruta. ¿En qué te ayudo hoy?</p>
         </div>
-        <div class="form-field"><input id="np-desc" placeholder="Descripción corta del premio"></div>
-        <button class="btn-primary" onclick="addPremio()" style="width:100%;">Añadir al catálogo</button>
       </div>
+      <div class="chips">
+        <button class="ch ch-b" onclick="ask('¿Qué hago si el alérgeno no coincide con el QR?')">Protocolos de entrega</button>
+        <button class="ch ch-g" onclick="ask('¿Qué hago con una caja roja?')">Alérgenos</button>
+        <button class="ch ch-v" onclick="ask('¿Cómo reporto una incidencia?')">Incidencias</button>
+        <button class="ch ch-b" onclick="ask('¿Qué significa el código QR rojo?')">Código QR</button>
+      </div>
+      <div class="asl">Pregúntame por ejemplo:</div>
+      <div class="asbts">
+        <button class="ab" onclick="ask('¿Qué hago si la etiqueta está dañada?')">¿Qué hago si la etiqueta está dañada?</button>
+        <button class="ab" onclick="ask('El usuario tiene alergia al pescado')">El usuario tiene alergia al pescado</button>
+        <button class="ab" onclick="ask('¿Qué significa el código QR rojo?')">¿Qué significa el QR rojo?</button>
+        <button class="ab" onclick="ask('El usuario no estaba en casa')">El usuario no estaba en casa</button>
+        <button class="ab" onclick="ask('Creo que entregué la caja equivocada')">Entregué la caja equivocada</button>
+      </div>
+      <div class="msgs" id="msgs"></div>
+      <div class="ib">
+        <button class="bmic" id="micBtn" onclick="toggleMic()">🎤</button>
+        <input id="inp" placeholder="Escríbeme o usa el micrófono 🎙️..." onkeydown="if(event.key==='Enter')sendChat()">
+        <button class="bsend" onclick="sendChat()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13" stroke="white" stroke-width="2.2" stroke-linecap="round"/><path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <button class="cbtn" id="cierreBtn" onclick="cerrarJornada()">🏁 Cerrar mi jornada de hoy</button>
     </div>
-  </div>
 
-  <!-- VOZ SUPERVISOR -->
-  <div class="sv-subview" id="sv-voz-sv">
-    <div class="sv-wrap">
-      <div style="background:var(--azul-claro);border-radius:14px;padding:1rem 1.5rem;margin-bottom:1.5rem;font-size:14px;color:var(--azul);border-left:4px solid var(--azul);">
-        🔊 Los mensajes se disparan automáticamente al repartidor según el intervalo configurado. Se leen en voz alta con la Web Speech API.
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;background:var(--blanco);border:0.5px solid var(--borde);border-radius:12px;padding:14px 16px;flex-wrap:wrap;">
-        <span style="font-size:13px;color:var(--gris-dark);font-weight:500;">Intervalo entre mensajes:</span>
-        <select id="vInt" onchange="setVInt()" style="padding:7px 12px;border:1px solid var(--borde);border-radius:8px;font-size:13px;font-family:'Outfit',sans-serif;outline:none;background:var(--gris);">
-          <option value="1">Cada 1 minuto (demo)</option>
-          <option value="10" selected>Cada 10 minutos</option>
-          <option value="15">Cada 15 minutos</option>
-          <option value="30">Cada 30 minutos</option>
-        </select>
-        <span id="vNextLbl" style="font-size:12px;color:var(--gris-mid);"></span>
-      </div>
-      <div id="vmsg-list-sv" style="margin-bottom:1.5rem;"></div>
-      <div style="background:var(--blanco);border:0.5px solid var(--borde);border-radius:14px;padding:1.25rem;">
-        <div style="font-size:14px;font-weight:600;margin-bottom:1rem;">➕ Añadir mensaje</div>
-        <div class="form-field"><label>Texto del mensaje</label><textarea id="mT" rows="2" placeholder="Escribe el mensaje motivacional, de responsabilidad o protocolo..."></textarea></div>
-        <div class="form-field"><label>Tipo</label>
-          <select id="mTipo"><option value="motivacional">Motivacional</option><option value="responsabilidad">Responsabilidad</option><option value="protocolo">Protocolo</option></select>
+    <!-- RANKING -->
+    <div class="tv" id="tv-ranking">
+      <div class="pb" id="pb" style="background:linear-gradient(135deg,#F0A800,#C8820A)"></div>
+      <div class="rc" id="rl"></div>
+      <div style="background:var(--bl);border:.5px solid var(--bo);border-radius:14px;padding:1rem;margin-bottom:.9rem;">
+        <div style="font-size:11px;font-weight:600;color:var(--gm);text-transform:uppercase;letter-spacing:.05em;margin-bottom:9px;">Rangos del equipo</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <div style="flex:1;min-width:70px;background:#FFF8EC;border:1px solid #F0A800;border-radius:10px;padding:8px;text-align:center;"><div style="font-size:18px;">👑</div><div style="font-size:11px;font-weight:700;color:#F0A800;">Oro</div><div style="font-size:10px;color:#8A95A3;">500+</div></div>
+          <div style="flex:1;min-width:70px;background:#F4F6F8;border:1px solid #C0C8D4;border-radius:10px;padding:8px;text-align:center;"><div style="font-size:18px;">🥈</div><div style="font-size:11px;font-weight:700;color:#8A95A3;">Plata</div><div style="font-size:10px;color:#8A95A3;">200+</div></div>
+          <div style="flex:1;min-width:70px;background:#FFF3EC;border:1px solid #C86820;border-radius:10px;padding:8px;text-align:center;"><div style="font-size:18px;">🥉</div><div style="font-size:11px;font-weight:700;color:#C86820;">Bronce</div><div style="font-size:10px;color:#8A95A3;">50+</div></div>
+          <div style="flex:1;min-width:70px;background:#EEEDFE;border:1px solid #7F77DD;border-radius:10px;padding:8px;text-align:center;"><div style="font-size:18px;">⭐</div><div style="font-size:11px;font-weight:700;color:#7F77DD;">Rookie</div><div style="font-size:10px;color:#8A95A3;">0-49</div></div>
         </div>
-        <button class="btn-primary" onclick="addVMsg()" style="width:100%;">Añadir mensaje</button>
       </div>
+    </div>
+
+    <!-- PREMIOS -->
+    <div class="tv" id="tv-premios">
+      <div class="phero" id="ph"><div style="font-size:20px;margin-bottom:4px;">🎁</div><div style="font-size:16px;font-weight:700;">Canjea tus puntos</div><div style="font-size:13px;opacity:.85;">Cargando...</div></div>
+      <div id="pl"></div>
+      <div style="text-align:center;padding:.5rem;font-size:12px;color:var(--gm);font-style:italic;">Canjea con el supervisor al cierre del mes.</div>
     </div>
   </div>
 
-  <!-- REPARTIDORES SUPERVISOR -->
-  <div class="sv-subview" id="sv-reps-sv">
-    <div class="sv-wrap">
+  <div class="bnav">
+    <button class="nb on" id="nb-home" onclick="tab('home',this)"><div class="ni">💬</div><div class="nl">Rutty</div></button>
+    <button class="nb" id="nb-ranking" onclick="tab('ranking',this)"><div class="ni">🏆</div><div class="nl">Ranking</div></button>
+    <button class="nb" id="nb-premios" onclick="tab('premios',this)"><div class="ni">🎁</div><div class="nl">Premios</div></button>
+  </div>
+</div>
+
+<!-- ══ SUPERVISOR ══ -->
+<div class="screen off" id="ss" style="overflow-y:auto;">
+  <div class="stb"><div class="stbi">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <img src="https://Aka625.b-cdn.net/Varios/rutty.png" style="width:30px;height:30px;border-radius:50%;border:1.5px solid var(--db);" onerror="this.style.display='none'">
+      <div style="color:#fff;font-size:15px;font-weight:700;">Panel Supervisor</div>
+    </div>
+    <button onclick="show('sw')" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:8px;color:rgba(255,255,255,.7);padding:5px 11px;font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;">← Salir</button>
+  </div></div>
+  <div class="stabs">
+    <button class="stab on" onclick="stab('sr',this)">📋 Reportes</button>
+    <button class="stab" onclick="stab('srk',this)">🏆 Ranking</button>
+    <button class="stab" onclick="stab('sp',this)">🎁 Premios</button>
+    <button class="stab" onclick="stab('sv',this)">🔊 Mensajes voz</button>
+    <button class="stab" onclick="stab('srp',this)">👥 Repartidores</button>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding-bottom:20px;">
+    <div class="sv on" id="sr">
+      <div class="sg">
+        <div class="ssc"><div class="sscn" id="ss1">0</div><div class="sscl">Reportes</div></div>
+        <div class="ssc"><div class="sscn" id="ss2" style="color:var(--ve)">0</div><div class="sscl">Aprobados</div></div>
+        <div class="ssc"><div class="sscn" id="ss3" style="color:var(--do)">0</div><div class="sscl">Pendientes</div></div>
+      </div>
+      <div id="repList"><div style="text-align:center;padding:2rem;color:var(--gm);font-size:14px;">No hay reportes aún.</div></div>
+    </div>
+    <div class="sv" id="srk"><div id="supRk"></div></div>
+    <div class="sv" id="sp">
+      <div id="supPL" style="margin-bottom:1rem;"></div>
+      <div class="scard">
+        <div style="font-size:14px;font-weight:600;margin-bottom:.9rem;">➕ Añadir premio</div>
+        <div style="display:grid;grid-template-columns:48px 1fr 1fr;gap:8px;margin-bottom:8px;">
+          <div class="ff" style="margin:0"><input id="ne" placeholder="🎁" maxlength="2" style="text-align:center;font-size:18px;"></div>
+          <div class="ff" style="margin:0"><input id="nn" placeholder="Nombre del premio"></div>
+          <div class="ff" style="margin:0"><input id="np" type="number" placeholder="Puntos"></div>
+        </div>
+        <div class="ff"><input id="nd" placeholder="Descripción corta"></div>
+        <button class="bp" onclick="addP()">Añadir</button>
+      </div>
+    </div>
+    <div class="sv" id="sv">
+      <div class="scard" style="margin-bottom:.9rem;">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <span style="font-size:13px;color:var(--gd);">Intervalo:</span>
+          <select id="vInt" onchange="setVI()" style="padding:6px 10px;border:1px solid var(--bo);border-radius:8px;font-size:13px;font-family:'Outfit',sans-serif;background:var(--gr);">
+            <option value="1">1 min (demo)</option><option value="10" selected>10 min</option><option value="15">15 min</option><option value="30">30 min</option>
+          </select>
+          <span id="vns" style="font-size:11px;color:var(--gm);"></span>
+        </div>
+      </div>
+      <div id="vozL" style="margin-bottom:.9rem;"></div>
+      <div class="scard">
+        <div class="ff"><label>Nuevo mensaje</label><textarea id="mT" rows="2" placeholder="Texto del mensaje..."></textarea></div>
+        <div class="ff"><label>Tipo</label><select id="mTipo"><option value="motivacional">Motivacional</option><option value="responsabilidad">Responsabilidad</option><option value="protocolo">Protocolo</option></select></div>
+        <button class="bp" onclick="addV()">Añadir</button>
+      </div>
+    </div>
+    <div class="sv" id="srp">
       <div class="g2">
-        <div style="background:var(--blanco);border:0.5px solid var(--borde);border-radius:14px;padding:1.25rem;">
-          <div style="font-size:14px;font-weight:600;margin-bottom:1rem;">➕ Añadir repartidor</div>
-          <div class="form-field"><label>Nombre completo</label><input id="rep-nombre" placeholder="Carlos Rodríguez"></div>
-          <div class="form-field"><label>Zona</label><input id="rep-zona" placeholder="Centro / Norte / Sur"></div>
-          <button class="btn-primary" onclick="addRep()" style="width:100%;">Añadir</button>
+        <div class="scard">
+          <div style="font-size:14px;font-weight:600;margin-bottom:.9rem;">➕ Añadir repartidor</div>
+          <div class="ff"><label>Nombre</label><input id="rn" placeholder="Carlos Rodríguez"></div>
+          <div class="ff"><label>Zona</label><input id="rz" placeholder="Norte / Sur / Centro"></div>
+          <button class="bp" onclick="addRep()">Añadir</button>
         </div>
-        <div style="background:var(--blanco);border:0.5px solid var(--borde);border-radius:14px;padding:1.25rem;">
-          <div style="font-size:14px;font-weight:600;margin-bottom:1rem;">👥 Repartidores activos</div>
-          <div id="reps-list-sv"></div>
-        </div>
+        <div class="scard"><div style="font-size:14px;font-weight:600;margin-bottom:.9rem;">👥 Activos</div><div id="repSL"></div></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ===== REPARTIDOR ===== -->
-<div class="view active" id="view-rep">
-  <div class="rv-page">
-
-    <div id="voiceArea"></div>
-    <div id="vcdArea" style="width:100%;max-width:860px;"></div>
-
-    <!-- HERO RUTTY — diseño original -->
-    <div class="rv-intro-card">
-      <img class="rv-intro-img" src="https://Aka625.b-cdn.net/Varios/rutty.png" alt="Rutty" onerror="this.style.display='none'">
-      <div>
-        <h2 class="rv-intro-h2">¡Hola! Soy <span>Rutty</span> 👋</h2>
-        <p class="rv-intro-p">Tu asistente en ruta. Conozco todos los protocolos de UCALSA — alérgenos, entregas especiales, incidencias, qué hacer si algo sale mal. Escríbeme o <strong>pulsa el micrófono y habla</strong> — estoy aquí cuando me necesites.</p>
-        <div class="chip-row">
-          <span class="chip chip-blue" style="cursor:pointer" onclick="ask('¿Cuáles son los protocolos de entrega?')">Protocolos de entrega</span>
-          <span class="chip chip-gold" style="cursor:pointer" onclick="ask('¿Qué hago si hay un alérgeno?')">Alérgenos</span>
-          <span class="chip chip-green" style="cursor:pointer" onclick="ask('¿Cómo gestiono una incidencia?')">Incidencias</span>
-          <span class="chip chip-blue" style="cursor:pointer" onclick="ask('¿Qué significa el código QR de alerta?')">Código QR</span>
-          <span class="chip chip-gold" style="cursor:pointer" onclick="">🎙️ Voz activada</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- TABS REPARTIDOR -->
-    <div class="rv-tabs">
-      <button class="rv-tab active" id="rvt-chat" onclick="showRvTab('chat',this)">💬 Consultar</button>
-      <button class="rv-tab" id="rvt-ranking" onclick="showRvTab('ranking',this)">🏆 Ranking</button>
-      <button class="rv-tab" id="rvt-premios" onclick="showRvTab('premios',this)">🎁 Premios</button>
-      <button class="rv-tab" id="rvt-reporte" onclick="showRvTab('reporte',this)">📋 Reporte del día</button>
-    </div>
-
-    <!-- TAB CHAT -->
-    <div id="rvview-chat" style="width:100%;max-width:860px;display:flex;flex-direction:column;">
-      <div class="ask-label" style="margin-top:4px;">Pregúntame por ejemplo:</div>
-      <div class="ask-btns">
-        <button class="ask-btn" onclick="ask('¿Qué hago si la etiqueta está dañada?')">¿Qué hago si la etiqueta está dañada?</button>
-        <button class="ask-btn" onclick="ask('El usuario tiene alergia al pescado')">El usuario tiene alergia al pescado</button>
-        <button class="ask-btn" onclick="ask('¿Qué significa el código QR rojo?')">¿Qué significa el código QR rojo?</button>
-        <button class="ask-btn" onclick="ask('El usuario no estaba en casa')">El usuario no estaba en casa</button>
-        <button class="ask-btn" onclick="ask('Creo que entregué la caja equivocada')">Creo que entregué la caja equivocada</button>
-      </div>
-      <div class="chat-wrap">
-        <div class="chat-msgs" id="chatMsgs"></div>
-        <div class="rv-input-bar">
-          <button class="btn-mic" id="micBtn" onclick="toggleMic()" title="Hablar">🎤</button>
-          <input id="chatInp" placeholder="Escríbeme o usa el micrófono 🎙️ ..." onkeydown="if(event.key==='Enter')sendChat()">
-          <button class="btn-send" onclick="sendChat()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB RANKING -->
-    <div id="rvview-ranking" style="width:100%;max-width:860px;display:none;flex-direction:column;">
-      <div id="rv-ranking-content"></div>
-    </div>
-
-    <!-- TAB PREMIOS -->
-    <div id="rvview-premios" style="width:100%;max-width:860px;display:none;flex-direction:column;">
-      <div id="rv-premios-content"></div>
-    </div>
-
-    <!-- TAB REPORTE -->
-    <div id="rvview-reporte" style="width:100%;max-width:860px;display:none;flex-direction:column;">
-      <div class="report-card">
-        <div style="font-size:17px;font-weight:700;color:var(--texto);margin-bottom:4px;">📋 Reporte de fin de jornada</div>
-        <div style="font-size:13px;color:var(--gris-mid);margin-bottom:1.5rem;">Completa cuántas entregas hiciste hoy. El supervisor revisará y aprobará los puntos.</div>
-        <div id="reportForm">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem;">
-            <div class="form-field"><label>Total entregas realizadas</label><input type="number" id="rTot" min="0" value="0" style="font-size:20px;font-weight:700;text-align:center;"></div>
-            <div class="form-field"><label>Entregas sin incidencias</label><input type="number" id="rOk" min="0" value="0" style="font-size:20px;font-weight:700;text-align:center;"></div>
-          </div>
-          <div class="form-field">
-            <label>Incidencias (selecciona las que apliquen)</label>
-            <div id="incChips" style="margin-top:6px;">
-              <span class="inc-chip" onclick="togInc(this,'Alérgeno no coincide')">Alérgeno no coincide</span>
-              <span class="inc-chip" onclick="togInc(this,'Envase dañado')">Envase dañado</span>
-              <span class="inc-chip" onclick="togInc(this,'Usuario ausente')">Usuario ausente</span>
-              <span class="inc-chip" onclick="togInc(this,'Temperatura fuera de rango')">Temperatura fuera de rango</span>
-              <span class="inc-chip" onclick="togInc(this,'Caja incorrecta')">Caja incorrecta</span>
-              <span class="inc-chip" onclick="togInc(this,'Rechazo del pedido')">Rechazo del pedido</span>
-              <span class="inc-chip" onclick="togInc(this,'Otro')">Otro</span>
-            </div>
-          </div>
-          <div class="form-field"><label>Observaciones (opcional)</label><textarea id="rNota" rows="2" placeholder="Añade cualquier nota adicional..."></textarea></div>
-          <button class="submit-report" onclick="submitReport()">Enviar reporte del día →</button>
-        </div>
-        <div id="reportSent" style="display:none;text-align:center;padding:1.5rem;">
-          <div style="font-size:32px;margin-bottom:8px;">✅</div>
-          <div style="font-size:16px;font-weight:600;color:var(--verde);margin-bottom:4px;">Reporte enviado correctamente</div>
-          <div style="font-size:13px;color:var(--gris-mid);">El supervisor revisará y aprobará tus puntos.</div>
-        </div>
-      </div>
-    </div>
-
+<!-- ══ CELEBRACIÓN ══ -->
+<div id="cel">
+  <canvas id="cc" style="position:absolute;inset:0;pointer-events:none;"></canvas>
+  <div class="cc">
+    <div class="ce" id="cE">🎉</div>
+    <div class="ct" id="cT">¡Felicidades!</div>
+    <div class="cs" id="cS"></div>
+    <button class="ccbtn" onclick="cerC()">¡Genial! 🎉</button>
   </div>
 </div>
 
-<!-- FOOTER -->
-<div style="background:var(--azul-nav);border-top:2px solid var(--dorado-bright);padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-  <div style="display:flex;align-items:center;gap:10px;">
-    <img src="https://Aka625.b-cdn.net/Varios/rutty.png" style="width:32px;height:32px;object-fit:contain;border-radius:50%;border:1.5px solid var(--dorado-bright);" onerror="this.style.display='none'">
-    <div>
-      <div style="color:white;font-size:13px;font-weight:600;">Rutty · Sistema de Entregas UCALSA</div>
-      <div style="color:rgba(255,255,255,0.5);font-size:11px;">Tu compañera de ruta — protocolos, alérgenos e incidencias 24/7</div>
-    </div>
+<!-- PIN -->
+<div class="ov" id="pinOv" style="display:none">
+  <div class="pbox">
+    <img src="https://Aka625.b-cdn.net/Varios/rutty.png" style="width:50px;height:50px;border-radius:50%;border:2px solid var(--db);margin-bottom:1rem;" onerror="this.style.display='none'">
+    <div style="font-size:17px;font-weight:700;color:var(--azn);margin-bottom:6px;">Área de supervisor</div>
+    <div style="font-size:13px;color:var(--gm);margin-bottom:1rem;">Introduce el PIN</div>
+    <input class="pinput" id="pinIn" type="password" maxlength="4" inputmode="numeric" placeholder="••••" oninput="if(this.value.length===4)chkPin()">
+    <div id="pinErr" style="color:var(--ro);font-size:12px;height:16px;margin:8px 0;"></div>
+    <button class="bp" style="margin-bottom:8px;" onclick="chkPin()">Entrar</button>
+    <button onclick="document.getElementById('pinOv').style.display='none'" style="background:none;border:none;color:var(--gm);font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;width:100%;">Cancelar</button>
   </div>
-  <div style="color:var(--dorado-bright);font-size:12px;font-weight:600;">Laztan Academy × UCALSA · <a href="https://jsantos.pro" target="_blank" style="color:var(--dorado-bright);">jsantos.pro</a></div>
 </div>
 
 <script>
-const PIN = '1111';
-let supOk = false;
-let chatLoading = false;
-let chatHist = [];
-let selectedIncs = [];
-let reportsSent = [];
-let reportsApproved = 0;
-let reportsRejected = 0;
-let vIntervalMin = 10;
-let vSecsLeft = vIntervalMin * 60;
-let vTicker = null;
-let vIdx = 0;
-let micActive = false;
-let recognition = null;
+const PIN='1111', IMG='https://Aka625.b-cdn.net/Varios/rutty.png';
 
-const IMG = 'https://Aka625.b-cdn.net/Varios/rutty.png';
-
-let reps = [
-  { nombre:'Ana García', pts:1240, zona:'Norte', entregas:0 },
-  { nombre:'Pedro Ruiz', pts:980, zona:'Sur', entregas:0 },
-  { nombre:'Laura Gómez', pts:870, zona:'Centro', entregas:0 },
+let reps=[
+  {nombre:'Ana García',pts:1240,zona:'Norte',medAntes:''},
+  {nombre:'Pedro Ruiz',pts:980,zona:'Sur',medAntes:''},
+  {nombre:'Laura Gómez',pts:870,zona:'Centro',medAntes:''},
 ];
-
-let premios = [
-  { pts:100, emoji:'☕', nombre:'Café del equipo', desc:'Un café pagado por UCALSA.', activo:true },
-  { pts:200, emoji:'🧢', nombre:'Equipación oficial', desc:'Gorra o camiseta del equipo UCALSA.', activo:true },
-  { pts:350, emoji:'🎟️', nombre:'Tarde libre', desc:'Una tarde de descanso a elegir.', activo:true },
-  { pts:500, emoji:'🛒', nombre:'Vale de compra', desc:'Vale de 25€ en supermercados.', activo:true },
-  { pts:750, emoji:'🍽️', nombre:'Cena para dos', desc:'Cena en restaurante de la zona.', activo:true },
-  { pts:1000, emoji:'🏆', nombre:'Premio élite', desc:'Reconocimiento + premio sorpresa UCALSA.', activo:true },
+let premios=[
+  {pts:100,emoji:'☕',nombre:'Café del equipo',desc:'Un café pagado por UCALSA.',activo:true},
+  {pts:200,emoji:'🧢',nombre:'Equipación oficial',desc:'Gorra o camiseta del equipo UCALSA.',activo:true},
+  {pts:350,emoji:'🎟️',nombre:'Tarde libre',desc:'Una tarde de descanso a elegir.',activo:true},
+  {pts:500,emoji:'🛒',nombre:'Vale de compra',desc:'Vale de 25€ en supermercados.',activo:true},
+  {pts:750,emoji:'🍽️',nombre:'Cena para dos',desc:'Cena en restaurante de la zona.',activo:true},
+  {pts:1000,emoji:'🏆',nombre:'Premio élite',desc:'Reconocimiento + premio sorpresa UCALSA.',activo:true},
 ];
-
-let voiceMsgs = [
-  { texto:'Cada caja roja que entregas correctamente es una persona mayor que come segura hoy. Tú eres parte de eso.', tipo:'motivacional' },
-  { texto:'Recuerda: ante cualquier duda con un alérgeno, no entregues y llama a coordinación. La seguridad primero.', tipo:'responsabilidad' },
-  { texto:'Antes de cada entrega especial, verifica que el código QR coincide con la etiqueta de la caja roja.', tipo:'protocolo' },
-  { texto:'Hoy has demostrado profesionalidad. Cada familia confía en ti. Sigue así.', tipo:'motivacional' },
-  { texto:'La temperatura del vehículo debe mantenerse entre 0 y 4 grados. Si hay dudas, no entregues.', tipo:'responsabilidad' },
+let voiceMsgs=[
+  {texto:'Cada caja roja que entregas bien es una persona mayor que come segura hoy. Tú eres parte de eso.',tipo:'motivacional'},
+  {texto:'Ante cualquier duda con un alérgeno, no entregues y llama a coordinación. La seguridad primero.',tipo:'responsabilidad'},
+  {texto:'Antes de cada entrega especial, verifica que el QR coincide con la etiqueta de la caja roja.',tipo:'protocolo'},
+  {texto:'Llevas ya varios días de racha. El equipo lo nota. Sigue así.',tipo:'motivacional'},
+  {texto:'La temperatura del vehículo debe mantenerse entre 0 y 4 grados. Si hay dudas, para y avisa.',tipo:'responsabilidad'},
 ];
+let reportes=[],repAprov=0,repAct=null,ptsInicio=0;
+let chatL=false,chatH=[],micOn=false,rec=null;
+let vMin=10,vSecs=600,vT=null,vIdx=0;
 
-// ─── NAV ───
-function goTab(t) {
-  if (t === 'sup' && !supOk) {
-    document.getElementById('pinOv').style.display = 'flex';
-    setTimeout(() => document.getElementById('pinIn').focus(), 100);
-    return;
-  }
-  document.getElementById('view-rep').classList.toggle('active', t === 'rep');
-  document.getElementById('view-sup').classList.toggle('active', t === 'sup');
-  document.getElementById('btn-rep').classList.toggle('active', t === 'rep');
-  document.getElementById('btn-sup').classList.toggle('active', t === 'sup');
-  if (t === 'sup') renderSup();
+// ─── UTILS ───
+function ini(n){return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();}
+function getMed(pts){
+  if(pts>=500)return{txt:'Oro',e:'👑',color:'#F0A800',bg:'#FFF8EC',tc:'#633806'};
+  if(pts>=200)return{txt:'Plata',e:'🥈',color:'#C0C8D4',bg:'#F4F6F8',tc:'#444441'};
+  if(pts>=50) return{txt:'Bronce',e:'🥉',color:'#C86820',bg:'#FFF3EC',tc:'#412402'};
+  return{txt:'Rookie',e:'⭐',color:'#7F77DD',bg:'#EEEDFE',tc:'#26215C'};
 }
-function chkPin() {
-  const v = document.getElementById('pinIn').value;
-  if (v === PIN) { supOk = true; document.getElementById('pinOv').style.display = 'none'; goTab('sup'); }
-  else { document.getElementById('pinErr').textContent = 'PIN incorrecto.'; document.getElementById('pinIn').value = ''; }
-}
-function showSub(t, btn) {
-  document.querySelectorAll('.sv-subview').forEach(e => e.classList.remove('active'));
-  document.querySelectorAll('.sv-subtab').forEach(e => e.classList.remove('active'));
-  document.getElementById('sv-' + t).classList.add('active');
-  if (btn) btn.classList.add('active');
-  if (t === 'ranking') renderRankingSup();
-  if (t === 'premios-sv') renderPremiosSup();
-  if (t === 'voz-sv') renderVozSup();
-  if (t === 'reps-sv') renderRepsSup();
-}
-function showRvTab(t, btn) {
-  ['chat','ranking','premios','reporte'].forEach(x => {
-    const el = document.getElementById('rvview-' + x);
-    if (el) el.style.display = 'none';
-    const b = document.getElementById('rvt-' + x);
-    if (b) b.classList.remove('active');
-  });
-  const el = document.getElementById('rvview-' + t);
-  if (el) { el.style.display = 'flex'; el.style.flexDirection = 'column'; }
-  if (btn) btn.classList.add('active');
-  if (t === 'ranking') renderRankingRep();
-  if (t === 'premios') renderPremiosRep();
-}
+function pmx(m){return m==='Rookie'?50:m==='Bronce'?200:m==='Plata'?500:1000;}
+function dias(){const h=new Date(),f=new Date(h.getFullYear(),h.getMonth()+1,0);return f.getDate()-h.getDate();}
 
-// ─── MEDALLAS ───
-function getMedalla(pts) {
-  if (pts >= 500) return { txt:'Oro', cls:'medalla-oro', emoji:'🥇', color:'#F0A800', colorText:'#633806' };
-  if (pts >= 200) return { txt:'Plata', cls:'medalla-plata', emoji:'🥈', color:'#C0C8D4', colorText:'#444441' };
-  if (pts >= 50) return { txt:'Bronce', cls:'medalla-bronce', emoji:'🥉', color:'#C86820', colorText:'#412402' };
-  return { txt:'Rookie', cls:'medalla-rookie', emoji:'⭐', color:'#7F77DD', colorText:'#26215C' };
-}
-function getPtsMax(m) { return m==='Rookie'?50:m==='Bronce'?200:m==='Plata'?500:1000; }
+// ─── PANTALLAS ───
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.add('off'));document.getElementById(id).classList.remove('off');}
 
-// ─── RANKING ───
-function renderRankingSup() {
-  const sorted = [...reps].sort((a,b) => b.pts - a.pts);
-  const medals = ['🥇','🥈','🥉'];
-  const posClss = ['pos1','pos2','pos3'], posNums = ['p1','p2','p3'], posEmoji = ['1°','2°','3°'];
-  const bgArr = ['#FFF8EC','#F4F6F8','#FFF3EC'], tcArr = ['#633806','#444441','#412402'];
-  document.getElementById('top3-sv').innerHTML = sorted.slice(0,3).map((r,i) => {
-    const med = getMedalla(r.pts), ini = r.nombre.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    const pct = Math.min(100, Math.round(r.pts / getPtsMax(med.txt) * 100));
-    return `<div class="top3-card ${posClss[i]}">
-      <div class="top3-pos ${posNums[i]}">${posEmoji[i]}</div>
-      <div class="top3-avatar" style="background:${bgArr[i]};color:${tcArr[i]}">${ini}</div>
-      <div class="top3-nombre">${r.nombre}</div>
-      <div class="top3-zona">${r.zona}</div>
-      <div class="medalla-badge ${med.cls}">${med.emoji} ${med.txt}</div>
-      <div class="top3-pts" style="color:${med.color}">${r.pts}</div>
-      <div style="font-size:11px;color:var(--gris-mid);margin-bottom:8px;">puntos este mes</div>
-      <div class="pts-bar-bg"><div class="pts-bar-fill" style="width:${pct}%;background:${med.color}"></div></div>
-      <div class="pts-label">${r.pts}/${getPtsMax(med.txt)} pts para siguiente rango</div>
-    </div>`;
-  }).join('');
-  document.getElementById('rk-body-sv').innerHTML = sorted.map((r,i) => {
-    const med = getMedalla(r.pts), ini = r.nombre.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    return `<div class="rk-row">
-      <div style="font-size:16px;font-weight:700;color:var(--gris-mid);">${i+1}</div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <div style="width:32px;height:32px;border-radius:50%;background:${med.color}22;color:${med.colorText};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">${ini}</div>
-        <div><div style="font-weight:600;font-size:13px;">${r.nombre}</div><div style="font-size:11px;color:var(--gris-mid);">${r.zona}</div></div>
-      </div>
-      <div><span class="medalla-badge ${med.cls}" style="font-size:11px;padding:3px 8px;">${med.emoji} ${med.txt}</span></div>
-      <div>${r.entregas} entregas</div>
-      <div style="font-size:15px;font-weight:700;color:${med.color};">${r.pts} pts</div>
+// ─── BIENVENIDA ───
+function renderBienvenida(){
+  document.getElementById('rsel').innerHTML=reps.map((r,i)=>{
+    const m=getMed(r.pts);
+    return `<div class="rb" onclick="elegir(${i})">
+      <div class="rav" style="background:${m.color}22;color:${m.tc};">${ini(r.nombre)}</div>
+      <div><div class="rn">${r.nombre}</div><div class="rs">${m.e} ${m.txt} · ${r.pts} pts · ${r.zona}</div></div>
+      <div class="rar">›</div>
     </div>`;
   }).join('');
 }
-function renderRankingRep() {
-  const wrap = document.getElementById('rv-ranking-content'); if (!wrap) return;
-  const sorted = [...reps].sort((a,b) => b.pts - a.pts);
-  const medals = ['🥇','🥈','🥉'];
-  const leyHtml = [
-    { emoji:'👑', txt:'Oro', pts:'500+', desc:'Élite del equipo.', color:'#F0A800', bg:'#FFF8EC', border:'#F0A800' },
-    { emoji:'🥈', txt:'Plata', pts:'200+', desc:'Fiable y constante.', color:'#8A95A3', bg:'#F4F6F8', border:'#C0C8D4' },
-    { emoji:'🥉', txt:'Bronce', pts:'50+', desc:'En ascenso.', color:'#C86820', bg:'#FFF3EC', border:'#C86820' },
-    { emoji:'⭐', txt:'Rookie', pts:'0-49', desc:'Empezando la ruta.', color:'#7F77DD', bg:'#EEEDFE', border:'#7F77DD' },
-  ].map(m => `<div style="flex:1;min-width:100px;background:${m.bg};border:1px solid ${m.border};border-radius:10px;padding:8px;text-align:center;">
-    <div style="font-size:20px;">${m.emoji}</div>
-    <div style="font-size:12px;font-weight:600;color:${m.color};">${m.txt}</div>
-    <div style="font-size:10px;color:#8A95A3;">${m.pts} pts</div>
-    <div style="font-size:10px;color:#5A6475;margin-top:3px;">${m.desc}</div>
-  </div>`).join('');
 
-  const rankHtml = sorted.map((r,i) => {
-    const med = getMedalla(r.pts), ini = r.nombre.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    const pct = Math.min(100, Math.round(r.pts / getPtsMax(med.txt) * 100));
-    const esYo = i === 0;
-    return `<div style="background:var(--blanco);border:${esYo?'2px solid '+med.color:'0.5px solid var(--borde)'};border-radius:14px;padding:1rem;margin-bottom:10px;display:flex;align-items:center;gap:12px;">
-      <div style="font-size:20px;font-weight:700;color:${i===0?med.color:i===1?'#C0C8D4':'#C86820'};min-width:24px;">${medals[i]||'#'+(i+1)}</div>
-      <div style="width:38px;height:38px;border-radius:50%;background:${med.color}22;color:${med.colorText};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">${ini}</div>
-      <div style="flex:1;">
-        <div style="font-size:14px;font-weight:600;">${r.nombre}${esYo?' <span style="font-size:11px;color:var(--gris-mid);">(tú)</span>':''}</div>
-        <div style="display:flex;align-items:center;gap:6px;margin-top:2px;"><span class="medalla-badge ${med.cls}" style="font-size:11px;padding:2px 8px;">${med.emoji} ${med.txt}</span></div>
-        <div style="margin-top:5px;"><div style="height:5px;background:var(--gris);border-radius:10px;overflow:hidden;"><div style="height:5px;background:${med.color};border-radius:10px;width:${pct}%;"></div></div></div>
-      </div>
-      <div style="font-size:17px;font-weight:700;color:${med.color};flex-shrink:0;">${r.pts}<div style="font-size:10px;color:var(--gris-mid);font-weight:400;text-align:center;">pts</div></div>
-    </div>`;
-  }).join('');
-
-  wrap.innerHTML = `
-    <div style="background:var(--azul-nav);border-radius:14px;padding:1rem 1.25rem;margin-bottom:1rem;color:white;font-size:13px;line-height:1.6;">
-      ✦ Quedan <strong>${diasRestantes()} días</strong> para cerrar el mes. ¿Dónde estás tú en el ranking?
-    </div>
-    <div style="font-size:12px;font-weight:600;color:var(--gris-mid);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Rangos del equipo</div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem;">${leyHtml}</div>
-    ${rankHtml}`;
-}
-
-// ─── PREMIOS ───
-function renderPremiosSup() {
-  const activos = premios.filter(p => p.activo);
-  document.getElementById('premios-sv-list').innerHTML = premios.map((p,i) => `
-    <div class="premio-sv-item ${p.activo?'':'inactivo'}">
-      <span style="font-size:24px;">${p.emoji}</span>
-      <div style="flex:1;">
-        <div style="font-size:14px;font-weight:600;">${p.nombre} <span style="font-size:12px;color:var(--dorado);font-weight:700;">${p.pts} pts</span></div>
-        <div style="font-size:12px;color:var(--gris-mid);">${p.desc}</div>
-      </div>
-      <button onclick="togglePremio(${i})" style="background:${p.activo?'var(--verde-bg)':'var(--gris)'};color:${p.activo?'var(--verde)':'var(--gris-mid)'};border:none;border-radius:8px;padding:6px 12px;font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;font-weight:600;">${p.activo?'✓ Activo':'Inactivo'}</button>
-      <button onclick="delPremio(${i})" style="background:var(--rojo-bg);color:var(--rojo);border:none;border-radius:8px;padding:6px 10px;cursor:pointer;">✕</button>
-    </div>`).join('');
-}
-function renderPremiosRep() {
-  const wrap = document.getElementById('rv-premios-content'); if (!wrap) return;
-  const myPts = reps[0].pts;
-  const med = getMedalla(myPts);
-  const ini = reps[0].nombre.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-  const activos = premios.filter(p => p.activo);
-
-  const perfilHtml = `
-    <div style="background:var(--blanco);border:0.5px solid var(--borde);border-radius:14px;padding:1.25rem;margin-bottom:1rem;display:flex;align-items:center;gap:1rem;">
-      <div style="width:64px;height:64px;border-radius:50%;background:${med.color}22;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;">${med.emoji}</div>
-      <div>
-        <div style="font-size:16px;font-weight:700;">${reps[0].nombre}</div>
-        <span class="medalla-badge ${med.cls}">${med.emoji} ${med.txt} · ${myPts} pts</span>
-        <div style="font-size:12px;color:var(--gris-mid);margin-top:4px;">📍 Posición 1º · ${diasRestantes()} días para cerrar el mes</div>
-      </div>
-    </div>`;
-
-  const heroHtml = `
-    <div class="pts-hero">
-      <div class="pts-hero-icon">🎁</div>
-      <div class="pts-hero-title">Canjea tus puntos</div>
-      <div class="pts-hero-sub">Tienes <strong>${myPts} puntos</strong> disponibles este mes</div>
-    </div>`;
-
-  const premiosHtml = activos.length ? activos.map(p => {
-    const pct = Math.min(100, Math.round(myPts / p.pts * 100));
-    const have = myPts >= p.pts;
-    return `<div class="premio-rv-item ${have?'available':''}">
-      <div class="premio-icon-wrap">${p.emoji}</div>
-      <div class="premio-info">
-        <div class="premio-name">${p.nombre}</div>
-        <div class="premio-desc">${p.desc}</div>
-        <div class="premio-bar-bg"><div class="premio-bar-fill" style="width:${pct}%;background:${have?'var(--verde)':'var(--azul)'}"></div></div>
-      </div>
-      <div class="premio-pts-col">
-        <div class="premio-pts-num">${p.pts} pts</div>
-        <div class="premio-pts-lbl">${have?'¡Disponible!':'Faltan '+(p.pts-myPts)+' pts'}</div>
-      </div>
-    </div>`;
-  }).join('') : '<div style="text-align:center;padding:2rem;color:var(--gris-mid);">El supervisor aún no ha definido el catálogo de premios.</div>';
-
-  wrap.innerHTML = perfilHtml + heroHtml + premiosHtml + '<div style="text-align:center;padding:0.75rem;font-size:12px;color:var(--gris-mid);font-style:italic;">Canjea con el supervisor al cierre del mes.</div>';
-}
-function togglePremio(i) { premios[i].activo = !premios[i].activo; renderPremiosSup(); }
-function delPremio(i) { if (!confirm('¿Eliminar este premio?')) return; premios.splice(i,1); renderPremiosSup(); }
-function addPremio() {
-  const emoji = document.getElementById('np-emoji').value.trim() || '🎁';
-  const nombre = document.getElementById('np-nombre').value.trim();
-  const pts = parseInt(document.getElementById('np-pts').value) || 0;
-  const desc = document.getElementById('np-desc').value.trim();
-  if (!nombre) return;
-  premios.push({ pts, emoji, nombre, desc, activo:true });
-  premios.sort((a,b) => a.pts - b.pts);
-  ['np-emoji','np-nombre','np-pts','np-desc'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
-  renderPremiosSup();
-}
-
-// ─── MENSAJES VOZ ───
-function renderVozSup() {
-  document.getElementById('vmsg-list-sv').innerHTML = voiceMsgs.map((m,i) => `
-    <div class="vmsg-item">
-      <span class="vmsg-tipo ${m.tipo==='motivacional'?'vt-mot':m.tipo==='responsabilidad'?'vt-res':'vt-pro'}">${m.tipo}</span>
-      <span style="flex:1;font-size:13px;color:var(--gris-dark);">${m.texto}</span>
-      <button class="vmsg-del" onclick="delVMsg(${i})">×</button>
-    </div>`).join('');
-  const nl = document.getElementById('vNextLbl');
-  if (nl) { const m=Math.floor(vSecsLeft/60),s=vSecsLeft%60; nl.textContent='Próximo en '+m+':'+String(s).padStart(2,'0'); }
-}
-function addVMsg() {
-  const t = document.getElementById('mT').value.trim();
-  const tipo = document.getElementById('mTipo').value;
-  if (!t) return;
-  voiceMsgs.push({ texto:t, tipo });
-  document.getElementById('mT').value = '';
-  renderVozSup();
-}
-function delVMsg(i) { voiceMsgs.splice(i,1); renderVozSup(); }
-function setVInt() {
-  vIntervalMin = parseInt(document.getElementById('vInt').value) || 10;
-  vSecsLeft = vIntervalMin * 60;
+function elegir(i){
+  repAct=i;ptsInicio=reps[i].pts;reps[i].medAntes=getMed(reps[i].pts).txt;
+  actualizarTopbar();renderRanking();renderPremios();
+  show('sa');tab('home',document.getElementById('nb-home'));
+  setTimeout(()=>hablar(`Hola ${reps[i].nombre.split(' ')[0]}. Bienvenida a tu jornada. Estoy aquí cuando me necesites.`),400);
   restartVoice();
 }
 
-// ─── REPARTIDORES ───
-function renderRepsSup() {
-  document.getElementById('reps-list-sv').innerHTML = reps.length ? reps.map((r,i) => {
-    const ini = r.nombre.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    const med = getMedalla(r.pts);
-    return `<div style="display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:0.5px solid var(--borde);">
-      <div style="width:36px;height:36px;border-radius:50%;background:${med.color}22;color:${med.colorText};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">${ini}</div>
-      <div style="flex:1;"><div style="font-size:14px;font-weight:600;">${r.nombre}</div><div style="font-size:12px;color:var(--gris-mid);">${r.zona} · ${med.emoji} ${r.pts} pts</div></div>
-      <button onclick="delRep(${i})" style="background:var(--rojo-bg);color:var(--rojo);border:none;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:12px;">✕</button>
-    </div>`;
-  }).join('') : '<div style="color:var(--gris-mid);font-size:13px;padding:1rem 0;">No hay repartidores aún.</div>';
-}
-function addRep() {
-  const n = document.getElementById('rep-nombre').value.trim();
-  const z = document.getElementById('rep-zona').value.trim();
-  if (!n) return;
-  reps.push({ nombre:n, pts:0, zona:z||'Sin zona', entregas:0 });
-  document.getElementById('rep-nombre').value = '';
-  document.getElementById('rep-zona').value = '';
-  renderRepsSup();
-}
-function delRep(i) { reps.splice(i,1); renderRepsSup(); }
+function volver(){show('sw');repAct=null;if(vT)clearInterval(vT);document.getElementById('vcd').style.display='none';document.getElementById('vbArea').style.display='none';}
 
-// ─── SUPERVISOR STATS ───
-function renderSup() {
-  const pend = reportsSent.filter(r=>r.status==='pendiente').length;
-  document.getElementById('s-total').textContent = reportsSent.length;
-  document.getElementById('s-aprov').textContent = reportsApproved;
-  document.getElementById('s-pend').textContent = pend;
-  document.getElementById('sc-total').textContent = reportsSent.length;
-  document.getElementById('sc-aprov').textContent = reportsApproved;
-  document.getElementById('sc-pend').textContent = pend;
-  document.getElementById('sc-rej').textContent = reportsRejected;
-  renderReportesSup();
+function actualizarTopbar(){
+  if(repAct===null)return;
+  const r=reps[repAct],m=getMed(r.pts);
+  document.getElementById('topPts').textContent=r.pts.toLocaleString()+' pts';
+  const av=document.getElementById('topAv');
+  av.textContent=ini(r.nombre);av.style.background=m.color+'33';av.style.color=m.tc;av.style.borderColor=m.color;
+  const hs=document.getElementById('heroSub');
+  if(hs)hs.textContent=`${m.e} ${m.txt} · ${r.pts} pts · ${dias()} días para cerrar el mes`;
 }
-function renderReportesSup() {
-  const wrap = document.getElementById('reportes-list');
-  if (!reportsSent.length) {
-    wrap.innerHTML = '<div style="text-align:center;padding:2.5rem;color:var(--gris-mid);font-size:14px;">Aún no hay reportes de hoy. Los repartidores los envían al cierre de jornada.</div>';
-    return;
-  }
-  wrap.innerHTML = reportsSent.map(r => `
-    <div class="rep-item">
-      <div class="rep-header">
-        <div class="rep-name">${r.rep}</div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:12px;color:var(--gris-mid);">${r.fecha}</span>
-          <span class="status-badge ${r.status==='pendiente'?'sb-pend':r.status==='aprobado'?'sb-ok':'sb-rej'}">${r.status==='pendiente'?'Pendiente':r.status==='aprobado'?'Aprobado':'Rechazado'}</span>
-        </div>
+
+// ─── TABS ───
+function tab(t,btn){
+  document.querySelectorAll('.tv').forEach(v=>v.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tv-'+t).classList.add('on');
+  if(btn)btn.classList.add('on');
+  if(t==='ranking')renderRanking();
+  if(t==='premios')renderPremios();
+}
+
+// ─── RANKING ───
+function renderRanking(){
+  if(repAct===null)return;
+  const r=reps[repAct],m=getMed(r.pts),pmax=pmx(m.txt),pct=Math.min(100,Math.round(r.pts/pmax*100));
+  const sorted=[...reps].sort((a,b)=>b.pts-a.pts);
+  const myPos=sorted.findIndex(x=>x.nombre===r.nombre)+1;
+  const pb=document.getElementById('pb');
+  if(pb)pb.innerHTML=`<div class="pbn">${r.pts.toLocaleString()}</div><div class="pbl">puntos este mes</div>
+    <div class="pbm">${m.e} ${m.txt} · Posición #${myPos}</div>
+    <div style="margin-top:9px;background:rgba(0,0,0,.15);border-radius:8px;height:5px;overflow:hidden;"><div style="height:100%;background:rgba(255,255,255,.55);width:${pct}%;border-radius:8px;"></div></div>
+    <div style="font-size:11px;opacity:.7;margin-top:4px;">${r.pts}/${pmax} pts para siguiente rango</div>`;
+  const medals=['🥇','🥈','🥉'];
+  document.getElementById('rl').innerHTML=sorted.map((rx,i)=>{
+    const mx=getMed(rx.pts),pmx2=pmx(mx.txt),p2=Math.min(100,Math.round(rx.pts/pmx2*100)),yo=rx.nombre===r.nombre;
+    return `<div class="rr ${yo?'yo':''}">
+      <div class="rpos">${medals[i]||'#'+(i+1)}</div>
+      <div class="rava" style="background:${mx.color}22;color:${mx.tc};">${ini(rx.nombre)}</div>
+      <div class="ri"><div class="rin">${rx.nombre}${yo?' <span style="font-size:11px;color:var(--azm);font-weight:400;">(tú)</span>':''}</div>
+        <div class="ris">${mx.e} ${mx.txt} · ${rx.zona}</div>
+        <div class="bb"><div class="bf" style="width:${p2}%;background:${mx.color};"></div></div>
       </div>
-      <div class="rep-body">
-        <strong>${r.tot}</strong> entregas totales — <strong>${r.ok}</strong> sin incidencias
-        ${r.incs.length?'<br>Incidencias: '+r.incs.join(', '):''}
-        ${r.nota?'<br>Nota: '+r.nota:''}
-        ${r.status==='aprobado'?'<br><strong style="color:var(--verde)">+'+r.ptsAprobados+' puntos adjudicados</strong>':''}
+      <div class="rpt" style="color:${mx.color};">${rx.pts.toLocaleString()}</div>
+    </div>`;
+  }).join('');
+}
+
+// ─── PREMIOS ───
+function renderPremios(){
+  if(repAct===null)return;
+  const myPts=reps[repAct].pts;
+  const ph=document.getElementById('ph');
+  if(ph)ph.innerHTML=`<div style="font-size:20px;margin-bottom:4px;">🎁</div><div style="font-size:16px;font-weight:700;">Canjea tus puntos</div><div style="font-size:13px;opacity:.85;">Tienes <strong>${myPts.toLocaleString()} puntos</strong> disponibles este mes</div>`;
+  document.getElementById('pl').innerHTML=premios.filter(p=>p.activo).map(p=>{
+    const pct=Math.min(100,Math.round(myPts/p.pts*100)),have=myPts>=p.pts;
+    return `<div class="pi ${have?'av':''}">
+      <div class="piico">${p.emoji}</div>
+      <div class="piin"><div class="pin">${p.nombre}</div><div class="pid">${p.desc}</div>
+        <div class="bb" style="margin-top:5px;"><div class="bf" style="width:${pct}%;background:${have?'var(--ve)':'var(--az)'}"></div></div>
+        ${have?`<button class="prb" onclick="reclamar('${p.nombre}')">✓ Reclamar</button>`:''}
       </div>
-      ${r.status==='pendiente'?`
-      <div class="rep-actions">
-        <span style="font-size:13px;color:var(--gris-dark);">Puntos a adjudicar:</span>
-        <input class="rep-pts-inp" id="pts-${r.id}" type="number" value="${r.ptsBase}">
-        <button class="rep-approve" onclick="approveRep('${r.id}')">Aprobar y adjudicar</button>
-        <button class="rep-reject" onclick="rejectRep('${r.id}')">Rechazar</button>
+      <div class="pipc"><div class="pip">${p.pts} pts</div><div class="pil">${have?'¡Disponible!':'Faltan '+(p.pts-myPts)}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function reclamar(n){
+  const r=reps[repAct];
+  celeb('🎁','¡Premio reclamado!',`Has solicitado:\n"${n}"\n\nHabla con tu supervisor para canjearlo.\n¡Te lo has ganado, ${r.nombre.split(' ')[0]}!`);
+}
+
+// ─── CIERRE JORNADA ───
+function cerrarJornada(){
+  if(repAct===null)return;
+  const r=reps[repAct],ptsHoy=r.pts-ptsInicio,m=getMed(r.pts),nombre=r.nombre.split(' ')[0];
+  const msgs=document.getElementById('msgs');
+  const d=document.createElement('div');
+  d.style.marginBottom='.9rem';
+  d.innerHTML=`<div class="rsc"><div style="font-size:12px;opacity:.8;margin-bottom:4px;">Jornada completada 🏁</div><div class="rsn">+${ptsHoy}</div><div class="rsl">puntos ganados hoy</div></div>
+    <div class="rsg">
+      <div class="rss"><div class="rssn">${r.pts.toLocaleString()}</div><div class="rssL">Total mes</div></div>
+      <div class="rss"><div class="rssn" style="color:var(--do)">${m.e}</div><div class="rssL">${m.txt}</div></div>
+      <div class="rss"><div class="rssn">${dias()}</div><div class="rssL">Días restantes</div></div>
+    </div>`;
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+
+  const proxP=premios.filter(p=>p.activo&&p.pts>r.pts)[0];
+  let msg=`${nombre}, jornada completada. Hoy sumaste ${ptsHoy} puntos. Llevas ${r.pts.toLocaleString()} este mes con rango ${m.txt}.`;
+  if(proxP)msg+=` Te faltan ${proxP.pts-r.pts} puntos para el ${proxP.nombre}.`;
+  msg+=' ¡Hasta mañana!';
+  hablar(msg);
+
+  reportes.push({id:'r'+Date.now(),rep:r.nombre,fecha:new Date().toLocaleDateString('es-ES'),ptsHoy,total:r.pts,status:'pendiente',base:ptsHoy});
+
+  const btn=document.getElementById('cierreBtn');
+  if(btn){btn.textContent='✓ Jornada cerrada · ¡Hasta mañana!';btn.style.background='linear-gradient(135deg,var(--gd),#3A4455)';btn.onclick=null;}
+
+  // Subida de rango
+  setTimeout(()=>{
+    const medNueva=getMed(r.pts).txt;
+    const orden=['Rookie','Bronce','Plata','Oro'];
+    if(r.medAntes&&orden.indexOf(medNueva)>orden.indexOf(r.medAntes)){
+      celeb(m.e,`¡Subiste a ${medNueva}!`,`${nombre}, has alcanzado el rango ${medNueva}.\n\n¡El equipo lo va a notar!`);
+    }
+  },3500);
+}
+
+// ─── CELEBRACIÓN + CONFETI ───
+function celeb(emoji,titulo,sub){
+  document.getElementById('cE').textContent=emoji;
+  document.getElementById('cT').textContent=titulo;
+  document.getElementById('cS').textContent=sub;
+  document.getElementById('cel').classList.add('on');
+  confeti();
+  setTimeout(()=>hablar(titulo+'. '+sub.replace(/\n/g,' ')),200);
+}
+function cerC(){document.getElementById('cel').classList.remove('on');}
+function confeti(){
+  const cv=document.getElementById('cc'),ctx=cv.getContext('2d');
+  cv.width=window.innerWidth;cv.height=window.innerHeight;
+  const cols=['#F0A800','#1A3F6F','#1A7A4A','#C93030','#7F77DD','#fff','#F0A800'];
+  const ps=Array.from({length:130},()=>({x:Math.random()*cv.width,y:-20-Math.random()*80,r:3+Math.random()*6,d:Math.random()*180,c:cols[Math.floor(Math.random()*cols.length)],t:Math.random()*10-10,s:2+Math.random()*4,o:1}));
+  let fr=0;
+  const go=()=>{
+    ctx.clearRect(0,0,cv.width,cv.height);
+    ps.forEach(p=>{p.y+=p.s;p.t+=.08;p.o=Math.max(0,1-p.y/cv.height*1.2);ctx.globalAlpha=p.o;ctx.fillStyle=p.c;ctx.beginPath();ctx.ellipse(p.x,p.y,p.r,p.r*.45,p.t,0,2*Math.PI);ctx.fill();});
+    ctx.globalAlpha=1;fr++;if(fr<200)requestAnimationFrame(go);else ctx.clearRect(0,0,cv.width,cv.height);
+  };requestAnimationFrame(go);
+}
+
+// ─── CHAT ───
+const SYS=`Eres Rutty, asistente del equipo de reparto de UCALSA. Directa, concisa, priorizas la seguridad. Cajas ROJAS para alérgicos: verificar QR y etiqueta, si no coincide NO entregar y llamar coordinación. Temperatura 0-4ºC. Envase dañado: no entregar. Incidencias en UCALCARE. Ante duda: no entregar. Máximo 3 frases en español.`;
+
+function addBubble(from,text){
+  const msgs=document.getElementById('msgs'),isU=from==='user';
+  const d=document.createElement('div');d.className=isU?'mu':'mr';
+  d.innerHTML=isU?`<div class="bu">${text}</div>`:`<img class="mav" src="${IMG}" onerror="this.style.display='none'"><div class="br">${text}</div>`;
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+  return d.querySelector(isU?'.bu':'.br');
+}
+function ask(q){document.getElementById('inp').value=q;sendChat();tab('home',document.getElementById('nb-home'));}
+async function sendChat(){
+  const inp=document.getElementById('inp'),q=inp.value.trim();
+  if(!q||chatL)return;
+  inp.value='';addBubble('user',q);chatH.push({role:'user',content:q});chatL=true;
+  const bbl=addBubble('rutty','◌');
+  try{
+    const res=await fetch('/.netlify/functions/rutty-api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({provider:'claude',system:SYS,messages:chatH})});
+    const data=await res.json();
+    const reply=data.text||data.content?.[0]?.text||'Hubo un error. Consulta con tu coordinador.';
+    chatH.push({role:'assistant',content:reply});
+    if(bbl)bbl.textContent=reply;hablar(reply);
+  }catch(e){if(bbl)bbl.textContent='No pude conectar. Consulta con tu coordinador.';}
+  chatL=false;
+}
+
+// ─── MIC ───
+function toggleMic(){
+  const btn=document.getElementById('micBtn');
+  if(!('webkitSpeechRecognition' in window)&&!('SpeechRecognition' in window)){alert('Usa Chrome para el micrófono.');return;}
+  if(micOn){rec&&rec.stop();return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;rec=new SR();
+  rec.lang='es-ES';rec.interimResults=false;
+  rec.onstart=()=>{micOn=true;btn.classList.add('on');btn.textContent='🔴';};
+  rec.onresult=e=>{document.getElementById('inp').value=e.results[0][0].transcript;sendChat();};
+  rec.onend=()=>{micOn=false;btn.classList.remove('on');btn.textContent='🎤';};
+  rec.onerror=()=>{micOn=false;btn.classList.remove('on');btn.textContent='🎤';};
+  rec.start();
+}
+
+// ─── VOZ ───
+function hablar(texto){
+  if(!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(texto);
+  const vs=window.speechSynthesis.getVoices();
+  const v=vs.find(v=>['Mónica','Monica','Paulina','Conchita'].some(n=>v.name.includes(n))&&v.lang.startsWith('es'))||vs.find(v=>v.lang.startsWith('es'))||null;
+  if(v)u.voice=v;u.lang='es-ES';u.rate=0.9;u.pitch=1.05;
+  window.speechSynthesis.speak(u);
+}
+function showVoice(){
+  if(!voiceMsgs.length)return;
+  const m=voiceMsgs[vIdx%voiceMsgs.length];vIdx++;
+  const dur=9000;const area=document.getElementById('vbArea');
+  area.style.display='block';
+  area.innerHTML=`<div class="vb ${m.tipo}"><span style="font-size:20px;flex-shrink:0;">🔊</span><div style="flex:1"><div class="vbt">${m.tipo}</div><div class="vbtx">"${m.texto}"</div></div><div class="vbar" style="animation-duration:${dur}ms"></div></div>`;
+  hablar(m.texto);
+  setTimeout(()=>{area.style.opacity='0';area.style.transition='opacity .5s';setTimeout(()=>{area.style.display='none';area.style.opacity='1';area.innerHTML='';},600);},dur);
+}
+function updateVcd(){
+  const m=Math.floor(vSecs/60),s=vSecs%60,pct=Math.round(vSecs/(vMin*60)*100);
+  document.getElementById('vcd').style.display='flex';
+  document.getElementById('vcdT').textContent=`Próximo mensaje en ${m}:${String(s).padStart(2,'0')}`;
+  document.getElementById('vcdf').style.width=pct+'%';
+  const ns=document.getElementById('vns');if(ns)ns.textContent=`Próximo en ${m}:${String(s).padStart(2,'0')}`;
+}
+function restartVoice(){
+  if(vT)clearInterval(vT);vSecs=vMin*60;
+  vT=setInterval(()=>{vSecs--;updateVcd();if(vSecs<=0){showVoice();vSecs=vMin*60;}},1000);
+}
+function setVI(){vMin=parseInt(document.getElementById('vInt').value)||10;vSecs=vMin*60;restartVoice();}
+
+// ─── SUPERVISOR ───
+function abrirPin(){document.getElementById('pinOv').style.display='flex';setTimeout(()=>document.getElementById('pinIn').focus(),100);}
+function chkPin(){
+  const v=document.getElementById('pinIn').value;
+  if(v===PIN){document.getElementById('pinOv').style.display='none';document.getElementById('pinIn').value='';show('ss');renderSup();}
+  else{document.getElementById('pinErr').textContent='PIN incorrecto';document.getElementById('pinIn').value='';}
+}
+function stab(id,btn){
+  document.querySelectorAll('.sv').forEach(v=>v.classList.remove('on'));
+  document.querySelectorAll('.stab').forEach(b=>b.classList.remove('on'));
+  document.getElementById(id).classList.add('on');if(btn)btn.classList.add('on');
+  if(id==='srk')renderSupRk();if(id==='sp')renderSupP();if(id==='sv')renderSupV();if(id==='srp')renderSupReps();
+}
+function renderSup(){renderSupRep();renderSupRk();renderSupP();renderSupV();renderSupReps();}
+
+function renderSupRep(){
+  const pend=reportes.filter(r=>r.status==='pendiente').length;
+  document.getElementById('ss1').textContent=reportes.length;
+  document.getElementById('ss2').textContent=repAprov;
+  document.getElementById('ss3').textContent=pend;
+  document.getElementById('repList').innerHTML=reportes.length?reportes.map(r=>`
+    <div class="scard" style="margin-bottom:.9rem;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px;">
+        <div style="font-size:14px;font-weight:600;">${r.rep}</div>
+        <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:11px;color:var(--gm);">${r.fecha}</span>
+          <span class="sbi ${r.status==='pendiente'?'sbp':r.status==='aprobado'?'sbok':'sbr'}">${r.status==='pendiente'?'Pendiente':r.status==='aprobado'?'Aprobado':'Rechazado'}</span></div>
+      </div>
+      <div style="font-size:13px;color:var(--gd);margin-bottom:9px;">+${r.ptsHoy} pts hoy · ${r.total} total</div>
+      ${r.status==='pendiente'?`<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <span style="font-size:12px;color:var(--gd);">Puntos:</span><input class="pinp" id="pi-${r.id}" type="number" value="${r.base}">
+        <button class="sa" onclick="aprob('${r.id}')">Aprobar</button>
+        <button class="sr" onclick="rechaz('${r.id}')">Rechazar</button>
       </div>`:''}
+    </div>`).join(''):'<div style="text-align:center;padding:2rem;color:var(--gm);font-size:14px;">No hay reportes aún.</div>';
+}
+function aprob(id){
+  const r=reportes.find(x=>x.id===id);const pts=parseInt(document.getElementById('pi-'+id).value)||r.base;
+  r.status='aprobado';r.aprobados=pts;const ri=reps.findIndex(x=>x.nombre===r.rep);
+  if(ri>=0)reps[ri].pts+=pts;repAprov++;renderSupRep();renderSupRk();
+}
+function rechaz(id){reportes.find(x=>x.id===id).status='rechazado';renderSupRep();}
+
+function renderSupRk(){
+  const sorted=[...reps].sort((a,b)=>b.pts-a.pts);const medals=['🥇','🥈','🥉'];
+  document.getElementById('supRk').innerHTML=sorted.map((r,i)=>{
+    const m=getMed(r.pts),p=Math.min(100,Math.round(r.pts/pmx(m.txt)*100));
+    return `<div style="background:#fff;border:.5px solid var(--bo);border-radius:14px;padding:1rem;margin-bottom:9px;display:flex;align-items:center;gap:11px;">
+      <div style="font-size:20px;">${medals[i]||'#'+(i+1)}</div>
+      <div style="width:36px;height:36px;border-radius:50%;background:${m.color}22;color:${m.tc};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">${ini(r.nombre)}</div>
+      <div style="flex:1;"><div style="font-size:14px;font-weight:600;">${r.nombre}</div><div style="font-size:11px;color:var(--gm);">${m.e} ${m.txt} · ${r.zona}</div>
+      <div class="bb" style="margin-top:4px;"><div class="bf" style="width:${p}%;background:${m.color};"></div></div></div>
+      <div style="font-size:16px;font-weight:700;color:${m.color};">${r.pts}<div style="font-size:10px;color:var(--gm);font-weight:400;text-align:center;">pts</div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderSupP(){
+  document.getElementById('supPL').innerHTML=premios.map((p,i)=>`
+    <div style="background:#fff;border:.5px solid var(--bo);border-radius:12px;padding:11px 13px;margin-bottom:8px;display:flex;align-items:center;gap:10px;opacity:${p.activo?1:.5};">
+      <span style="font-size:20px;">${p.emoji}</span>
+      <div style="flex:1;"><div style="font-size:14px;font-weight:600;">${p.nombre} <span style="color:var(--do);font-size:12px;">${p.pts} pts</span></div><div style="font-size:12px;color:var(--gm);">${p.desc}</div></div>
+      <button onclick="tP(${i})" style="background:${p.activo?'var(--veb)':'var(--gr)'};color:${p.activo?'var(--ve)':'var(--gm)'};border:none;border-radius:8px;padding:5px 9px;font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;cursor:pointer;">${p.activo?'✓':'Off'}</button>
+      <button onclick="dP(${i})" style="background:var(--rob);color:var(--ro);border:none;border-radius:8px;padding:5px 7px;cursor:pointer;">✕</button>
     </div>`).join('');
 }
-function approveRep(id) {
-  const r = reportsSent.find(x => x.id === id);
-  const pts = parseInt(document.getElementById('pts-'+id).value) || r.ptsBase;
-  r.status = 'aprobado'; r.ptsAprobados = pts;
-  reps[0].pts += pts; reportsApproved++;
-  renderSup(); renderRankingRep(); renderPremiosRep();
-}
-function rejectRep(id) {
-  const r = reportsSent.find(x => x.id === id);
-  r.status = 'rechazado'; reportsRejected++;
-  renderSup();
+function tP(i){premios[i].activo=!premios[i].activo;renderSupP();}
+function dP(i){premios.splice(i,1);renderSupP();}
+function addP(){
+  const e=document.getElementById('ne').value.trim()||'🎁',n=document.getElementById('nn').value.trim();
+  const p=parseInt(document.getElementById('np').value)||0,d=document.getElementById('nd').value.trim();
+  if(!n)return;premios.push({pts:p,emoji:e,nombre:n,desc:d,activo:true});premios.sort((a,b)=>a.pts-b.pts);
+  ['ne','nn','np','nd'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});renderSupP();
 }
 
-// ─── REPORTE ───
-let selIncs = [];
-function togInc(el, val) {
-  el.classList.toggle('sel');
-  if (el.classList.contains('sel')) selIncs.push(val);
-  else selIncs = selIncs.filter(x => x !== val);
+function renderSupV(){
+  document.getElementById('vozL').innerHTML=voiceMsgs.map((m,i)=>`
+    <div class="vmi"><span class="vmt ${m.tipo==='motivacional'?'vtm':m.tipo==='responsabilidad'?'vtr':'vtp'}">${m.tipo}</span>
+      <span style="flex:1;font-size:12px;color:var(--gd);">${m.texto}</span>
+      <button onclick="dV(${i})" style="border:none;background:none;cursor:pointer;font-size:16px;color:var(--gm);">×</button>
+    </div>`).join('');
 }
-function submitReport() {
-  const tot = parseInt(document.getElementById('rTot').value) || 0;
-  const ok = parseInt(document.getElementById('rOk').value) || 0;
-  const nota = document.getElementById('rNota').value.trim();
-  if (tot === 0) { alert('Introduce al menos el número de entregas realizadas.'); return; }
-  const rpt = {
-    id: 'r' + Date.now(), rep: reps[0].nombre,
-    fecha: new Date().toLocaleDateString('es-ES'),
-    tot, ok, incs: [...selIncs], nota,
-    status: 'pendiente', ptsBase: ok * 15
-  };
-  reportsSent.push(rpt);
-  document.getElementById('reportForm').style.display = 'none';
-  document.getElementById('reportSent').style.display = 'block';
-  if (supOk) renderSup();
+function addV(){
+  const t=document.getElementById('mT').value.trim(),tipo=document.getElementById('mTipo').value;
+  if(!t)return;voiceMsgs.push({texto:t,tipo});document.getElementById('mT').value='';renderSupV();
 }
+function dV(i){voiceMsgs.splice(i,1);renderSupV();}
 
-// ─── VOZ AUTOMÁTICA ───
-function showVoice() {
-  if (!voiceMsgs.length) return;
-  const m = voiceMsgs[vIdx % voiceMsgs.length]; vIdx++;
-  const dur = 9000;
-  const area = document.getElementById('voiceArea');
-  area.innerHTML = `
-    <div class="voice-notif ${m.tipo}">
-      <span style="font-size:26px;flex-shrink:0;">🔊</span>
-      <div style="flex:1;">
-        <div class="voice-tipo">${m.tipo}</div>
-        <div class="voice-txt">"${m.texto}"</div>
-      </div>
-      <div class="voice-bar-anim" id="vbar" style="animation-duration:${dur}ms"></div>
+function renderSupReps(){
+  document.getElementById('repSL').innerHTML=reps.map((r,i)=>{
+    const m=getMed(r.pts);
+    return `<div style="display:flex;align-items:center;gap:8px;padding:9px;background:var(--gr);border-radius:10px;margin-bottom:7px;">
+      <div style="width:32px;height:32px;border-radius:50%;background:${m.color}22;color:${m.tc};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">${ini(r.nombre)}</div>
+      <div style="flex:1;"><div style="font-size:13px;font-weight:600;">${r.nombre}</div><div style="font-size:11px;color:var(--gm);">${r.zona} · ${m.e} ${r.pts} pts</div></div>
+      <button onclick="dR(${i})" style="background:var(--rob);color:var(--ro);border:none;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:12px;">✕</button>
     </div>`;
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(m.texto);
-    u.lang = 'es-ES'; u.rate = 0.88;
-    window.speechSynthesis.speak(u);
-  }
-  setTimeout(() => {
-    const n = area.firstChild;
-    if (n) { n.style.opacity = '0'; n.style.transition = 'opacity .5s'; setTimeout(() => area.innerHTML = '', 600); }
-  }, dur);
+  }).join('');
 }
-function updateVcd() {
-  const pct = Math.round(vSecsLeft / (vIntervalMin * 60) * 100);
-  const m = Math.floor(vSecsLeft / 60), s = vSecsLeft % 60;
-  document.getElementById('vcdArea').innerHTML = `
-    <div class="vcd-row">
-      <span>🔔 Próximo mensaje motivacional</span>
-      <div class="vcd-prog"><div class="vcd-fill" style="width:${pct}%"></div></div>
-      <span style="font-weight:600;">${m}:${String(s).padStart(2,'0')}</span>
-    </div>`;
-  const nl = document.getElementById('vNextLbl');
-  if (nl) nl.textContent = 'Próximo en ' + m + ':' + String(s).padStart(2,'0');
+function addRep(){
+  const n=document.getElementById('rn').value.trim(),z=document.getElementById('rz').value.trim();
+  if(!n)return;reps.push({nombre:n,pts:0,zona:z||'Sin zona',medAntes:''});
+  document.getElementById('rn').value='';document.getElementById('rz').value='';
+  renderSupReps();renderBienvenida();
 }
-function restartVoice() {
-  if (vTicker) clearInterval(vTicker);
-  vSecsLeft = vIntervalMin * 60;
-  vTicker = setInterval(() => {
-    vSecsLeft--;
-    updateVcd();
-    if (vSecsLeft <= 0) { showVoice(); vSecsLeft = vIntervalMin * 60; }
-  }, 1000);
-}
-
-// ─── CHAT IA ───
-const SYS = `Eres Rutty, asistente especializada del equipo de reparto de UCALSA. Directa, concisa, priorizas la seguridad.
-- Cajas ROJAS: personas con alergias/intolerancias. QR de ruta: código de alerta con alérgeno. Si no coincide: NO entregar, llamar coordinación.
-- Temperatura vehículo: 0-4ºC. Si se desvía, parar y avisar.
-- Envase dañado, hinchado o ilegible: NO entregar, contactar responsable.
-- Incidencias: registrar en UCALCARE, informar coordinador.
-- Ante duda: no entregar hasta instrucciones.
-Responde en español. Máximo 3 frases. Si hay riesgo de salud, sé muy directa.`;
-
-function addBubble(from, text) {
-  const msgs = document.getElementById('chatMsgs'); if (!msgs) return null;
-  const isU = from === 'user';
-  const d = document.createElement('div');
-  d.className = isU ? 'chat-msg-u' : 'chat-msg-r';
-  d.innerHTML = isU
-    ? `<div class="bubble-u">${text}</div>`
-    : `<img class="chat-avatar" src="${IMG}" onerror="this.style.display='none'"><div class="bubble-r">${text}</div>`;
-  msgs.appendChild(d);
-  msgs.scrollTop = msgs.scrollHeight;
-  return d.querySelector(isU ? '.bubble-u' : '.bubble-r');
-}
-function ask(q) { document.getElementById('chatInp').value = q; sendChat(); }
-async function sendChat() {
-  const inp = document.getElementById('chatInp');
-  const q = inp.value.trim();
-  if (!q || chatLoading) return;
-  inp.value = '';
-  addBubble('user', q);
-  chatHist.push({ role:'user', content:q });
-  chatLoading = true;
-  const bbl = addBubble('rutty', '<span style="animation:wave 0.8s ease-in-out infinite;display:inline-block;font-size:18px;">◌</span>');
-  try {
-    const res = await fetch('/.netlify/functions/rutty-api', {
-      method:'POST', headers:{ 'Content-Type':'application/json' },
-      body: JSON.stringify({ provider:'claude', system:SYS, messages:chatHist })
-    });
-    const data = await res.json();
-    const reply = data.text || data.content?.[0]?.text || 'Hubo un error. Consulta con tu coordinador.';
-    chatHist.push({ role:'assistant', content:reply });
-    if (bbl) bbl.textContent = reply;
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(reply);
-      u.lang = 'es-ES'; u.rate = 0.9;
-      window.speechSynthesis.speak(u);
-    }
-  } catch(e) {
-    const fb = ['Para alérgeno no coincidente: no entregues, llama a coordinación.','Envase dañado: retén la caja y contacta almacén.','Incidencia: registra en UCALCARE e informa al responsable.'];
-    if (bbl) bbl.textContent = fb[Math.floor(Math.random()*fb.length)];
-  }
-  chatLoading = false;
-}
-
-// ─── MICRÓFONO ───
-function toggleMic() {
-  const btn = document.getElementById('micBtn');
-  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) { alert('Usa Chrome en Android o Safari en iOS para el micrófono.'); return; }
-  if (micActive) { recognition && recognition.stop(); return; }
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  recognition = new SR();
-  recognition.lang = 'es-ES'; recognition.interimResults = false;
-  recognition.onstart = () => { micActive = true; btn.classList.add('active'); btn.textContent = '🔴'; };
-  recognition.onresult = e => { document.getElementById('chatInp').value = e.results[0][0].transcript; sendChat(); };
-  recognition.onend = () => { micActive = false; btn.classList.remove('active'); btn.textContent = '🎤'; };
-  recognition.onerror = () => { micActive = false; btn.classList.remove('active'); btn.textContent = '🎤'; };
-  recognition.start();
-}
-
-// ─── UTILS ───
-function diasRestantes() {
-  const hoy = new Date(), fin = new Date(hoy.getFullYear(), hoy.getMonth()+1, 0);
-  return fin.getDate() - hoy.getDate();
-}
+function dR(i){reps.splice(i,1);renderSupReps();renderBienvenida();}
 
 // ─── INIT ───
-restartVoice();
-addBubble('rutty', '¡Hola! Soy Rutty, tu compañera de ruta. Conozco todos los protocolos de UCALSA — alérgenos, entregas especiales, incidencias. Escríbeme o usa el micrófono. ¿En qué te ayudo?');
+renderBienvenida();
+if('speechSynthesis' in window){window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();window.speechSynthesis.getVoices();}
+
+// Integración con app oficial — URL ?rep=ana entra directamente
+const params=new URLSearchParams(window.location.search);
+if(params.has('rep')){
+  const slug=params.get('rep').toLowerCase();
+  const fi=reps.findIndex(r=>r.nombre.toLowerCase().startsWith(slug));
+  if(fi>=0)setTimeout(()=>elegir(fi),300);
+}
+// Modo integrado — ocultar barra del navegador en móvil
+if(window.navigator.standalone||window.matchMedia('(display-mode: standalone)').matches){
+  document.body.style.paddingTop='0';
+}
 </script>
 </body>
 </html>
