@@ -13,10 +13,11 @@
 <style>
 :root{--az:#1A3F6F;--azm:#2563A8;--azc:#EEF4FB;--azn:#152E54;--do:#D4920A;--db:#F0A800;--dob:#FFF8EC;--ro:#C93030;--rob:#FEF0F0;--ve:#1A7A4A;--veb:#EEF9F4;--gr:#F0F2F7;--gm:#8A95A3;--gd:#5A6475;--tx:#0D1825;--bo:#DDE3EC;--bl:#fff;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;color:var(--tx);}
-body{background:var(--azn);}
+html,body{height:100%;font-family:'Outfit',sans-serif;color:var(--tx);margin:0;}
+body{background:var(--azn);display:flex;justify-content:center;}
 
-.screen{position:fixed;inset:0;display:flex;flex-direction:column;transition:opacity .35s,transform .35s;background:var(--gr);}
+#app-shell{position:relative;overflow:hidden;width:100%;max-width:430px;height:100vh;overflow:hidden;background:var(--gr);box-shadow:0 0 60px rgba(0,0,0,.5);flex-shrink:0;}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;transition:opacity .35s,transform .35s;background:var(--gr);}
 .screen.off{opacity:0;pointer-events:none;transform:translateY(24px);}
 
 /* ── BIENVENIDA ── */
@@ -60,7 +61,7 @@ body{background:var(--azn);}
 
 /* ── SCROLL + NAV ── */
 .sc{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:72px;}
-.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--bl);border-top:1px solid var(--bo);display:flex;padding-bottom:env(safe-area-inset-bottom,0);z-index:50;}
+.bnav{position:absolute;bottom:0;left:0;right:0;background:var(--bl);border-top:1px solid var(--bo);display:flex;padding-bottom:env(safe-area-inset-bottom,0);z-index:50;}
 .nb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:9px 4px;cursor:pointer;border:none;background:none;}
 .nb.on .ni{color:var(--az);}.nb.on .nl{color:var(--az);font-weight:600;}
 .ni{font-size:22px;color:var(--gm);margin-bottom:1px;}.nl{font-size:10px;color:var(--gm);font-family:'Outfit',sans-serif;}
@@ -155,7 +156,7 @@ body{background:var(--azn);}
 .pinp{width:60px;padding:5px 7px;border:1.5px solid var(--bo);border-radius:7px;font-size:13px;font-weight:600;text-align:center;color:var(--tx);outline:none;font-family:'Outfit',sans-serif;}
 
 /* ── CELEBRACIÓN ── */
-#cel{position:fixed;inset:0;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(21,46,84,.92);opacity:0;pointer-events:none;transition:opacity .4s;}
+#cel{position:absolute;inset:0;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(21,46,84,.92);opacity:0;pointer-events:none;transition:opacity .4s;}
 #cel.on{opacity:1;pointer-events:all;}
 .cc{background:var(--bl);border-radius:24px;padding:2rem 1.5rem;text-align:center;width:90%;max-width:340px;position:relative;}
 .ce{font-size:60px;margin-bottom:10px;animation:pop .5s cubic-bezier(.17,.67,.27,1.5);}
@@ -165,15 +166,16 @@ body{background:var(--azn);}
 .ccbtn{width:100%;padding:12px;background:linear-gradient(135deg,var(--db),var(--do));color:#fff;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;cursor:pointer;}
 
 /* ── PIN ── */
-.ov{position:fixed;inset:0;background:rgba(21,46,84,.88);display:flex;align-items:center;justify-content:center;z-index:900;}
+.ov{position:absolute;inset:0;background:rgba(21,46,84,.88);display:flex;align-items:center;justify-content:center;z-index:900;}
 .pbox{background:var(--bl);border-radius:20px;padding:1.75rem;width:min(300px,90vw);text-align:center;}
 .pinput{width:120px;text-align:center;font-size:24px;letter-spacing:8px;border:2px solid var(--bo);border-radius:10px;padding:10px;font-family:'Outfit',sans-serif;outline:none;background:var(--gr);}
 .pinput:focus{border-color:var(--az);}
 
-@media(min-width:540px){.sc,.bnav{max-width:500px;left:50%;transform:translateX(-50%);right:auto;width:100%;}#sw .wc{padding:2rem;}.bnav{transform:translateX(-50%);}}
+
 </style>
 </head>
 <body>
+<div id="app-shell">
 
 <!-- ══ BIENVENIDA ══ -->
 <div class="screen" id="sw">
@@ -750,5 +752,6 @@ if(window.navigator.standalone||window.matchMedia('(display-mode: standalone)').
   document.body.style.paddingTop='0';
 }
 </script>
+</div>
 </body>
 </html>
