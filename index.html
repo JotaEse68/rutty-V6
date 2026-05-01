@@ -50,7 +50,7 @@ body{height:100%;font-family:'Outfit',sans-serif;color:var(--tx);background:var(
 .welcome-rutty-bg{
   position:absolute;bottom:0;right:-20px;width:220px;height:220px;
   opacity:.07;pointer-events:none;
-  background:url('https://Aka625.b-cdn.net/Varios/rutty.png') center/contain no-repeat;
+  background:url('./rutty.png') center/contain no-repeat;
 }
 .welcome-content{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;padding:env(safe-area-inset-top,20px) 1.5rem 1.5rem;overflow-y:auto;}
 .welcome-logo-row{display:flex;align-items:center;gap:10px;margin-top:1rem;margin-bottom:2rem;}
@@ -58,9 +58,9 @@ body{height:100%;font-family:'Outfit',sans-serif;color:var(--tx);background:var(
 .welcome-logo-row span{font-size:15px;font-weight:700;color:#fff;}
 .welcome-logo-row small{font-size:11px;color:rgba(255,255,255,.4);font-weight:400;}
 
-.welcome-hero{text-align:center;margin-bottom:2rem;}
-.welcome-avatar-wrap{position:relative;display:inline-block;margin-bottom:1.25rem;}
-.welcome-avatar-wrap img{width:110px;height:110px;object-fit:contain;filter:drop-shadow(0 8px 28px rgba(0,0,0,.5));animation:fl 3s ease-in-out infinite;}
+.welcome-hero{text-align:center;margin-bottom:1.5rem;display:flex;flex-direction:column;align-items:center;}
+.welcome-avatar-wrap{position:relative;display:inline-block;margin-bottom:1rem;}
+.welcome-avatar-wrap img{width:200px;height:200px;object-fit:contain;filter:drop-shadow(0 12px 40px rgba(0,0,0,.6));animation:fl 3s ease-in-out infinite;}
 @keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 .online-dot{position:absolute;bottom:6px;right:6px;width:14px;height:14px;border-radius:50%;background:#2ECC71;border:2.5px solid var(--azn);animation:pulse-g 2s ease-in-out infinite;}
 @keyframes pulse-g{0%,100%{box-shadow:0 0 0 0 rgba(46,204,113,.4)}50%{box-shadow:0 0 0 6px rgba(46,204,113,0)}}
@@ -72,13 +72,16 @@ body{height:100%;font-family:'Outfit',sans-serif;color:var(--tx);background:var(
 
 .rep-cards{display:flex;flex-direction:column;gap:10px;margin-bottom:1.25rem;}
 .rep-card{
-  background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.2);
   border-radius:var(--r2);padding:1rem 1.25rem;
   display:flex;align-items:center;gap:1rem;cursor:pointer;
-  transition:all .2s;position:relative;overflow:hidden;
+  transition:all .25s;position:relative;overflow:hidden;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  box-shadow:0 4px 24px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.12);
 }
 .rep-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.04),transparent);opacity:0;transition:opacity .2s;}
-.rep-card:active,.rep-card:hover{background:rgba(255,255,255,.15);border-color:var(--db);transform:translateY(-1px);}
+.rep-card:active,.rep-card:hover{background:rgba(255,255,255,.14);border-color:rgba(240,168,0,.6);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.2),0 0 0 1px rgba(240,168,0,.3);}
 .rep-card:active::before,.rep-card:hover::before{opacity:1;}
 .rep-card-av{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0;position:relative;}
 .rep-card-av .med-badge{position:absolute;bottom:-2px;right:-2px;font-size:12px;}
@@ -86,18 +89,21 @@ body{height:100%;font-family:'Outfit',sans-serif;color:var(--tx);background:var(
 .rep-card-name{font-size:15px;font-weight:700;color:#fff;}
 .rep-card-sub{font-size:12px;color:rgba(255,255,255,.5);margin-top:2px;}
 .rep-card-pts{text-align:right;flex-shrink:0;}
-.rep-card-pts-num{font-size:17px;font-weight:800;color:var(--db);}
+.rep-card-pts-num{font-size:18px;font-weight:900;color:var(--db);text-shadow:0 0 12px rgba(240,168,0,.4);}
 .rep-card-pts-lbl{font-size:10px;color:rgba(255,255,255,.4);}
 .rep-card-arrow{color:rgba(255,255,255,.3);font-size:20px;margin-left:4px;}
 
 .sup-access-btn{
-  width:100%;padding:14px;background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.15);border-radius:var(--r);
-  color:rgba(255,255,255,.5);font-family:'Outfit',sans-serif;
-  font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;
+  width:100%;padding:13px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.12);border-radius:var(--r);
+  color:rgba(255,255,255,.4);font-family:'Outfit',sans-serif;
+  font-size:13px;font-weight:500;cursor:pointer;transition:all .25s;
   display:flex;align-items:center;justify-content:center;gap:8px;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  letter-spacing:.02em;
 }
-.sup-access-btn:active,.sup-access-btn:hover{background:rgba(255,255,255,.12);color:rgba(255,255,255,.8);}
+.sup-access-btn:active,.sup-access-btn:hover{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.25);}
 
 /* ══════════════════════════════════
    APP REPARTIDOR
@@ -107,7 +113,7 @@ body{height:100%;font-family:'Outfit',sans-serif;color:var(--tx);background:var(
 /* TOPBAR */
 .topbar{background:var(--azn);padding:env(safe-area-inset-top,0) 0 0;flex-shrink:0;border-bottom:2px solid var(--db);}
 .topbar-inner{height:54px;display:flex;align-items:center;padding:0 1rem;gap:10px;}
-.topbar-rutty{width:32px;height:32px;border-radius:50%;border:2px solid var(--db);object-fit:contain;flex-shrink:0;}
+.topbar-rutty{width:36px;height:36px;border-radius:50%;border:2px solid var(--db);object-fit:contain;flex-shrink:0;background:var(--azd);}
 .topbar-title{flex:1;min-width:0;}
 .topbar-title .t1{font-size:15px;font-weight:700;color:#fff;}
 .topbar-title .t2{font-size:10px;color:rgba(255,255,255,.4);}
@@ -160,7 +166,7 @@ body{height:100%;font-family:'Outfit',sans-serif;color:var(--tx);background:var(
 .rutty-intro::after{
   content:'';position:absolute;bottom:-20px;right:-20px;
   width:100px;height:100px;
-  background:url('https://Aka625.b-cdn.net/Varios/rutty.png') center/contain no-repeat;
+  background:url('./rutty.png') center/contain no-repeat;
   opacity:.08;pointer-events:none;
 }
 .rutty-intro img{width:70px;height:70px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 3px 12px rgba(0,0,0,.4));}
@@ -391,13 +397,13 @@ canvas#cc{position:absolute;inset:0;pointer-events:none;border-radius:inherit;}
   <div class="welcome-rutty-bg"></div>
   <div class="welcome-content">
     <div class="welcome-logo-row">
-      <img src="https://Aka625.b-cdn.net/Varios/rutty.png" alt="R" onerror="this.style.display='none'">
+      <img src="./rutty.png" alt="R" onerror="this.style.display='none'">
       <div><span>Rutty</span> <small>· by Jota Santos</small></div>
     </div>
 
     <div class="welcome-hero">
       <div class="welcome-avatar-wrap">
-        <img src="https://Aka625.b-cdn.net/Varios/rutty.png" alt="Rutty" onerror="this.style.opacity=.3">
+        <img src="./rutty.png" alt="Rutty" onerror="this.style.opacity=.3">
         <div class="online-dot"></div>
       </div>
       <h1 class="welcome-title">¡Hola! Soy <span>Rutty</span> 👋</h1>
@@ -417,7 +423,7 @@ canvas#cc{position:absolute;inset:0;pointer-events:none;border-radius:inherit;}
 <div class="scr off" id="s-app">
   <div class="topbar">
     <div class="topbar-inner">
-      <img class="topbar-rutty" src="https://Aka625.b-cdn.net/Varios/rutty.png" alt="R" onerror="this.style.display='none'">
+      <img class="topbar-rutty" src="./rutty.png" alt="R" onerror="this.style.display='none'">
       <div class="topbar-title">
         <div class="t1">Rutty <span style="font-weight:400;font-size:11px;color:rgba(255,255,255,.35)">· UCALSA</span></div>
         <div class="t2">Tu compañera de ruta 24/7</div>
@@ -439,7 +445,7 @@ canvas#cc{position:absolute;inset:0;pointer-events:none;border-radius:inherit;}
     <!-- HOME -->
     <div class="tv on" id="tv-home">
       <div class="rutty-intro">
-        <img src="https://Aka625.b-cdn.net/Varios/rutty.png" alt="Rutty" onerror="this.style.display='none'">
+        <img src="./rutty.png" alt="Rutty" onerror="this.style.display='none'">
         <div class="ri-text">
           <h2>¡Hola! Soy <span>Rutty</span> 👋</h2>
           <p id="hero-sub">Tu asistente en ruta. ¿En qué te ayudo hoy?</p>
@@ -518,7 +524,7 @@ canvas#cc{position:absolute;inset:0;pointer-events:none;border-radius:inherit;}
   <div class="sup-topbar">
     <div class="sup-topbar-inner">
       <div style="display:flex;align-items:center;gap:8px;">
-        <img src="https://Aka625.b-cdn.net/Varios/rutty.png" style="width:30px;height:30px;border-radius:50%;border:1.5px solid var(--db);object-fit:contain;" onerror="this.style.display='none'">
+        <img src="./rutty.png" style="width:30px;height:30px;border-radius:50%;border:1.5px solid var(--db);object-fit:contain;" onerror="this.style.display='none'">
         <div style="color:#fff;font-size:15px;font-weight:800;">Panel Supervisor</div>
       </div>
       <button onclick="show('s-welcome')" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:8px;color:rgba(255,255,255,.7);padding:6px 12px;font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;">← Salir</button>
@@ -611,7 +617,7 @@ canvas#cc{position:absolute;inset:0;pointer-events:none;border-radius:inherit;}
 <!-- PIN -->
 <div class="pin-ov" id="pin-ov" style="display:none">
   <div class="pin-box">
-    <img src="https://Aka625.b-cdn.net/Varios/rutty.png" onerror="this.style.display='none'">
+    <img src="./rutty.png" onerror="this.style.display='none'">
     <div class="pin-title">Área de supervisor</div>
     <div class="pin-sub">Introduce el PIN de acceso</div>
     <input class="pinput" id="pin-in" type="password" maxlength="4" inputmode="numeric" placeholder="••••" oninput="if(this.value.length===4)chkPin()">
@@ -627,7 +633,7 @@ canvas#cc{position:absolute;inset:0;pointer-events:none;border-radius:inherit;}
 // CONSTANTES Y DATOS
 // ──────────────────────────────────────
 const PIN='1111';
-const IMG='https://Aka625.b-cdn.net/Varios/rutty.png';
+const IMG='./rutty.png';
 
 const INSIGNIAS_DEF=[
   {id:'guardian',e:'🛡️',n:'Guardián del alérgeno',d:'10 entregas de riesgo alto sin incidencia',req:s=>s.alto>=10},
