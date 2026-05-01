@@ -1001,3 +1001,660 @@ addBubble('rutty', '¡Hola! Soy Rutty, tu compañera de ruta. Conozco todos los 
 </script>
 </body>
 </html>
+
+<style>
+/* ============================================
+   ESTILOS GENERALES
+   ============================================ */
+.landing-wct {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color: #1e293b;
+  line-height: 1.6;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.landing-wct h1, .landing-wct h2, .landing-wct h3 {
+  font-weight: 700;
+}
+
+.landing-wct .btn {
+  display: inline-block;
+  padding: 14px 32px;
+  border-radius: 100px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s;
+  text-align: center;
+}
+
+.landing-wct .btn-primary {
+  background: linear-gradient(135deg, #0a7c6f 0%, #06b6a3 100%);
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(10,124,111,0.3);
+}
+.landing-wct .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(10,124,111,0.4);
+}
+
+.landing-wct .btn-outline {
+  border: 2px solid #0a7c6f;
+  color: #0a7c6f;
+}
+.landing-wct .btn-outline:hover {
+  background: #0a7c6f;
+  color: #fff;
+}
+
+/* Hero */
+.hero-wct {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 60px 0;
+}
+.hero-wct-content {
+  flex: 1 1 500px;
+}
+.hero-wct-image {
+  flex: 1 1 400px;
+  text-align: center;
+}
+.hero-wct-image img {
+  max-width: 100%;
+  height: auto;
+}
+.hero-wct h1 {
+  font-size: 3em;
+  margin: 0 0 20px;
+  line-height: 1.2;
+}
+.hero-wct .subtitle {
+  font-size: 1.25em;
+  color: #475569;
+  margin-bottom: 32px;
+}
+.badge-premium {
+  display: inline-block;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 0.8em;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 100px;
+  margin-bottom: 16px;
+}
+
+/* Secciones */
+.section-wct {
+  padding: 80px 0;
+}
+.section-title {
+  text-align: center;
+  font-size: 2.2em;
+  margin-bottom: 16px;
+}
+.section-subtitle {
+  text-align: center;
+  color: #64748b;
+  font-size: 1.1em;
+  max-width: 600px;
+  margin: 0 auto 48px;
+}
+
+/* Cards de características */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+}
+.feature-card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+}
+.feature-icon {
+  font-size: 2.5em;
+  margin-bottom: 16px;
+}
+.feature-card h3 {
+  font-size: 1.3em;
+  margin-bottom: 12px;
+}
+
+/* Beneficios (lista con iconos) */
+.benefit-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+.benefit-list li {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 20px;
+}
+.benefit-list .benefit-icon {
+  font-size: 1.8em;
+}
+.benefit-list strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* Cómo funciona (pasos) */
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 32px;
+  counter-reset: step;
+}
+.step-card {
+  text-align: center;
+  position: relative;
+}
+.step-card::before {
+  counter-increment: step;
+  content: counter(step);
+  display: block;
+  width: 48px;
+  height: 48px;
+  background: #0a7c6f;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 1.5em;
+  font-weight: bold;
+  line-height: 48px;
+  margin: 0 auto 16px;
+}
+
+/* Precios */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.pricing-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 40px;
+  text-align: center;
+  transition: all 0.3s;
+}
+.pricing-card.popular {
+  border-color: #0a7c6f;
+  box-shadow: 0 0 0 2px #0a7c6f;
+}
+.pricing-card .plan-name {
+  font-size: 1.3em;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.pricing-card .price {
+  font-size: 2.8em;
+  font-weight: 800;
+  color: #0a7c6f;
+  margin-bottom: 20px;
+}
+.pricing-card ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 32px;
+  text-align: left;
+}
+.pricing-card ul li {
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+.pricing-card ul li::before {
+  content: '✓ ';
+  color: #0a7c6f;
+  font-weight: bold;
+}
+
+/* Testimonios */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+}
+.testimonial-card {
+  background: #f8fafc;
+  border-radius: 20px;
+  padding: 32px;
+}
+.testimonial-card .quote {
+  font-style: italic;
+  margin-bottom: 16px;
+}
+.testimonial-card .author {
+  font-weight: 600;
+  color: #0a7c6f;
+}
+
+/* Footer CTA */
+.cta-footer {
+  background: linear-gradient(135deg, #0a7c6f 0%, #06b6a3 100%);
+  border-radius: 32px;
+  padding: 60px;
+  text-align: center;
+  color: #fff;
+}
+.cta-footer h2 {
+  font-size: 2em;
+  margin-bottom: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-wct {
+    flex-direction: column-reverse;
+    text-align: center;
+  }
+  .hero-wct h1 {
+    font-size: 2.2em;
+  }
+}
+</style>
+
+<div class="landing-wct">
+
+  <!-- Hero -->
+  <header class="hero-wct">
+    <div class="hero-wct-content">
+      <span class="badge-premium">🎯 Ayuda contextual en WordPress</span>
+      <h1>Entrena a tus clientes sin salir del panel de administración</h1>
+      <p class="subtitle">WP Client Trainer añade un asistente flotante que muestra tutoriales personalizados según la pantalla, el rol y la plantilla del sitio. Con marca blanca, IA y estadísticas.</p>
+      <a href="#precios" class="btn btn-primary">Comprar ahora →</a>
+      <a href="#demo" class="btn btn-outline" style="margin-left:12px;">Ver demo</a>
+    </div>
+    <div class="hero-wct-image">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%23f8fafc' rx='20'/%3E%3Ccircle cx='320' cy='220' r='40' fill='%230a7c6f'/%3E%3Ctext x='320' y='228' text-anchor='middle' fill='white' font-size='24' font-weight='bold'%3E?%3C/text%3E%3C/svg%3E" alt="Panel de ayuda flotante en WordPress" style="border-radius:24px; box-shadow:0 20px 40px rgba(0,0,0,0.1);" />
+    </div>
+  </header>
+
+  <!-- Sección de problema/solución -->
+  <section class="section-wct" id="problema">
+    <h2 class="section-title">¿Cansado de explicar lo mismo una y otra vez?</h2>
+    <p class="section-subtitle">Las agencias pierden horas en videollamadas y correos enseñando tareas básicas. WP Client Trainer automatiza la educación de tus clientes dentro del propio WordPress.</p>
+  </section>
+
+  <!-- Características clave -->
+  <section class="section-wct" id="caracteristicas">
+    <h2 class="section-title">Funcionalidades principales</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🧭</div>
+        <h3>Panel de ayuda contextual</h3>
+        <p>Botón flotante que muestra tutoriales justo en la pantalla donde el cliente los necesita. Se adapta a Dashboard, Páginas, WooCommerce, Elementor, etc.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <h3>White‑label completo</h3>
+        <p>Personaliza el logo, título, colores y textos para que el panel luzca como una extensión de tu agencia.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>Generación con IA (OpenAI / Claude)</h3>
+        <p>El administrador escribe un prompt y la IA redacta un borrador del tutorial. Ahorra tiempo y mantiene la calidad.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎬</div>
+        <h3>Búsqueda inteligente de vídeos</h3>
+        <p>Busca automáticamente tutoriales en YouTube relacionados con el tema y añádelos con un solo clic.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Estadísticas y feedback</h3>
+        <p>Mide cuántos clientes ven cada tutorial, si les fue útil y recoge comentarios para mejorar.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Control por roles y plantillas</h3>
+        <p>Filtra quién ve qué: por rol de usuario, tipo de sitio (corporativo, tienda, blog…) y contexto de pantalla.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Beneficios -->
+  <section class="section-wct" id="beneficios">
+    <h2 class="section-title">Beneficios para tu agencia</h2>
+    <ul class="benefit-list">
+      <li><span class="benefit-icon">⏱️</span><div><strong>Reduce el soporte recurrente</strong>Los clientes encuentran respuestas solos, sin tickets.</div></li>
+      <li><span class="benefit-icon">🎯</span><div><strong>Mejora la experiencia del cliente</strong>Ayuda proactiva y personalizada, sin salir del admin.</div></li>
+      <li><span class="benefit-icon">💰</span><div><strong>Incrementa el valor percibido</strong>Un panel profesional con tu marca diferencia tu servicio.</div></li>
+      <li><span class="benefit-icon">📈</span><div><strong>Escala sin esfuerzo</strong>Los tutoriales se reutilizan; tu conocimiento queda registrado.</div></li>
+    </ul>
+  </section>
+
+  <!-- Cómo funciona -->
+  <section class="section-wct" id="como-funciona">
+    <h2 class="section-title">Cómo funciona</h2>
+    <div class="steps-grid">
+      <div class="step-card"><h3>1. Configura</h3><p>Instala el plugin, define la marca y conecta tus APIs de IA.</p></div>
+      <div class="step-card"><h3>2. Crea tutoriales</h3><p>Redacta o genera con IA tutoriales con pasos, vídeos y CTA.</p></div>
+      <div class="step-card"><h3>3. Asigna contextos</h3><p>Elige pantallas, roles y plantillas donde aparecerán.</p></div>
+      <div class="step-card"><h3>4. Tus clientes aprenden</h3><p>El panel flotante muestra la ayuda justa en el momento preciso.</p></div>
+    </div>
+  </section>
+
+  <!-- Precios -->
+  <section class="section-wct" id="precios">
+    <h2 class="section-title">Elige tu plan</h2>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="plan-name">Gratuito</div>
+        <div class="price">$0</div>
+        <ul>
+          <li>Hasta 5 tutoriales</li>
+          <li>Panel contextual básico</li>
+          <li>White‑label limitado</li>
+          <li>Soporte por foro</li>
+        </ul>
+        <a href="#" class="btn btn-outline">Descargar gratis</a>
+      </div>
+      <div class="pricing-card popular">
+        <div class="plan-name">Premium</div>
+        <div class="price">$99<span style="font-size:0.4em;">/año</span></div>
+        <ul>
+          <li>Tutoriales ilimitados</li>
+          <li>Estadísticas y feedback</li>
+          <li>Generación con IA</li>
+          <li>Búsqueda YouTube</li>
+          <li>White‑label completo</li>
+          <li>Actualizaciones y soporte prioritario</li>
+        </ul>
+        <a href="#" class="btn btn-primary">Comprar ahora</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonios (placeholders) -->
+  <section class="section-wct" id="testimonios">
+    <h2 class="section-title">Lo que dicen las agencias</h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="quote">“Redujimos los tickets de soporte en un 40% desde que instalamos WP Client Trainer. Nuestros clientes ahora son más autónomos.”</div>
+        <div class="author">— Marta G., CEO de DigitalBoost</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">“La integración con OpenAI nos ahorra horas cada semana. El panel queda perfecto con nuestra marca.”</div>
+        <div class="author">— Carlos R., Freelance WP</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA final -->
+  <footer class="cta-footer">
+    <h2>Convierte el soporte en formación automatizada</h2>
+    <p style="margin-bottom:32px;">WP Client Trainer 2.0 ya está disponible. Empieza hoy.</p>
+    <a href="#precios" class="btn btn-primary" style="background:white; color:#0a7c6f;">Comprar Premium</a>
+  </footer>
+
+</div>
+<?php
+/**
+ * Script generador del ZIP de WP Client Trainer 2.0.0
+ * Coloca este archivo en la raíz de tu proyecto y ábrelo en el navegador o ejecuta: php build-wp-client-trainer.php
+ */
+
+$base_dir = __DIR__ . '/wp-client-trainer';
+$zip_file = __DIR__ . '/wp-client-trainer.zip';
+
+// Eliminar compilaciones anteriores
+if ( is_dir( $base_dir ) ) {
+    array_map( 'unlink', glob( "$base_dir/*.*" ) );
+    rmdir( $base_dir );
+}
+if ( file_exists( $zip_file ) ) unlink( $zip_file );
+
+// Crear estructura de directorios
+$dirs = [
+    '', 'includes', 'admin', 'frontend', 'assets/css', 'assets/js', 'assets/img', 'templates'
+];
+foreach ( $dirs as $dir ) {
+    $path = $base_dir . ( $dir ? "/$dir" : '' );
+    if ( ! is_dir( $path ) ) mkdir( $path, 0755, true );
+}
+
+// Función para escribir archivos
+function write_file( $relative_path, $content ) {
+    global $base_dir;
+    $filepath = $base_dir . '/' . ltrim( $relative_path, '/' );
+    file_put_contents( $filepath, "<?php\n" . $content );
+}
+
+// =============================================
+// Aquí irían las definiciones de todos los archivos PHP, JS, CSS...
+// Por brevedad, usaré placeholders. En la práctica, debajo pegarías el contenido completo de cada archivo.
+// =============================================
+
+write_file( 'wp-client-trainer.php', <<<'MAIN'
+<?php
+/**
+ * Plugin Name: WP Client Trainer
+ * Description: Train clients inside WordPress...
+ * Version: 2.0.0
+ * Text Domain: wp-client-trainer
+ */
+// ... (todo el contenido tal cual)
+MAIN
+);
+
+// ... repetir para cada archivo ...
+
+// Crear ZIP
+$zip = new ZipArchive();
+if ( $zip->open( $zip_file, ZipArchive::CREATE ) === true ) {
+    $files = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator( $base_dir ),
+        RecursiveIteratorIterator::LEAVES_ONLY
+    );
+    foreach ( $files as $name => $file ) {
+        if ( ! $file->isDir() ) {
+            $file_path = $file->getRealPath();
+            $relative = substr( $file_path, strlen( $base_dir ) + 1 );
+            $zip->addFile( $file_path, $relative );
+        }
+    }
+    $zip->close();
+    echo "✅ ZIP creado: " . $zip_file;
+} else {
+    echo "❌ Error al crear el ZIP.";
+}
+public static function is_premium() {
+    return defined( 'WCT_IS_PREMIUM' ) && WCT_IS_PREMIUM;
+}
+<?php
+class WCT_Loader {
+	protected $services = array();
+
+	public function run() {
+		$this->load_dependencies();
+		$this->register_hooks();
+		$this->boot_services();
+	}
+
+	protected function load_dependencies() {
+		$files = array(
+			'includes/class-helpers.php',
+			'includes/class-post-types.php',
+			'includes/class-admin-menu.php',
+			'includes/class-settings.php',
+			'includes/class-screen-detector.php',
+			'includes/class-access-control.php',
+			'includes/class-assets.php',
+			'includes/class-ajax.php',
+			'includes/class-setup-wizard.php',
+			'includes/class-taxonomies.php',
+			'includes/class-db.php',
+			'includes/class-license.php',
+			'includes/class-ai-provider.php',
+			'includes/class-ai-provider-openai.php',
+			'includes/class-ai-provider-anthropic.php',
+			'includes/class-ai-generator.php',
+			'admin/class-tutorials-list.php',
+			'frontend/class-help-widget.php',
+		);
+		foreach ( $files as $file ) {
+			require_once WCT_PLUGIN_DIR . $file;
+		}
+	}
+
+	protected function register_hooks() {
+		add_action( 'init', array( $this, 'load_textdomain' ) );
+	}
+
+	protected function boot_services() {
+		$this->services['settings']        = new WCT_Settings();
+		$this->services['post_types']      = new WCT_Post_Types();
+		$this->services['screen_detector'] = new WCT_Screen_Detector();
+		$this->services['access_control']  = new WCT_Access_Control();
+		$this->services['admin_menu']      = new WCT_Admin_Menu();
+		$this->services['tutorials_list']  = new WCT_Tutorials_List();
+		$this->services['ajax']            = new WCT_AJAX();
+		$this->services['assets']          = new WCT_Assets();
+		$this->services['help_widget']     = new WCT_Help_Widget();
+		$this->services['setup_wizard']    = new WCT_Setup_Wizard();
+		$this->services['taxonomies']      = new WCT_Taxonomies();
+		$this->services['license']         = new WCT_License();
+		$this->services['ai_generator']    = new WCT_AI_Generator();
+	}
+
+	public function load_textdomain() {
+		load_plugin_textdomain( 'wp-client-trainer', false, dirname( WCT_PLUGIN_BASENAME ) . '/languages' );
+	}
+}
+<?php
+if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
+	exit;
+}
+
+delete_option( 'wct_settings' );
+delete_option( 'wct_ai_api_keys' );
+
+$tutorial_ids = get_posts( array(
+	'post_type'              => 'tutorial_item',
+	'post_status'            => 'any',
+	'numberposts'            => -1,
+	'fields'                 => 'ids',
+	'suppress_filters'       => false,
+	'no_found_rows'          => true,
+	'update_post_meta_cache' => false,
+	'update_post_term_cache' => false,
+) );
+
+if ( is_array( $tutorial_ids ) ) {
+	foreach ( $tutorial_ids as $tutorial_id ) {
+		wp_delete_post( (int) $tutorial_id, true );
+	}
+}
+
+$role = get_role( 'administrator' );
+if ( $role instanceof WP_Role ) {
+	$capabilities = array(
+		'edit_tutorial_item','read_tutorial_item','delete_tutorial_item',
+		'edit_tutorial_items','edit_others_tutorial_items','publish_tutorial_items',
+		'read_private_tutorial_items','delete_tutorial_items','delete_private_tutorial_items',
+		'delete_published_tutorial_items','delete_others_tutorial_items',
+		'edit_private_tutorial_items','edit_published_tutorial_items',
+	);
+	foreach ( $capabilities as $cap ) {
+		$role->remove_cap( $cap );
+	}
+}
+
+global $wpdb;
+$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}wct_tutorial_views" );
+$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}wct_tutorial_feedback" );
+<?php
+/**
+ * Plugin Name: WP Client Trainer
+ * Description: Train clients inside WordPress with contextual tutorials, a floating help widget, white-label agency settings, and AI-powered drafting.
+ * Version: 2.0.0
+ * Author: Codex
+ * Text Domain: wp-client-trainer
+ * Domain Path: /languages
+ *
+ * @package WP_Client_Trainer
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+define( 'WCT_VERSION', '2.0.0' );
+define( 'WCT_PLUGIN_FILE', __FILE__ );
+define( 'WCT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'WCT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'WCT_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+
+require_once WCT_PLUGIN_DIR . 'includes/class-loader.php';
+
+/**
+ * Activates the plugin.
+ */
+function wct_activate_plugin() {
+	require_once WCT_PLUGIN_DIR . 'includes/class-helpers.php';
+	require_once WCT_PLUGIN_DIR . 'includes/class-post-types.php';
+	require_once WCT_PLUGIN_DIR . 'includes/class-db.php';
+
+	WCT_Post_Types::register_post_type();
+	WCT_Post_Types::add_capabilities();
+	WCT_DB::create_tables();
+
+	if ( ! get_option( 'wct_settings', false ) ) {
+		update_option( 'wct_settings', WCT_Helpers::get_default_settings() );
+	}
+
+	set_transient( 'wct_activation_redirect', true, 30 );
+	flush_rewrite_rules();
+}
+register_activation_hook( __FILE__, 'wct_activate_plugin' );
+
+/**
+ * Deactivation hook.
+ */
+function wct_deactivate_plugin() {
+	flush_rewrite_rules();
+}
+register_deactivation_hook( __FILE__, 'wct_deactivate_plugin' );
+
+/**
+ * Activation redirect to setup wizard.
+ */
+function wct_activation_redirect() {
+	if ( get_transient( 'wct_activation_redirect' ) ) {
+		delete_transient( 'wct_activation_redirect' );
+		if ( ! is_network_admin() && current_user_can( 'manage_options' ) ) {
+			wp_safe_redirect( admin_url( 'admin.php?page=wct-setup' ) );
+			exit;
+		}
+	}
+}
+add_action( 'admin_init', 'wct_activation_redirect' );
+
+/**
+ * Boot the plugin.
+ */
+function wct_boot_plugin() {
+	$loader = new WCT_Loader();
+	$loader->run();
+}
+add_action( 'plugins_loaded', 'wct_boot_plugin' );
