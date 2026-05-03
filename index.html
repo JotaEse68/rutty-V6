@@ -920,10 +920,12 @@ async function sendChat(){
   inp.value='';addBubble('user',q);chatH.push({role:'user',content:q});chatL=true;
   const bbl=addBubble('rutty','◌');
   try{
+    // Build OpenAI messages with system prompt prepended
+    const openaiMsgs = [{role:'system',content:SYS},...chatH];
     const res=await fetch('/.netlify/functions/rutty-api',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({provider:'claude',system:SYS,messages:chatH})
+      body:JSON.stringify({provider:'openai',messages:openaiMsgs})
     });
     if(!res.ok){
       const errTxt=await res.text();
@@ -932,7 +934,7 @@ async function sendChat(){
     }
     const data=await res.json();
     if(data.error) throw new Error(data.error);
-    const reply=data.text||data.content?.[0]?.text||'';
+    const reply=data.text||data.content?.[0]?.text||data.choices?.[0]?.message?.content||'';
     if(!reply) throw new Error('empty');
     chatH.push({role:'assistant',content:reply});
     if(bbl)bbl.textContent=reply;
