@@ -61,7 +61,8 @@ exports.handler = async function(event) {
       if (!ELEVEN_KEY) return json(503, { error: 'ELEVEN_KEY no configurada en Netlify env vars' });
       if (!text)       return json(400, { error: 'text requerido' });
 
-      const VOICE_ID = 'XB0fDUnXU5powFXDhCwa';
+      // Rachel - voz gratuita en todos los planes de ElevenLabs
+      const VOICE_ID = '21m00Tcm4TlvDq8ikWAM';
       const resp = await fetch(
         `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream`,
         {
