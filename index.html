@@ -173,7 +173,7 @@ body{height:100%;font-family:'Outfit',sans-serif;color:var(--tx);background:var(
   background:url('./rutty.png') center/contain no-repeat;
   opacity:.08;pointer-events:none;
 }
-.rutty-intro img{width:140px;height:160px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 4px 16px rgba(240,168,0,.35));background:transparent;margin-bottom:-3px;}
+.rutty-intro img{width:150px;height:170px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 4px 20px rgba(240,168,0,.4));background:transparent;margin-bottom:-3px;}
 .ri-text h2{font-size:18px;font-weight:800;color:#fff;margin-bottom:4px;}
 .ri-text h2 span{color:var(--db);}
 .ri-text p{font-size:12px;color:rgba(255,255,255,.6);line-height:1.5;}
@@ -189,12 +189,12 @@ body{height:100%;font-family:'Outfit',sans-serif;color:var(--tx);background:var(
 .ab{background:var(--bl);border:1px solid var(--bo);border-radius:20px;color:var(--gd);cursor:pointer;font-family:'Outfit',sans-serif;font-size:12px;padding:6px 13px;transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.06);}
 .ab:active{background:var(--azc);border-color:var(--az);transform:scale(.97);}
 
-.chat-msgs{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem;min-height:50px;}
+.chat-msgs{display:flex;flex-direction:column;gap:12px;margin-bottom:1rem;min-height:50px;}
 .msg-u{display:flex;justify-content:flex-end;}
-.msg-r{display:flex;gap:8px;align-items:flex-end;}
+.msg-r{display:flex;flex-direction:column;align-items:flex-start;gap:0;}
 .bbl-u{background:var(--az);color:#fff;padding:10px 14px;border-radius:18px 18px 4px 18px;font-size:13px;max-width:83%;line-height:1.5;}
-.bbl-r{background:var(--bl);border:.5px solid var(--bo);padding:11px 14px;border-radius:4px 18px 18px 18px;font-size:13px;max-width:80%;line-height:1.6;color:var(--tx);box-shadow:0 2px 10px rgba(0,0,0,.08);}
-.msg-av{width:52px;height:52px;object-fit:contain;flex-shrink:0;margin-top:0;background:transparent;border-radius:50%;}
+.bbl-r{background:var(--bl);border:.5px solid var(--bo);padding:12px 15px;border-radius:0 18px 18px 18px;font-size:13px;max-width:88%;line-height:1.6;color:var(--tx);box-shadow:0 2px 12px rgba(0,0,0,.09);position:relative;z-index:1;}
+.msg-av{width:90px;height:90px;object-fit:contain;flex-shrink:0;background:transparent;display:block;filter:drop-shadow(0 2px 8px rgba(240,168,0,.25));margin-left:4px;margin-bottom:-8px;position:relative;z-index:2;}
 
 .input-bar{
   background:var(--bl);border:1.5px solid var(--bo);border-radius:18px;
@@ -1589,9 +1589,19 @@ function csvProcesar(texto, nombreArchivo) {
   } else {
     // CSV con columna de repartidor → bloque por cada uno
     for (const [repNombre, entregas] of Object.entries(grupos)) {
-      const repEncontrado = reps.find(r => r.nombre.toLowerCase().includes(repNombre.toLowerCase()) || repNombre.toLowerCase().includes(r.nombre.toLowerCase().split(' ')[0]));
+      // Match flexible: nombre completo, primer apellido, o cualquier palabra
+      const repNombreLow = repNombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+      const repEncontrado = reps.find(r => {
+        const rLow = r.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+        return rLow === repNombreLow || 
+               rLow.includes(repNombreLow) || 
+               repNombreLow.includes(rLow) ||
+               rLow.split(' ').some(w => w.length > 2 && repNombreLow.includes(w)) ||
+               repNombreLow.split(' ').some(w => w.length > 2 && rLow.includes(w));
+      });
       const matchClass = repEncontrado ? 'color:#0a8a4a' : 'color:var(--do)';
-      const matchTxt = repEncontrado ? `✓ ${repEncontrado.nombre}` : `⚠ No encontrado en el equipo`;
+      // Si no hay match, mostrar selector para asignar manualmente
+      const matchTxt = repEncontrado ? `✓ Asignado a: ${repEncontrado.nombre}` : `⚠ No encontrado — asigna manualmente`;
 
       html += `<div class="csv-rep-block">
         <div class="csv-rep-hdr">
@@ -1599,9 +1609,16 @@ function csvProcesar(texto, nombreArchivo) {
             <div class="csv-rep-name">${repNombre}</div>
             <div class="csv-rep-count" style="${matchClass}">${matchTxt} · ${entregas.length} entregas</div>
           </div>
-          <button class="btn-csv-import" onclick="csvImportarRep('${repNombre}')" ${!repEncontrado ? 'disabled title="Repartidor no encontrado en el equipo"' : ''}>
-            ⬆ Importar
-          </button>
+          ${repEncontrado 
+            ? `<button class="btn-csv-import" onclick="csvImportarRep('${repNombre}')">⬆ Importar</button>`
+            : `<div style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;">
+                <select id="csv-remap-${repNombre.replace(/\s/g,'_')}" style="flex:1;padding:6px 8px;background:var(--gr);border:1.5px solid var(--bo);border-radius:8px;font-family:'Outfit',sans-serif;font-size:11px;color:var(--tx);outline:none;">
+                  <option value="">— Asignar a —</option>
+                  ${reps.map(r => `<option value="${r.nombre}">${r.nombre}</option>`).join('')}
+                </select>
+                <button class="btn-csv-import" onclick="csvImportarRepRemap('${repNombre}')">⬆</button>
+              </div>`
+          }
         </div>
         ${entregas.slice(0,3).map(e => `<div class="csv-row-prev">
           <span class="csv-row-num">${e.orden}</span>
@@ -1627,11 +1644,27 @@ function csvMostrarError(msg) {
 async function csvImportarRep(repNombre) {
   if (!csvDatosImportados) return;
   const entregas = csvDatosImportados.grupos[repNombre];
-  const repReal = reps.find(r => r.nombre.toLowerCase().includes(repNombre.toLowerCase()) || repNombre.toLowerCase().includes(r.nombre.toLowerCase().split(' ')[0]));
+  const repNombreLow = repNombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const repReal = reps.find(r => {
+    const rLow = r.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    return rLow === repNombreLow || rLow.includes(repNombreLow) || repNombreLow.includes(rLow) ||
+           rLow.split(' ').some(w => w.length > 2 && repNombreLow.includes(w)) ||
+           repNombreLow.split(' ').some(w => w.length > 2 && rLow.includes(w));
+  });
   if (!repReal || !entregas) return;
-
   const fecha = document.getElementById('sup-ruta-fecha')?.value || fechaHoy();
   await csvEnviarRuta(repReal.nombre, fecha, entregas);
+}
+
+async function csvImportarRepRemap(repNombreCSV) {
+  if (!csvDatosImportados) return;
+  const sel = document.getElementById('csv-remap-' + repNombreCSV.replace(/\s/g,'_'));
+  const repDestino = sel?.value;
+  if (!repDestino) { alert('Selecciona a qué repartidor del equipo asignar este bloque.'); return; }
+  const entregas = csvDatosImportados.grupos[repNombreCSV];
+  if (!entregas) return;
+  const fecha = document.getElementById('sup-ruta-fecha')?.value || fechaHoy();
+  await csvEnviarRuta(repDestino, fecha, entregas);
 }
 
 async function csvImportarSinRep() {
@@ -1686,13 +1719,19 @@ async function csvEnviarRuta(repNombre, fecha, entregas) {
 }
 
 function descargarPlantillaCSV() {
-  const repNombres = reps.map(r => r.nombre).join(' / ');
+  // Usar nombres reales del equipo actual
+  const r0 = reps[0]?.nombre || 'Ana García';
+  const r1 = reps[1]?.nombre || 'Pedro Ruiz';
+  const r2 = reps[2]?.nombre || 'Laura Gómez';
   const csv = [
+    // Cabecera con nombres exactos de columnas que Rutty reconoce
     'Repartidor;Orden;Nombre;Direccion;Alergenos;Riesgo;Notas',
-    `${reps[0]?.nombre || 'Ana García'};1;María López;Calle Mayor 12 3ºA;;normal;Timbre roto, llamar por teléfono`,
-    `${reps[0]?.nombre || 'Ana García'};2;Juan Pérez;Av. Constitución 45 2ºB;gluten pescado;alto;Caja roja — verificar QR`,
-    `${reps[1]?.nombre || 'Pedro Ruiz'};1;Carmen Ruiz;Plaza España 3 1ºC;;normal;`,
-    `${reps[1]?.nombre || 'Pedro Ruiz'};2;Antonio Díaz;C/ Pez 7 bajo;;critico;ALÉRGICO FRUTOS SECOS — caja roja obligatoria`,
+    // Ejemplos con los repartidores reales del equipo
+    `${r0};1;Maria Lopez;Calle Mayor 12 3 A;;normal;Timbre roto llamar por telefono`,
+    `${r0};2;Juan Perez;Av. Constitucion 45 2 B;gluten pescado;alto;Caja roja verificar QR`,
+    `${r1};1;Carmen Ruiz;Plaza Espana 3 1 C;;normal;`,
+    `${r1};2;Antonio Diaz;C Pez 7 bajo;;critico;ALERGICO FRUTOS SECOS caja roja obligatoria`,
+    `${r2};1;Rosa Sanchez;C Gran Via 88 4 D;lactosa;alto;Verificar temperatura`,
   ].join('\n');
 
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
