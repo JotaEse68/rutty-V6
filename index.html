@@ -944,28 +944,86 @@ function toggleMic(){
 }
 
 // ──────────────────────────────────────
-// VOZ — humanizada, mujer España
+// VOZ — OpenAI TTS (shimmer) + fallback Web Speech
+// shimmer es la voz femenina más natural de OpenAI en español
 // ──────────────────────────────────────
-function getVozEspañola(){
-  if(!('speechSynthesis' in window))return null;
-  const vs=window.speechSynthesis.getVoices();
-  // Prioridad: voces femeninas de España
-  const prio=['Mónica','Monica','Lucía','Lucia','Marta','Elena','Isabel','Francisca','Laura','María','Conchita','Paulina'];
-  for(const name of prio){
-    const v=vs.find(x=>x.name.includes(name)&&x.lang.startsWith('es'));
-    if(v)return v;
-  }
-  // Fallback: cualquier voz española
-  return vs.find(x=>x.lang==='es-ES')||vs.find(x=>x.lang.startsWith('es'))||null;
-}
-function hablar(texto){
+let _audioActual = null;
+let _vozQueue = [];
+let _vozPlaying = false;
+
+// Para textos cortos (< 80 chars) y mensajes de bienvenida usamos Web Speech
+// para no gastar llamadas API. Para todo lo demás, OpenAI TTS.
+const TTS_UMBRAL = 80;
+
+function hablarWebSpeech(texto){
   if(!('speechSynthesis' in window))return;
   window.speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(texto);
-  const v=getVozEspañola();
-  if(v)u.voice=v;
-  u.lang='es-ES';u.rate=0.88;u.pitch=1.1;u.volume=1;
+  const u = new SpeechSynthesisUtterance(texto);
+  const vs = window.speechSynthesis.getVoices();
+  const prio = ['Mónica','Monica','Lucía','Lucia','Marta','Elena','Isabel'];
+  let voz = null;
+  for(const name of prio){
+    voz = vs.find(x=>x.name.includes(name)&&x.lang.startsWith('es'));
+    if(voz) break;
+  }
+  if(!voz) voz = vs.find(x=>x.lang==='es-ES') || vs.find(x=>x.lang.startsWith('es'));
+  if(voz) u.voice = voz;
+  u.lang='es-ES'; u.rate=0.88; u.pitch=1.08; u.volume=1;
   window.speechSynthesis.speak(u);
+}
+
+async function hablarTTS(texto){
+  if(_audioActual){ _audioActual.pause(); _audioActual.src=''; _audioActual=null; }
+  if('speechSynthesis' in window) window.speechSynthesis.cancel();
+
+  // 1º intento: ElevenLabs (la más natural del mercado)
+  try{
+    const resp = await fetch('/.netlify/functions/rutty-api',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ provider:'tts-eleven', text: texto })
+    });
+    if(!resp.ok) throw new Error('ElevenLabs '+resp.status);
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    _audioActual = new Audio(url);
+    _audioActual.onended = () => { URL.revokeObjectURL(url); _audioActual=null; };
+    _audioActual.onerror = () => { _audioActual=null; };
+    await _audioActual.play();
+    return; // éxito, salimos
+  } catch(e){
+    console.warn('ElevenLabs falló, probando OpenAI TTS:', e.message);
+  }
+
+  // 2º intento: OpenAI TTS shimmer
+  try{
+    const resp = await fetch('/.netlify/functions/rutty-api',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ provider:'tts', text: texto, voice:'shimmer' })
+    });
+    if(!resp.ok) throw new Error('OpenAI TTS '+resp.status);
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    _audioActual = new Audio(url);
+    _audioActual.onended = () => { URL.revokeObjectURL(url); _audioActual=null; };
+    _audioActual.onerror = () => { _audioActual=null; };
+    await _audioActual.play();
+    return;
+  } catch(e){
+    console.warn('OpenAI TTS falló, usando Web Speech:', e.message);
+  }
+
+  // 3º fallback: Web Speech del navegador
+  hablarWebSpeech(texto);
+}
+
+// Función principal — decide qué motor usar
+function hablar(texto){
+  if(!texto) return;
+  // Textos muy cortos (ej: "◌") no hablan
+  if(texto.trim().length < 2) return;
+  hablarTTS(texto);
 }
 
 // ──────────────────────────────────────
