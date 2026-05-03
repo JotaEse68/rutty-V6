@@ -194,7 +194,7 @@ body{height:100%;font-family:'Outfit',sans-serif;color:var(--tx);background:var(
 .msg-r{display:flex;flex-direction:column;align-items:flex-start;gap:0;}
 .bbl-u{background:var(--az);color:#fff;padding:10px 14px;border-radius:18px 18px 4px 18px;font-size:13px;max-width:83%;line-height:1.5;}
 .bbl-r{background:var(--bl);border:.5px solid var(--bo);padding:12px 15px;border-radius:0 18px 18px 18px;font-size:13px;max-width:88%;line-height:1.6;color:var(--tx);box-shadow:0 2px 12px rgba(0,0,0,.09);position:relative;z-index:1;}
-.msg-av{width:90px;height:90px;object-fit:contain;flex-shrink:0;background:transparent;display:block;filter:drop-shadow(0 2px 8px rgba(240,168,0,.25));margin-left:4px;margin-bottom:-8px;position:relative;z-index:2;}
+.msg-av{width:90px;height:90px;object-fit:contain;flex-shrink:0;display:block;filter:drop-shadow(0 3px 12px rgba(0,0,0,.35)) drop-shadow(0 0 8px rgba(26,63,111,.5));margin-left:4px;margin-bottom:-8px;position:relative;z-index:2;background:transparent;}
 
 .input-bar{
   background:var(--bl);border:1.5px solid var(--bo);border-radius:18px;
@@ -621,10 +621,10 @@ canvas#cc{position:absolute;inset:0;pointer-events:none;border-radius:inherit;}
 
         <!-- ── IMPORTADOR CSV ── -->
         <div class="csv-import-box" id="csv-drop-zone" onclick="document.getElementById('csv-file-input').click()" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="csvOnDrop(event)">
-          <input type="file" id="csv-file-input" accept=".csv,.txt" style="display:none" onchange="csvLeerArchivo(this.files[0])">
+          <input type="file" id="csv-file-input" accept=".csv,.txt,.xlsx,.xls" style="display:none" onchange="csvLeerArchivo(this.files[0])">
           <div style="font-size:28px;margin-bottom:.4rem;">📂</div>
           <div style="font-weight:700;font-size:13px;margin-bottom:.2rem;">Importar ruta desde CSV</div>
-          <div style="font-size:11px;color:var(--gm);">Arrastra el CSV de Ucalsa Connect o pulsa para seleccionar</div>
+          <div style="font-size:11px;color:var(--gm);">Arrastra el CSV o Excel de la ruta, o pulsa para seleccionar</div>
           <button onclick="event.stopPropagation();descargarPlantillaCSV()" style="margin-top:.75rem;padding:5px 12px;background:transparent;border:1px solid var(--bo);border-radius:8px;color:var(--gm);font-family:Outfit,sans-serif;font-size:11px;cursor:pointer;">⬇ Descargar plantilla CSV</button>
         </div>
 
@@ -1531,13 +1531,123 @@ function csvOnDrop(ev) {
 
 function csvLeerArchivo(file) {
   if (!file) return;
-  if (!file.name.match(/\.csv$|\.txt$/i)) {
-    csvMostrarError('Solo se aceptan archivos .csv o .txt');
+  const esExcel = file.name.match(/\.xlsx?$/i);
+  const esCSV = file.name.match(/\.csv$|\.txt$/i);
+  if (!esExcel && !esCSV) {
+    csvMostrarError('Sube un archivo CSV (.csv) o Excel (.xlsx)');
     return;
   }
-  const reader = new FileReader();
-  reader.onload = e => csvProcesar(e.target.result, file.name);
-  reader.readAsText(file, 'UTF-8');
+
+  const prev = document.getElementById('csv-preview');
+  prev.style.display = 'block';
+  prev.innerHTML = '<div style="text-align:center;padding:1rem;color:var(--gm);font-size:13px;">⏳ Leyendo archivo...</div>';
+
+  if (esExcel) {
+    // Leer como base64 y enviar al servidor para parsear
+    const reader = new FileReader();
+    reader.onload = async e => {
+      // Excel: extraer CSV usando el servidor (enviar binario como base64)
+      // Alternativa simple: leer como texto si es xlsx simple, 
+      // o mostrar instrucciones para guardar como CSV
+      // Por ahora: intentar leer como texto (xlsx es zip, no funcionará directo)
+      // → Convertir xlsx a CSV en cliente usando la estructura XML interna
+      await csvProcesarExcel(file, e.target.result);
+    };
+    reader.readAsArrayBuffer(file);
+  } else {
+    const reader = new FileReader();
+    reader.onload = e => csvProcesar(e.target.result, file.name);
+    reader.readAsText(file, 'UTF-8');
+  }
+}
+
+async function csvProcesarExcel(file, arrayBuffer) {
+  // Extraer la hoja como CSV desde el XML interno del xlsx
+  try {
+    const uint8 = new Uint8Array(arrayBuffer);
+    // Convertir a base64 para enviar al servidor
+    let binary = '';
+    uint8.forEach(b => binary += String.fromCharCode(b));
+    const base64 = btoa(binary);
+
+    // Enviar al servidor para que lo convierta
+    const fecha = document.getElementById('sup-ruta-fecha')?.value || fechaHoy();
+    const res = await fetch('/.netlify/functions/rutty-excel', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ base64, fileName: file.name })
+    });
+
+    if (!res.ok) {
+      // Si no hay función de excel, intentar leer el XML interno manualmente
+      csvExtraerXMLExcel(arrayBuffer, file.name);
+      return;
+    }
+    const data = await res.json();
+    if (data.csv) {
+      csvProcesar(data.csv, file.name);
+    } else {
+      csvMostrarError(data.error || 'No se pudo convertir el Excel');
+    }
+  } catch(e) {
+    csvExtraerXMLExcel(arrayBuffer, file.name);
+  }
+}
+
+function csvExtraerXMLExcel(arrayBuffer, fileName) {
+  // Extraer datos del xlsx leyendo el XML interno (xlsx es un ZIP)
+  try {
+    const bytes = new Uint8Array(arrayBuffer);
+    // Signature ZIP: PK (0x50, 0x4B)
+    if (bytes[0] !== 0x50 || bytes[1] !== 0x4B) {
+      csvMostrarError('Archivo no reconocido. Guárdalo como CSV desde Excel y súbelo.');
+      return;
+    }
+    // Decodificar como texto para buscar el XML de la hoja
+    const decoder = new TextDecoder('utf-8', {fatal: false});
+    const text = decoder.decode(bytes);
+
+    // Buscar sharedStrings (strings del excel)
+    const ssMatch = text.match(/<sst[^>]*>([\s\S]*?)<\/sst>/);
+    const strings = [];
+    if (ssMatch) {
+      const tMatches = ssMatch[1].matchAll(/<t[^>]*>([^<]*)<\/t>/g);
+      for (const m of tMatches) strings.push(m[1]);
+    }
+
+    // Buscar primera hoja (sheet1.xml)
+    const sheetMatch = text.match(/<worksheet[\s\S]*?<sheetData>([\s\S]*?)<\/sheetData>/);
+    if (!sheetMatch) {
+      csvMostrarError('No se pudo leer la hoja Excel. Guárdala como CSV (.csv separado por punto y coma) y súbela.');
+      return;
+    }
+
+    const filas = [];
+    const rowMatches = sheetMatch[1].matchAll(/<row[^>]*>([\s\S]*?)<\/row>/g);
+    for (const rowM of rowMatches) {
+      const celdas = [];
+      const cellMatches = rowM[1].matchAll(/<c r="([A-Z]+\d+)"[^>]*(?:t="([^"]*)")?[^>]*>(?:<v>([^<]*)<\/v>)?[^<]*<\/c>/g);
+      for (const cm of cellMatches) {
+        const tipo = cm[2];
+        const val = cm[3];
+        if (tipo === 's') {
+          celdas.push(strings[parseInt(val)] || '');
+        } else {
+          celdas.push(val || '');
+        }
+      }
+      if (celdas.some(c => c)) filas.push(celdas.join(';'));
+    }
+
+    if (filas.length < 2) {
+      csvMostrarError('No se encontraron datos en el Excel. Prueba a guardarlo como CSV desde Excel → Archivo → Guardar como → CSV UTF-8.');
+      return;
+    }
+
+    csvProcesar(filas.join('\n'), fileName + ' (Excel)');
+  } catch(e) {
+    csvMostrarError('Error al leer el Excel: ' + e.message + '. Guárdalo como CSV y súbelo.');
+  }
 }
 
 let csvDatosImportados = null; // resultado parseado guardado para confirm
@@ -1689,6 +1799,14 @@ async function csvImportarTodos() {
 async function csvEnviarRuta(repNombre, fecha, entregas) {
   const btns = document.querySelectorAll('.btn-csv-import');
   btns.forEach(b => b.disabled = true);
+
+  // Si el repartidor no existe en el equipo, añadirlo automáticamente
+  const existe = reps.find(r => r.nombre.toLowerCase() === repNombre.toLowerCase());
+  if (!existe) {
+    reps.push({ nombre: repNombre, pts: 0, zona: 'Sin zona', medAntes: '', meses: 0, racha: 0, total: 0, alto: 0, incGraves: 0 });
+    renderBienvenida();
+    console.log('Repartidor nuevo añadido al equipo:', repNombre);
+  }
 
   try {
     const res = await fetch('/.netlify/functions/rutty-blobs', {
