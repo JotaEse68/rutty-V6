@@ -1218,52 +1218,66 @@ async function runDiag(){
   const out = document.getElementById('diag-result');
   out.style.display = 'block';
   out.textContent = '⏳ Comprobando conexión...';
+
+  async function safeJson(resp) {
+    try { return await resp.json(); }
+    catch(e) {
+      const txt = await resp.text().catch(()=>'');
+      throw new Error('Función no encontrada (HTTP ' + resp.status + '). Respuesta: ' + txt.slice(0,100));
+    }
+  }
+
   try {
-    // 1. Test proxy reachable
+    // 1. Test función alcanzable + env vars
     const r1 = await fetch('/.netlify/functions/rutty-api', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ provider:'diagnostico' })
     });
-    const d1 = await r1.json();
-    let msg = '🔑 Variables de entorno:\n';
+    if(!r1.ok && r1.status === 404) throw new Error('Función rutty-api NO encontrada (404). Verifica que el deploy incluye netlify/functions/rutty-api.js');
+    const d1 = await safeJson(r1);
+    let msg = '✅ Función alcanzable\n\n';
+    msg += '🔑 Variables de entorno:\n';
+    msg += '  OPENAI_KEY: ' + (d1.openai_key || 'MISSING ❌') + '\n';
     msg += '  CLAUDE_KEY: ' + (d1.claude_key || 'MISSING ❌') + '\n';
-    msg += '  ELEVEN_KEY: ' + (d1.eleven_key || 'MISSING ❌') + '\n';
-    msg += '  OPENAI_KEY: ' + (d1.openai_key || 'MISSING ❌') + '\n\n';
+    msg += '  ELEVEN_KEY: ' + (d1.eleven_key || 'MISSING ❌') + '\n\n';
 
-    // 2. Test ElevenLabs with short text
+    // 2. Test ElevenLabs
     msg += '🔊 Probando ElevenLabs...\n';
-    const r2 = await fetch('/.netlify/functions/rutty-api', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ provider:'tts-eleven', text:'Hola, soy Rutty.' })
-    });
-    if(r2.ok){
-      msg += '  ElevenLabs: ✅ OK - reproduciendo...\n';
-      const blob = await r2.blob();
-      const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-      audio.play();
-    } else {
-      const err = await r2.json();
-      msg += '  ElevenLabs: ❌ ' + (err.error||r2.status) + '\n';
-    }
+    try {
+      const r2 = await fetch('/.netlify/functions/rutty-api', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ provider:'tts-eleven', text:'Hola, soy Rutty.' })
+      });
+      if(r2.ok){
+        msg += '  ElevenLabs: ✅ OK - reproduciendo...\n';
+        const blob = await r2.blob();
+        const url = URL.createObjectURL(blob);
+        new Audio(url).play();
+      } else {
+        const err = await safeJson(r2);
+        msg += '  ElevenLabs: ❌ ' + (err.error || r2.status) + '\n';
+      }
+    } catch(e2) { msg += '  ElevenLabs: ❌ ' + e2.message + '\n'; }
 
     // 3. Test Claude
     msg += '🤖 Probando Claude...\n';
-    const r3 = await fetch('/.netlify/functions/rutty-api', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ provider:'claude', system:'Di hola en una frase.', messages:[{role:'user',content:'hola'}] })
-    });
-    if(r3.ok){
-      const d3 = await r3.json();
-      msg += '  Claude: ✅ OK - "' + (d3.text||'').slice(0,60) + '"\n';
-    } else {
-      const err = await r3.json();
-      msg += '  Claude: ❌ ' + (err.error||r3.status) + '\n';
-    }
+    try {
+      const r3 = await fetch('/.netlify/functions/rutty-api', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ provider:'claude', system:'Di hola en una frase.', messages:[{role:'user',content:'hola'}] })
+      });
+      if(r3.ok){
+        const d3 = await safeJson(r3);
+        msg += '  Claude: ✅ OK - "' + (d3.text||'').slice(0,60) + '"\n';
+      } else {
+        const err = await safeJson(r3);
+        msg += '  Claude: ❌ ' + (err.error || r3.status) + '\n';
+      }
+    } catch(e3) { msg += '  Claude: ❌ ' + e3.message + '\n'; }
 
     out.textContent = msg;
   } catch(e) {
-    out.textContent = '❌ Error de red: ' + e.message + '\n\nPosibles causas:\n- La función no está desplegada\n- El netlify.toml es incorrecto\n- El archivo rutty-api.js no está en netlify/functions/';
+    out.textContent = '❌ ' + e.message + '\n\n→ Solución: sube los archivos corregidos a GitHub y espera que Netlify redepliegue.';
   }
 }
 
