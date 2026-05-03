@@ -1223,85 +1223,101 @@ async function runDiag(){
       body: JSON.stringify({ provider:'diagnostico' })
     });
     const d1 = await r1.json();
-    let msg = '🔑 Variables de entorno:
-';
-    msg += '  CLAUDE_KEY: ' + (d1.claude_key || 'MISSING ❌') + '
-';
-    msg += '  ELEVEN_KEY: ' + (d1.eleven_key || 'MISSING ❌') + '
-';
-    msg += '  OPENAI_KEY: ' + (d1.openai_key || 'MISSING ❌') + '
-
-';
+    let msg = '🔑 Variables de entorno:\n';
+    msg += '  CLAUDE_KEY: ' + (d1.claude_key || 'MISSING ❌') + '\n';
+    msg += '  ELEVEN_KEY: ' + (d1.eleven_key || 'MISSING ❌') + '\n';
+    msg += '  OPENAI_KEY: ' + (d1.openai_key || 'MISSING ❌') + '\n\n';
 
     // 2. Test ElevenLabs with short text
-    msg += '🔊 Probando ElevenLabs...
-';
+    msg += '🔊 Probando ElevenLabs...\n';
     const r2 = await fetch('/.netlify/functions/rutty-api', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ provider:'tts-eleven', text:'Hola, soy Rutty.' })
     });
     if(r2.ok){
-      msg += '  ElevenLabs: ✅ OK - reproduciendo...
-';
+      msg += '  ElevenLabs: ✅ OK - reproduciendo...\n';
       const blob = await r2.blob();
       const url = URL.createObjectURL(blob);
       const audio = new Audio(url);
       audio.play();
     } else {
       const err = await r2.json();
-      msg += '  ElevenLabs: ❌ ' + (err.error||r2.status) + '
-';
+      msg += '  ElevenLabs: ❌ ' + (err.error||r2.status) + '\n';
     }
 
     // 3. Test Claude
-    msg += '🤖 Probando Claude...
-';
+    msg += '🤖 Probando Claude...\n';
     const r3 = await fetch('/.netlify/functions/rutty-api', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ provider:'claude', system:'Di hola en una frase.', messages:[{role:'user',content:'hola'}] })
     });
     if(r3.ok){
       const d3 = await r3.json();
-      msg += '  Claude: ✅ OK - "' + (d3.text||'').slice(0,60) + '"
-';
+      msg += '  Claude: ✅ OK - "' + (d3.text||'').slice(0,60) + '"\n';
     } else {
       const err = await r3.json();
-      msg += '  Claude: ❌ ' + (err.error||r3.status) + '
-';
+      msg += '  Claude: ❌ ' + (err.error||r3.status) + '\n';
     }
 
     out.textContent = msg;
   } catch(e) {
-    out.textContent = '❌ Error de red: ' + e.message + '
-
-Posibles causas:
-- La función no está desplegada
-- El netlify.toml es incorrecto
-- El archivo rutty-api.js no está en netlify/functions/';
+    out.textContent = '❌ Error de red: ' + e.message + '\n\nPosibles causas:\n- La función no está desplegada\n- El netlify.toml es incorrecto\n- El archivo rutty-api.js no está en netlify/functions/';
   }
 }
 
 // ──────────────────────────────────────
-// INIT
+// INIT — bulletproof
 // ──────────────────────────────────────
-document.addEventListener('DOMContentLoaded', function() {
-  renderBienvenida();
+function initApp() {
+  try {
+    renderBienvenida();
+  } catch(e) {
+    console.error('renderBienvenida error:', e);
+    // Fallback: inject directly
+    const el = document.getElementById('rep-cards');
+    if(el) {
+      el.innerHTML = reps.map((r,i) => {
+        const m = getMed(r.pts);
+        return `<div class="rep-card" onclick="elegir(${i})" style="cursor:pointer;">
+          <div class="rep-card-av" style="background:${m.color}22;color:${m.tc};">${ini(r.nombre)}</div>
+          <div class="rep-card-info">
+            <div class="rep-card-name">${r.nombre}</div>
+            <div class="rep-card-sub">${r.zona} · ${m.txt}</div>
+          </div>
+          <div class="rep-card-pts">
+            <div class="rep-card-pts-num">${r.pts}</div>
+            <div class="rep-card-pts-lbl">puntos</div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+  }
 
-  // Cargar voces con delay para iOS/Android
+  // Voces
   if('speechSynthesis' in window){
     const load=()=>window.speechSynthesis.getVoices();
-    load();window.speechSynthesis.onvoiceschanged=load;
+    load(); window.speechSynthesis.onvoiceschanged=load;
     setTimeout(load,500);
   }
 
-  // URL directa por repartidor ?rep=ana
-  const params=new URLSearchParams(window.location.search);
-  if(params.has('rep')){
-    const slug=params.get('rep').toLowerCase();
-    const fi=reps.findIndex(r=>r.nombre.toLowerCase().startsWith(slug));
-    if(fi>=0)setTimeout(()=>elegir(fi),300);
-  }
-});
+  // URL directa ?rep=ana
+  try {
+    const params=new URLSearchParams(window.location.search);
+    if(params.has('rep')){
+      const slug=params.get('rep').toLowerCase();
+      const fi=reps.findIndex(r=>r.nombre.toLowerCase().startsWith(slug));
+      if(fi>=0) setTimeout(()=>elegir(fi),300);
+    }
+  } catch(e){}
+}
+
+// Ejecutar cuando el DOM esté listo — funciona en todos los navegadores
+if(document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  // DOM ya cargado (script está al final del body)
+  initApp();
+}
 </script>
 </body>
 </html>
