@@ -61,8 +61,12 @@ exports.handler = async function(event) {
       if (!ELEVEN_KEY) return json(503, { error: 'ELEVEN_KEY no configurada en Netlify env vars' });
       if (!text)       return json(400, { error: 'text requerido' });
 
-      // Rachel - voz gratuita en todos los planes de ElevenLabs
-      const VOICE_ID = '21m00Tcm4TlvDq8ikWAM';
+      // VOCES PREMADE GRATUITAS (plan free OK):
+      // Matilda - calida, natural    → XrExE9yKIg1WjnnlVkGX  ← ACTIVA
+      // Sarah   - joven, profesional → EXAVITQu4vr4xnSDxMaL
+      // Serena  - clara, agradable   → pMsXgVXv3BLzUgSXRplE
+      // Grace   - joven, melodica    → oWAxZDx7w5VEj9dCyTzz
+      const VOICE_ID = 'XrExE9yKIg1WjnnlVkGX'; // Matilda
       const resp = await fetch(
         `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream`,
         {
