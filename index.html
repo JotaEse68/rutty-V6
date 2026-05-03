@@ -1284,20 +1284,24 @@ Posibles causas:
 // ──────────────────────────────────────
 // INIT
 // ──────────────────────────────────────
-renderBienvenida();
-// Cargar voces con delay para iOS/Android
-if('speechSynthesis' in window){
-  const load=()=>window.speechSynthesis.getVoices();
-  load();window.speechSynthesis.onvoiceschanged=load;
-  setTimeout(load,500);
-}
-// URL directa por repartidor ?rep=ana
-const params=new URLSearchParams(window.location.search);
-if(params.has('rep')){
-  const slug=params.get('rep').toLowerCase();
-  const fi=reps.findIndex(r=>r.nombre.toLowerCase().startsWith(slug));
-  if(fi>=0)setTimeout(()=>elegir(fi),300);
-}
+document.addEventListener('DOMContentLoaded', function() {
+  renderBienvenida();
+
+  // Cargar voces con delay para iOS/Android
+  if('speechSynthesis' in window){
+    const load=()=>window.speechSynthesis.getVoices();
+    load();window.speechSynthesis.onvoiceschanged=load;
+    setTimeout(load,500);
+  }
+
+  // URL directa por repartidor ?rep=ana
+  const params=new URLSearchParams(window.location.search);
+  if(params.has('rep')){
+    const slug=params.get('rep').toLowerCase();
+    const fi=reps.findIndex(r=>r.nombre.toLowerCase().startsWith(slug));
+    if(fi>=0)setTimeout(()=>elegir(fi),300);
+  }
+});
 </script>
 </body>
 </html>
