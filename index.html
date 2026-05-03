@@ -127,6 +127,10 @@ body{height:100%;font-family:'Outfit',sans-serif;color:var(--tx);background:var(
 .vbanner.motivacional{background:linear-gradient(135deg,#1a3a6e,#0d2040);}
 .vbanner.responsabilidad{background:linear-gradient(135deg,#6e1a1a,#400d0d);}
 .vbanner.protocolo{background:linear-gradient(135deg,var(--azm),var(--az));}
+.vbanner.alergeno{background:linear-gradient(135deg,#6e3a0d,#3d1f00);}
+.vbanner.reconocimiento{background:linear-gradient(135deg,#4a3a00,#2a2000);}
+.vbanner.recordatorio{background:linear-gradient(135deg,#1a4a3a,#0d2a22);}
+.vbanner.custom{background:linear-gradient(135deg,#3a1a6e,#1a0d40);}
 .vbanner-tipo{font-size:9px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;opacity:.6;margin-bottom:3px;}
 .vbanner-txt{font-size:12px;line-height:1.45;font-style:italic;}
 .vbanner-bar{position:absolute;bottom:0;left:0;height:3px;background:var(--db);animation:shrink linear forwards;}
@@ -159,9 +163,9 @@ body{height:100%;font-family:'Outfit',sans-serif;color:var(--tx);background:var(
 /* ── HOME TAB ── */
 .rutty-intro{
   background:linear-gradient(135deg,var(--azn),var(--az));
-  border-radius:var(--r2);padding:1.25rem;margin-bottom:1rem;
-  display:flex;align-items:flex-start;gap:1rem;
-  border-bottom:3px solid var(--db);position:relative;overflow:hidden;
+  border-radius:var(--r2);padding:1rem 1.25rem 0;margin-bottom:1rem;
+  display:flex;align-items:flex-end;gap:.75rem;
+  border-bottom:3px solid var(--db);position:relative;overflow:hidden;min-height:140px;
 }
 .rutty-intro::after{
   content:'';position:absolute;bottom:-20px;right:-20px;
@@ -169,7 +173,7 @@ body{height:100%;font-family:'Outfit',sans-serif;color:var(--tx);background:var(
   background:url('./rutty.png') center/contain no-repeat;
   opacity:.08;pointer-events:none;
 }
-.rutty-intro img{width:72px;height:72px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 2px 8px rgba(240,168,0,.2));background:transparent;}
+.rutty-intro img{width:140px;height:160px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 4px 16px rgba(240,168,0,.35));background:transparent;margin-bottom:-3px;}
 .ri-text h2{font-size:18px;font-weight:800;color:#fff;margin-bottom:4px;}
 .ri-text h2 span{color:var(--db);}
 .ri-text p{font-size:12px;color:rgba(255,255,255,.6);line-height:1.5;}
@@ -187,10 +191,10 @@ body{height:100%;font-family:'Outfit',sans-serif;color:var(--tx);background:var(
 
 .chat-msgs{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem;min-height:50px;}
 .msg-u{display:flex;justify-content:flex-end;}
-.msg-r{display:flex;gap:7px;align-items:flex-start;}
+.msg-r{display:flex;gap:8px;align-items:flex-end;}
 .bbl-u{background:var(--az);color:#fff;padding:10px 14px;border-radius:18px 18px 4px 18px;font-size:13px;max-width:83%;line-height:1.5;}
-.bbl-r{background:var(--bl);border:.5px solid var(--bo);padding:10px 14px;border-radius:18px 18px 18px 4px;font-size:13px;max-width:83%;line-height:1.6;color:var(--tx);box-shadow:0 2px 8px rgba(0,0,0,.06);}
-.msg-av{width:32px;height:32px;object-fit:contain;flex-shrink:0;margin-top:2px;background:transparent;}
+.bbl-r{background:var(--bl);border:.5px solid var(--bo);padding:11px 14px;border-radius:4px 18px 18px 18px;font-size:13px;max-width:80%;line-height:1.6;color:var(--tx);box-shadow:0 2px 10px rgba(0,0,0,.08);}
+.msg-av{width:52px;height:52px;object-fit:contain;flex-shrink:0;margin-top:0;background:transparent;border-radius:50%;}
 
 .input-bar{
   background:var(--bl);border:1.5px solid var(--bo);border-radius:18px;
@@ -341,6 +345,9 @@ body{height:100%;font-family:'Outfit',sans-serif;color:var(--tx);background:var(
 .vt-m{background:var(--veb);color:var(--ve);}
 .vt-r{background:var(--rob);color:var(--ro);}
 .vt-p{background:var(--azc);color:var(--azm);}
+.vt-a{background:#C9303022;color:#C93030;}
+.vt-rk{background:#F0A80022;color:#c87800;}
+.vt-rc{background:#15C76A22;color:#0a8a4a;}
 
 /* REPARTIDORES SUP — 1 columna en móvil */
 .reps-section{display:flex;flex-direction:column;gap:1rem;}
@@ -457,7 +464,7 @@ canvas#cc{position:absolute;inset:0;pointer-events:none;border-radius:inherit;}
   <div class="welcome-content">
     <div class="welcome-logo-row">
       <img src="./rutty.png" alt="R" onerror="this.style.display='none'">
-      <div><span>Rutty</span> <small>· by Jota Santos</small></div>
+      <div><span>Rutty</span> <small>· by AlimentIA Consulting Group LLC</small></div>
     </div>
 
     <div class="welcome-hero">
@@ -466,7 +473,7 @@ canvas#cc{position:absolute;inset:0;pointer-events:none;border-radius:inherit;}
         <div class="online-dot"></div>
       </div>
       <h1 class="welcome-title">¡Hola! Soy <span>Rutty</span> 👋</h1>
-      <p class="welcome-tagline">Estoy aquí para ayudarte con protocolos, alérgenos e incidencias.<br>¿Listo para empezar la jornada?</p>
+      <p class="welcome-tagline">Tu compañera de ruta: protocolos, alérgenos, seguridad y motivación.<br>¿Listo para una jornada perfecta?</p>
     </div>
 
     <div class="welcome-section-label">¿Quién eres hoy?</div>
@@ -507,7 +514,7 @@ canvas#cc{position:absolute;inset:0;pointer-events:none;border-radius:inherit;}
         <img src="./rutty.png" alt="Rutty" onerror="this.style.display='none'">
         <div class="ri-text">
           <h2>¡Hola! Soy <span>Rutty</span> 👋</h2>
-          <p id="hero-sub">Tu asistente en ruta. ¿En qué te ayudo hoy?</p>
+          <p id="hero-sub">Tu compañera de ruta. ¿En qué te ayudo hoy?</p>
           <div class="ri-chips">
             <button class="ch ch-b" onclick="ask('¿Qué hago si el alérgeno no coincide con el QR?')">Protocolos</button>
             <button class="ch ch-g" onclick="ask('¿Qué hago con una caja roja?')">Alérgenos</button>
@@ -533,7 +540,7 @@ canvas#cc{position:absolute;inset:0;pointer-events:none;border-radius:inherit;}
         </button>
       </div>
       <button class="cierre-btn" id="cierre-btn" onclick="cerrarJornada()">🏁 Cerrar mi jornada de hoy</button>
-<button onclick="runDiag()" style="width:100%;margin-top:8px;padding:10px;background:transparent;border:1px dashed var(--gm);border-radius:12px;color:var(--gm);font-family:Outfit,sans-serif;font-size:12px;cursor:pointer;">🔧 Diagnóstico de conexión</button>
+<button onclick="runDiag()" style="display:none;">🔧 Diagnóstico de conexión</button>
 <div id="diag-result" style="display:none;margin-top:8px;padding:12px;background:var(--bl);border:1px solid var(--bo);border-radius:12px;font-size:12px;font-family:monospace;white-space:pre-wrap;color:var(--tx);line-height:1.6;"></div>
     </div>
 
@@ -603,7 +610,7 @@ canvas#cc{position:absolute;inset:0;pointer-events:none;border-radius:inherit;}
     <button class="stab" onclick="stab('sv-rutas',this);cargarRutasSup()">🚚 Rutas</button>
     <button class="stab" onclick="stab('sv-rk',this)">🏆 Ranking</button>
     <button class="stab" onclick="stab('sv-p',this)">🎁 Premios</button>
-    <button class="stab" onclick="stab('sv-voz',this)">🔊 Mensajes</button>
+    <button class="stab" onclick="stab('sv-voz',this)">🔊 Mensajes de voz</button>
     <button class="stab" onclick="stab('sv-reps',this)">👥 Equipo</button>
   </div>
   <div class="sup-scroll">
@@ -700,7 +707,15 @@ canvas#cc{position:absolute;inset:0;pointer-events:none;border-radius:inherit;}
         <div class="sec-hdr">➕ Añadir mensaje de voz</div>
         <div class="ff"><label>Texto del mensaje</label><textarea id="mT" rows="3" placeholder="Escribe el mensaje motivacional o de protocolo..."></textarea></div>
         <div class="ff"><label>Tipo</label>
-          <select id="mTipo"><option value="motivacional">Motivacional</option><option value="responsabilidad">Responsabilidad</option><option value="protocolo">Protocolo</option></select>
+          <select id="mTipo">
+              <option value="motivacional">💪 Motivacional</option>
+              <option value="responsabilidad">⚠️ Responsabilidad</option>
+              <option value="protocolo">📋 Protocolo</option>
+              <option value="alergeno">🚨 Alergeno / Seguridad</option>
+              <option value="reconocimiento">🏆 Reconocimiento</option>
+              <option value="recordatorio">🔔 Recordatorio</option>
+              <option value="custom">✏️ Personalizado</option>
+            </select>
         </div>
         <button class="bp" onclick="addV()">Añadir mensaje</button>
       </div>
@@ -1174,7 +1189,8 @@ function showVoice(){
   const m=voiceMsgs[vIdx%voiceMsgs.length];vIdx++;
   const dur=10000;const area=document.getElementById('vb-area');
   area.style.display='block';
-  area.innerHTML=`<div class="vbanner ${m.tipo}"><span style="font-size:22px;flex-shrink:0;">🔊</span>
+  const tipoIco={'motivacional':'💪','responsabilidad':'⚠️','protocolo':'📋','alergeno':'🚨','reconocimiento':'🏆','recordatorio':'🔔','custom':'✏️'}[m.tipo]||'🔊';
+  area.innerHTML=`<div class="vbanner ${m.tipo}"><span style="font-size:22px;flex-shrink:0;">${tipoIco}</span>
     <div style="flex:1"><div class="vbanner-tipo">${m.tipo}</div><div class="vbanner-txt">"${m.texto}"</div></div>
     <div class="vbanner-bar" style="animation-duration:${dur}ms"></div>
   </div>`;
@@ -1295,7 +1311,7 @@ function addP(){
 function renderSupVoz(){
   document.getElementById('voz-list').innerHTML=voiceMsgs.map((m,i)=>`
     <div class="vmsg-item">
-      <span class="vmsg-tipo ${m.tipo==='motivacional'?'vt-m':m.tipo==='responsabilidad'?'vt-r':'vt-p'}">${m.tipo}</span>
+      <span class="vmsg-tipo ${m.tipo==='motivacional'?'vt-m':m.tipo==='responsabilidad'?'vt-r':m.tipo==='alergeno'?'vt-a':m.tipo==='reconocimiento'?'vt-rk':m.tipo==='recordatorio'?'vt-rc':'vt-p'}">${m.tipo}</span>
       <span style="flex:1;font-size:13px;color:var(--gd);line-height:1.4;">${m.texto}</span>
       <button onclick="dV(${i})" style="border:none;background:none;cursor:pointer;font-size:18px;color:var(--gm);flex-shrink:0;">×</button>
     </div>`).join('');
