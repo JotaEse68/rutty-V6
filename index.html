@@ -474,6 +474,8 @@ canvas#cc{position:absolute;inset:0;pointer-events:none;border-radius:inherit;}
         </button>
       </div>
       <button class="cierre-btn" id="cierre-btn" onclick="cerrarJornada()">🏁 Cerrar mi jornada de hoy</button>
+<button onclick="runDiag()" style="width:100%;margin-top:8px;padding:10px;background:transparent;border:1px dashed var(--gm);border-radius:12px;color:var(--gm);font-family:Outfit,sans-serif;font-size:12px;cursor:pointer;">🔧 Diagnóstico de conexión</button>
+<div id="diag-result" style="display:none;margin-top:8px;padding:12px;background:var(--bl);border:1px solid var(--bo);border-radius:12px;font-size:12px;font-family:monospace;white-space:pre-wrap;color:var(--tx);line-height:1.6;"></div>
     </div>
 
     <!-- RANKING -->
@@ -1206,6 +1208,78 @@ function addRep(){
   renderSupReps();renderBienvenida();
 }
 function dR(i){if(!confirm('¿Eliminar a '+reps[i].nombre+'?'))return;reps.splice(i,1);renderSupReps();renderBienvenida();}
+
+// ──────────────────────────────────────
+// DIAGNÓSTICO
+// ──────────────────────────────────────
+async function runDiag(){
+  const out = document.getElementById('diag-result');
+  out.style.display = 'block';
+  out.textContent = '⏳ Comprobando conexión...';
+  try {
+    // 1. Test proxy reachable
+    const r1 = await fetch('/.netlify/functions/rutty-api', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ provider:'diagnostico' })
+    });
+    const d1 = await r1.json();
+    let msg = '🔑 Variables de entorno:
+';
+    msg += '  CLAUDE_KEY: ' + (d1.claude_key || 'MISSING ❌') + '
+';
+    msg += '  ELEVEN_KEY: ' + (d1.eleven_key || 'MISSING ❌') + '
+';
+    msg += '  OPENAI_KEY: ' + (d1.openai_key || 'MISSING ❌') + '
+
+';
+
+    // 2. Test ElevenLabs with short text
+    msg += '🔊 Probando ElevenLabs...
+';
+    const r2 = await fetch('/.netlify/functions/rutty-api', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ provider:'tts-eleven', text:'Hola, soy Rutty.' })
+    });
+    if(r2.ok){
+      msg += '  ElevenLabs: ✅ OK - reproduciendo...
+';
+      const blob = await r2.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audio.play();
+    } else {
+      const err = await r2.json();
+      msg += '  ElevenLabs: ❌ ' + (err.error||r2.status) + '
+';
+    }
+
+    // 3. Test Claude
+    msg += '🤖 Probando Claude...
+';
+    const r3 = await fetch('/.netlify/functions/rutty-api', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ provider:'claude', system:'Di hola en una frase.', messages:[{role:'user',content:'hola'}] })
+    });
+    if(r3.ok){
+      const d3 = await r3.json();
+      msg += '  Claude: ✅ OK - "' + (d3.text||'').slice(0,60) + '"
+';
+    } else {
+      const err = await r3.json();
+      msg += '  Claude: ❌ ' + (err.error||r3.status) + '
+';
+    }
+
+    out.textContent = msg;
+  } catch(e) {
+    out.textContent = '❌ Error de red: ' + e.message + '
+
+Posibles causas:
+- La función no está desplegada
+- El netlify.toml es incorrecto
+- El archivo rutty-api.js no está en netlify/functions/';
+  }
+}
 
 // ──────────────────────────────────────
 // INIT
