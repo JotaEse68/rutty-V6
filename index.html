@@ -386,6 +386,65 @@ canvas#cc{position:absolute;inset:0;pointer-events:none;border-radius:inherit;}
 .empty-state .ei{font-size:40px;margin-bottom:.75rem;}
 .vint-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:1rem;background:var(--bl);border:.5px solid var(--bo);border-radius:var(--r);margin-bottom:1rem;box-shadow:var(--shadow);}
 .vint-row select{padding:7px 10px;border:1.5px solid var(--bo);border-radius:8px;font-size:13px;font-family:'Outfit',sans-serif;background:var(--gr);outline:none;}
+
+/* ── SISTEMA DE RUTAS ── */
+.ruta-hero{background:linear-gradient(135deg,var(--azn),var(--db));border-radius:var(--r2);padding:1rem;margin-bottom:1rem;color:#fff;text-align:center;}
+.ruta-hero-num{font-size:36px;font-weight:800;line-height:1;}
+.ruta-hero-lbl{font-size:12px;opacity:.75;margin-top:2px;}
+.ruta-progress{background:rgba(255,255,255,.15);border-radius:20px;height:8px;margin-top:.75rem;overflow:hidden;}
+.ruta-progress-fill{height:100%;background:#15C76A;border-radius:20px;transition:width .5s ease;}
+.entrega-card{background:var(--bl);border:.5px solid var(--bo);border-radius:var(--r2);padding:1rem;margin-bottom:.75rem;box-shadow:var(--shadow);transition:all .2s;}
+.entrega-card.entregado{border-color:#15C76A44;background:#15C76A08;opacity:.75;}
+.entrega-card.incidencia{border-color:#C9303044;background:#C9303008;}
+.entrega-card.proxima{border-color:var(--az);box-shadow:0 0 0 2px #1A3F6F22,var(--shadow);}
+.entrega-orden{display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;}
+.entrega-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
+.entrega-num.normal{background:#1A3F6F22;color:var(--az);}
+.entrega-num.alto{background:#F0A80022;color:#c87800;}
+.entrega-num.critico{background:#C9303022;color:#C93030;}
+.entrega-nombre{font-size:14px;font-weight:700;flex:1;}
+.entrega-estado{font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;}
+.entrega-estado.pendiente{background:#1A3F6F22;color:var(--az);}
+.entrega-estado.entregado{background:#15C76A22;color:#0a8a4a;}
+.entrega-estado.incidencia{background:#C9303022;color:#C93030;}
+.entrega-dir{font-size:12px;color:var(--gm);margin-bottom:.4rem;display:flex;align-items:flex-start;gap:.35rem;}
+.entrega-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.6rem;}
+.etag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;border:1px solid;}
+.etag.normal{border-color:var(--bo);color:var(--gm);background:var(--gr);}
+.etag.alto{border-color:#F0A80055;color:#c87800;background:#F0A80011;}
+.etag.critico{border-color:#C9303055;color:#C93030;background:#C9303011;}
+.entrega-btns{display:flex;gap:.5rem;margin-top:.65rem;}
+.btn-confirmar{flex:1;padding:10px;background:linear-gradient(135deg,#15C76A,#0fa858);color:#fff;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;cursor:pointer;}
+.btn-incidencia{padding:10px 14px;background:var(--gr);color:var(--do);border:1.5px solid #C9303044;border-radius:10px;font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;cursor:pointer;}
+.sup-ruta-block{background:var(--bl);border:.5px solid var(--bo);border-radius:var(--r2);padding:1rem;margin-bottom:1rem;box-shadow:var(--shadow);}
+.sup-ruta-hdr{display:flex;align-items:center;gap:.6rem;margin-bottom:.75rem;}
+.sup-ruta-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;background:#1A3F6F22;color:var(--az);flex-shrink:0;}
+.sup-ruta-name{font-size:14px;font-weight:700;flex:1;}
+.sup-ruta-stats{font-size:11px;color:var(--gm);}
+.entrega-row-sup{display:flex;align-items:center;gap:.5rem;padding:.5rem;border-radius:8px;margin-bottom:.3rem;background:var(--gr);}
+.er-num{font-size:11px;font-weight:700;width:20px;text-align:center;color:var(--gm);}
+.er-info{flex:1;font-size:12px;}
+.er-estado{font-size:10px;font-weight:700;padding:2px 6px;border-radius:20px;}
+.er-estado.pendiente{background:#1A3F6F22;color:var(--az);}
+.er-estado.entregado{background:#15C76A22;color:#0a8a4a;}
+.er-estado.incidencia{background:#C9303022;color:#C93030;}
+.ruta-empty{text-align:center;padding:2rem;color:var(--gm);}
+.ruta-empty .ei{font-size:40px;margin-bottom:.5rem;}
+/* ── IMPORTADOR CSV ── */
+.csv-import-box{background:var(--bl);border:2px dashed var(--bo);border-radius:var(--r2);padding:1.25rem;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:1rem;}
+.csv-import-box:hover,.csv-import-box.drag-over{border-color:var(--az);background:#1A3F6F08;}
+.csv-rep-block{background:var(--bl);border:.5px solid var(--bo);border-radius:var(--r2);padding:.75rem;margin-bottom:.75rem;box-shadow:var(--shadow);}
+.csv-rep-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;flex-wrap:wrap;gap:.4rem;}
+.csv-rep-name{font-size:13px;font-weight:700;}
+.csv-rep-count{font-size:11px;color:var(--gm);}
+.btn-csv-import{padding:8px 16px;background:linear-gradient(135deg,var(--az),var(--azm));color:#fff;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-weight:700;font-size:12px;cursor:pointer;}
+.btn-csv-import:disabled{opacity:.5;cursor:not-allowed;}
+.csv-ok{display:inline-flex;align-items:center;gap:.4rem;font-size:11px;color:#0a8a4a;font-weight:700;padding:3px 8px;background:#15C76A22;border-radius:20px;}
+.csv-err{font-size:11px;color:#C93030;background:#C9303011;padding:.5rem .75rem;border-radius:8px;margin-bottom:.5rem;}
+.csv-row-prev{font-size:11px;padding:.35rem .5rem;border-radius:6px;background:var(--gr);margin-bottom:.25rem;display:flex;gap:.5rem;align-items:flex-start;}
+.csv-row-num{color:var(--gm);font-weight:700;min-width:18px;}
+.csv-alg{font-size:10px;padding:1px 5px;border-radius:10px;border:1px solid #F0A80055;color:#c87800;background:#F0A80011;}
+.csv-crit{font-size:10px;padding:1px 5px;border-radius:10px;border:1px solid #C9303055;color:#C93030;background:#C9303011;}
 </style>
 </head>
 <body>
@@ -503,6 +562,12 @@ canvas#cc{position:absolute;inset:0;pointer-events:none;border-radius:inherit;}
     </div>
 
     <!-- PREMIOS -->
+    <div class="tv" id="tv-ruta">
+      <div id="ruta-content">
+        <div class="ruta-empty"><div class="ei">📦</div><div>Cargando tu ruta de hoy...</div></div>
+      </div>
+    </div>
+
     <div class="tv" id="tv-premios">
       <div class="pts-canjea" id="pts-canjea">
         <div class="pts-canjea-ico">🎁</div>
@@ -516,6 +581,7 @@ canvas#cc{position:absolute;inset:0;pointer-events:none;border-radius:inherit;}
 
   <div class="bnav">
     <button class="nb on" id="nb-home" onclick="tab('home',this)"><div class="n-ico">💬</div><div class="n-lbl">Rutty</div></button>
+    <button class="nb" id="nb-ruta" onclick="tab('ruta',this);cargarRuta()"><div class="n-ico">📦</div><div class="n-lbl">Mi Ruta</div></button>
     <button class="nb" id="nb-ranking" onclick="tab('ranking',this)"><div class="n-ico">🏆</div><div class="n-lbl">Ranking</div></button>
     <button class="nb" id="nb-premios" onclick="tab('premios',this)"><div class="n-ico">🎁</div><div class="n-lbl">Premios</div></button>
   </div>
@@ -534,6 +600,7 @@ canvas#cc{position:absolute;inset:0;pointer-events:none;border-radius:inherit;}
   </div>
   <div class="sup-tabs">
     <button class="stab on" onclick="stab('sv-rep',this)">📋 Reportes</button>
+    <button class="stab" onclick="stab('sv-rutas',this);cargarRutasSup()">🚚 Rutas</button>
     <button class="stab" onclick="stab('sv-rk',this)">🏆 Ranking</button>
     <button class="stab" onclick="stab('sv-p',this)">🎁 Premios</button>
     <button class="stab" onclick="stab('sv-voz',this)">🔊 Mensajes</button>
@@ -541,6 +608,57 @@ canvas#cc{position:absolute;inset:0;pointer-events:none;border-radius:inherit;}
   </div>
   <div class="sup-scroll">
     <!-- REPORTES -->
+    <div class="sv" id="sv-rutas">
+      <div style="padding:0 1rem 1rem;">
+        <div class="sec-hdr" style="margin-bottom:1rem;">🚚 Gestión de Rutas Diarias</div>
+
+        <!-- ── IMPORTADOR CSV ── -->
+        <div class="csv-import-box" id="csv-drop-zone" onclick="document.getElementById('csv-file-input').click()" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="csvOnDrop(event)">
+          <input type="file" id="csv-file-input" accept=".csv,.txt" style="display:none" onchange="csvLeerArchivo(this.files[0])">
+          <div style="font-size:28px;margin-bottom:.4rem;">📂</div>
+          <div style="font-weight:700;font-size:13px;margin-bottom:.2rem;">Importar ruta desde CSV</div>
+          <div style="font-size:11px;color:var(--gm);">Arrastra el CSV de Ucalsa Connect o pulsa para seleccionar</div>
+          <button onclick="event.stopPropagation();descargarPlantillaCSV()" style="margin-top:.75rem;padding:5px 12px;background:transparent;border:1px solid var(--bo);border-radius:8px;color:var(--gm);font-family:Outfit,sans-serif;font-size:11px;cursor:pointer;">⬇ Descargar plantilla CSV</button>
+        </div>
+
+        <!-- Preview de importación -->
+        <div id="csv-preview" style="display:none;margin-bottom:1rem;"></div>
+
+        <!-- Separador -->
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;">
+          <div style="flex:1;height:1px;background:var(--bo);"></div>
+          <span style="font-size:11px;color:var(--gm);white-space:nowrap;">o gestiona manualmente</span>
+          <div style="flex:1;height:1px;background:var(--bo);"></div>
+        </div>
+
+        <!-- Selector de repartidor y fecha -->
+        <div style="display:flex;gap:.5rem;margin-bottom:1rem;align-items:center;flex-wrap:wrap;">
+          <select id="sup-ruta-rep" style="flex:1;padding:9px 12px;background:var(--gr);border:1.5px solid var(--bo);border-radius:10px;font-family:Outfit,sans-serif;font-size:13px;color:var(--tx);outline:none;">
+            <option value="">— Selecciona repartidor —</option>
+          </select>
+          <input type="date" id="sup-ruta-fecha" style="padding:9px 12px;background:var(--gr);border:1.5px solid var(--bo);border-radius:10px;font-family:Outfit,sans-serif;font-size:13px;color:var(--tx);outline:none;">
+        </div>
+
+        <!-- Editor de entregas -->
+        <div id="sup-entregas-editor">
+          <div class="ruta-empty"><div class="ei">🚚</div><div style="font-size:13px;">Selecciona un repartidor o importa un CSV</div></div>
+        </div>
+
+        <!-- Botón añadir entrega -->
+        <div id="sup-add-entrega-btn" style="display:none;margin-bottom:1rem;">
+          <button onclick="supAddEntrega()" style="width:100%;padding:10px;background:var(--gr);border:1.5px dashed var(--bo);border-radius:10px;color:var(--az);font-family:Outfit,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">+ Añadir entrega</button>
+        </div>
+
+        <!-- Botón guardar -->
+        <div id="sup-save-btn" style="display:none;">
+          <button onclick="supGuardarRuta()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--az),var(--azm));color:#fff;border:none;border-radius:12px;font-family:Outfit,sans-serif;font-weight:700;font-size:14px;cursor:pointer;">💾 Guardar ruta del día</button>
+        </div>
+
+        <!-- Vista estado en tiempo real -->
+        <div id="sup-ruta-estado" style="margin-top:1.5rem;"></div>
+      </div>
+    </div>
+
     <div class="sv on" id="sv-rep">
       <div class="sup-stats">
         <div class="sstat"><div class="sstat-n" id="ss1">0</div><div class="sstat-l">Reportes</div></div>
@@ -1284,6 +1402,617 @@ async function runDiag(){
 // ──────────────────────────────────────
 // INIT — bulletproof
 // ──────────────────────────────────────
+
+// ══════════════════════════════════════════════════════
+// IMPORTADOR CSV — RUTAS DESDE UCALSA CONNECT
+// ══════════════════════════════════════════════════════
+
+// Columnas que reconoce el parser (flexible, no importa el orden ni mayúsculas)
+const CSV_COLS = {
+  repartidor: ['repartidor','rep','conductor','driver','responsable','nombre repartidor','asignado a','asignado'],
+  nombre:     ['nombre','destinatario','cliente','usuario','comensall','comensal','nombre usuario','nombre cliente','paciente'],
+  direccion:  ['direccion','dirección','address','domicilio','calle','dir','domicilio completo','dirección completa'],
+  alergenos:  ['alergenos','alérgenos','alergia','alergias','allergens','intolerancias','restricciones','dieta especial'],
+  riesgo:     ['riesgo','risk','nivel','prioridad','priority','tipo caja','caja'],
+  notas:      ['notas','nota','observaciones','comentarios','note','notes','obs','instrucciones'],
+  orden:      ['orden','order','nº','numero','#','seq','secuencia','parada'],
+};
+
+function csvNormKey(str) {
+  return str.toLowerCase().trim()
+    .normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .replace(/[^a-z0-9 ]/g,'').trim();
+}
+
+function csvDetectarColumna(header) {
+  const h = csvNormKey(header);
+  for (const [campo, aliases] of Object.entries(CSV_COLS)) {
+    for (const alias of aliases) {
+      if (h === alias || h.includes(alias) || alias.includes(h)) return campo;
+    }
+  }
+  return null;
+}
+
+function csvDetectarRiesgo(val) {
+  if (!val) return 'normal';
+  const v = val.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  if (v.includes('criti') || v.includes('roj') || v.includes('alta') || v.includes('high')) return 'critico';
+  if (v.includes('alto') || v.includes('medio') || v.includes('amarill') || v.includes('medium') || v.includes('alerg')) return 'alto';
+  return 'normal';
+}
+
+function csvParsear(texto) {
+  // Detectar separador: ; , o tab
+  const lineas = texto.trim().split(/\r?\n/).filter(l => l.trim());
+  if (lineas.length < 2) return { error: 'El CSV necesita al menos una cabecera y una fila de datos.' };
+
+  const detectarSep = (linea) => {
+    const pts = [';',',','\t','|'].map(s => ({ s, n: linea.split(s).length }));
+    return pts.sort((a,b) => b.n - a.n)[0].s;
+  };
+  const sep = detectarSep(lineas[0]);
+
+  const cabeceras = lineas[0].split(sep).map(h => h.replace(/^["']|["']$/g,'').trim());
+  const mapaCol = {}; // índice → campo
+  cabeceras.forEach((h, i) => {
+    const campo = csvDetectarColumna(h);
+    if (campo) mapaCol[i] = campo;
+  });
+
+  const camposDetectados = Object.values(mapaCol);
+  if (!camposDetectados.includes('nombre') && !camposDetectados.includes('direccion')) {
+    return { error: `No se detectaron columnas reconocibles. Cabeceras encontradas: ${cabeceras.join(', ')}. Usa la plantilla como referencia.` };
+  }
+
+  // Parsear filas
+  const filas = [];
+  for (let i = 1; i < lineas.length; i++) {
+    const vals = lineas[i].split(sep).map(v => v.replace(/^["']|["']$/g,'').trim());
+    if (vals.every(v => !v)) continue; // fila vacía
+    const fila = {};
+    vals.forEach((v, idx) => { if (mapaCol[idx]) fila[mapaCol[idx]] = v; });
+    filas.push(fila);
+  }
+
+  if (!filas.length) return { error: 'El CSV no tiene filas de datos.' };
+
+  // Agrupar por repartidor
+  const grupos = {};
+  filas.forEach((f, i) => {
+    // Si no hay columna repartidor, agrupar todo bajo el rep seleccionado (null)
+    const rep = f.repartidor ? f.repartidor.trim() : '__SIN_REP__';
+    if (!grupos[rep]) grupos[rep] = [];
+    grupos[rep].push({
+      id: 'csv_' + Date.now() + '_' + i,
+      orden: parseInt(f.orden) || (grupos[rep] ? grupos[rep].length + 1 : 1),
+      nombre: f.nombre || '(sin nombre)',
+      direccion: f.direccion || '(sin dirección)',
+      alergenos: f.alergenos || '',
+      riesgo: csvDetectarRiesgo(f.riesgo || f.alergenos),
+      notas: f.notas || '',
+      estado: 'pendiente',
+      confirmadoEn: null,
+      ptsGanados: 0
+    });
+  });
+
+  // Ordenar dentro de cada grupo
+  for (const rep of Object.keys(grupos)) {
+    grupos[rep].sort((a,b) => a.orden - b.orden);
+    grupos[rep].forEach((e,i) => e.orden = i+1);
+  }
+
+  return { ok: true, grupos, total: filas.length, columnas: camposDetectados };
+}
+
+function csvOnDrop(ev) {
+  ev.preventDefault();
+  document.getElementById('csv-drop-zone').classList.remove('drag-over');
+  const file = ev.dataTransfer.files[0];
+  if (file) csvLeerArchivo(file);
+}
+
+function csvLeerArchivo(file) {
+  if (!file) return;
+  if (!file.name.match(/\.csv$|\.txt$/i)) {
+    csvMostrarError('Solo se aceptan archivos .csv o .txt');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = e => csvProcesar(e.target.result, file.name);
+  reader.readAsText(file, 'UTF-8');
+}
+
+let csvDatosImportados = null; // resultado parseado guardado para confirm
+
+function csvProcesar(texto, nombreArchivo) {
+  const prev = document.getElementById('csv-preview');
+  prev.style.display = 'block';
+
+  const result = csvParsear(texto);
+  if (result.error) {
+    prev.innerHTML = `<div class="csv-err">❌ ${result.error}</div>`;
+    return;
+  }
+
+  csvDatosImportados = result;
+  const grupos = result.grupos;
+  const repsConocidos = reps.map(r => r.nombre.toLowerCase().trim());
+
+  let html = `<div style="font-size:12px;color:var(--gm);margin-bottom:.75rem;">
+    📄 <strong>${nombreArchivo}</strong> · ${result.total} entregas · Columnas detectadas: ${result.columnas.join(', ')}
+  </div>`;
+
+  const sinRep = grupos['__SIN_REP__'];
+
+  if (sinRep) {
+    // CSV sin columna de repartidor → asignar al seleccionado
+    html += `<div class="csv-rep-block">
+      <div class="csv-rep-hdr">
+        <div>
+          <div class="csv-rep-name">📦 ${sinRep.length} entregas detectadas</div>
+          <div class="csv-rep-count">Sin columna "Repartidor" — se asignarán al repartidor seleccionado abajo</div>
+        </div>
+      </div>
+      ${sinRep.slice(0,4).map(e => `<div class="csv-row-prev">
+        <span class="csv-row-num">${e.orden}</span>
+        <span style="flex:1;">${e.nombre} · ${e.direccion}</span>
+        ${e.alergenos ? `<span class="csv-alg">⚠ ${e.alergenos}</span>` : ''}
+        ${e.riesgo==='critico' ? '<span class="csv-crit">🚨</span>' : ''}
+      </div>`).join('')}
+      ${sinRep.length > 4 ? `<div style="font-size:11px;color:var(--gm);text-align:center;">+${sinRep.length-4} más...</div>` : ''}
+      <div style="margin-top:.6rem;">
+        <select id="csv-asignar-rep" style="width:100%;padding:8px 10px;background:var(--gr);border:1.5px solid var(--bo);border-radius:8px;font-family:'Outfit',sans-serif;font-size:12px;color:var(--tx);outline:none;">
+          <option value="">— Asignar a repartidor —</option>
+          ${reps.map(r => `<option value="${r.nombre}">${r.nombre}</option>`).join('')}
+        </select>
+      </div>
+      <button class="btn-csv-import" style="width:100%;margin-top:.6rem;" onclick="csvImportarSinRep()">⬆ Importar estas entregas</button>
+    </div>`;
+  } else {
+    // CSV con columna de repartidor → bloque por cada uno
+    for (const [repNombre, entregas] of Object.entries(grupos)) {
+      const repEncontrado = reps.find(r => r.nombre.toLowerCase().includes(repNombre.toLowerCase()) || repNombre.toLowerCase().includes(r.nombre.toLowerCase().split(' ')[0]));
+      const matchClass = repEncontrado ? 'color:#0a8a4a' : 'color:var(--do)';
+      const matchTxt = repEncontrado ? `✓ ${repEncontrado.nombre}` : `⚠ No encontrado en el equipo`;
+
+      html += `<div class="csv-rep-block">
+        <div class="csv-rep-hdr">
+          <div>
+            <div class="csv-rep-name">${repNombre}</div>
+            <div class="csv-rep-count" style="${matchClass}">${matchTxt} · ${entregas.length} entregas</div>
+          </div>
+          <button class="btn-csv-import" onclick="csvImportarRep('${repNombre}')" ${!repEncontrado ? 'disabled title="Repartidor no encontrado en el equipo"' : ''}>
+            ⬆ Importar
+          </button>
+        </div>
+        ${entregas.slice(0,3).map(e => `<div class="csv-row-prev">
+          <span class="csv-row-num">${e.orden}</span>
+          <span style="flex:1;">${e.nombre} · <span style="color:var(--gm)">${e.direccion}</span></span>
+          ${e.alergenos ? `<span class="csv-alg">⚠ ${e.alergenos}</span>` : ''}
+          ${e.riesgo==='critico' ? '<span class="csv-crit">🚨</span>' : ''}
+        </div>`).join('')}
+        ${entregas.length > 3 ? `<div style="font-size:11px;color:var(--gm);text-align:center;padding:.3rem;">+${entregas.length-3} más</div>` : ''}
+      </div>`;
+    }
+    html += `<button class="btn-csv-import" style="width:100%;margin-bottom:.75rem;" onclick="csvImportarTodos()">⬆ Importar TODOS los repartidores de una vez</button>`;
+  }
+
+  prev.innerHTML = html;
+}
+
+function csvMostrarError(msg) {
+  const prev = document.getElementById('csv-preview');
+  prev.style.display = 'block';
+  prev.innerHTML = `<div class="csv-err">❌ ${msg}</div>`;
+}
+
+async function csvImportarRep(repNombre) {
+  if (!csvDatosImportados) return;
+  const entregas = csvDatosImportados.grupos[repNombre];
+  const repReal = reps.find(r => r.nombre.toLowerCase().includes(repNombre.toLowerCase()) || repNombre.toLowerCase().includes(r.nombre.toLowerCase().split(' ')[0]));
+  if (!repReal || !entregas) return;
+
+  const fecha = document.getElementById('sup-ruta-fecha')?.value || fechaHoy();
+  await csvEnviarRuta(repReal.nombre, fecha, entregas);
+}
+
+async function csvImportarSinRep() {
+  if (!csvDatosImportados) return;
+  const repSel = document.getElementById('csv-asignar-rep')?.value;
+  if (!repSel) { alert('Selecciona a qué repartidor asignar las entregas.'); return; }
+  const entregas = csvDatosImportados.grupos['__SIN_REP__'];
+  const fecha = document.getElementById('sup-ruta-fecha')?.value || fechaHoy();
+  await csvEnviarRuta(repSel, fecha, entregas);
+}
+
+async function csvImportarTodos() {
+  if (!csvDatosImportados) return;
+  const fecha = document.getElementById('sup-ruta-fecha')?.value || fechaHoy();
+  for (const [repNombre, entregas] of Object.entries(csvDatosImportados.grupos)) {
+    if (repNombre === '__SIN_REP__') continue;
+    const repReal = reps.find(r => r.nombre.toLowerCase().includes(repNombre.toLowerCase()) || repNombre.toLowerCase().includes(r.nombre.toLowerCase().split(' ')[0]));
+    if (repReal) await csvEnviarRuta(repReal.nombre, fecha, entregas);
+  }
+}
+
+async function csvEnviarRuta(repNombre, fecha, entregas) {
+  const btns = document.querySelectorAll('.btn-csv-import');
+  btns.forEach(b => b.disabled = true);
+
+  try {
+    const res = await fetch('/.netlify/functions/rutty-blobs', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ op: 'set-rutas', fecha, repNombre, entregas })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error);
+
+    // Marcar como importado en preview
+    const prev = document.getElementById('csv-preview');
+    const bloques = prev.querySelectorAll('.csv-rep-block');
+    bloques.forEach(b => {
+      if (b.textContent.includes(repNombre)) {
+        const btn = b.querySelector('.btn-csv-import');
+        if (btn) btn.outerHTML = `<span class="csv-ok">✓ Importado — ${data.total} entregas guardadas</span>`;
+      }
+    });
+
+    // Si hay un solo bloque sin rep, mostrar ok general
+    if (!bloques.length) {
+      prev.innerHTML += `<div class="csv-ok" style="margin-top:.5rem;">✓ ${entregas.length} entregas guardadas para ${repNombre}</div>`;
+    }
+  } catch(e) {
+    btns.forEach(b => b.disabled = false);
+    csvMostrarError('Error al guardar: ' + e.message);
+  }
+}
+
+function descargarPlantillaCSV() {
+  const repNombres = reps.map(r => r.nombre).join(' / ');
+  const csv = [
+    'Repartidor;Orden;Nombre;Direccion;Alergenos;Riesgo;Notas',
+    `${reps[0]?.nombre || 'Ana García'};1;María López;Calle Mayor 12 3ºA;;normal;Timbre roto, llamar por teléfono`,
+    `${reps[0]?.nombre || 'Ana García'};2;Juan Pérez;Av. Constitución 45 2ºB;gluten pescado;alto;Caja roja — verificar QR`,
+    `${reps[1]?.nombre || 'Pedro Ruiz'};1;Carmen Ruiz;Plaza España 3 1ºC;;normal;`,
+    `${reps[1]?.nombre || 'Pedro Ruiz'};2;Antonio Díaz;C/ Pez 7 bajo;;critico;ALÉRGICO FRUTOS SECOS — caja roja obligatoria`,
+  ].join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'plantilla-rutty-rutas.csv';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
+// ══════════════════════════════════════════════════════
+// SISTEMA DE RUTAS DIARIAS
+// ══════════════════════════════════════════════════════
+
+let rutaHoy = [];          // Entregas del repartidor activo hoy
+let rutaFechaHoy = '';     // Fecha en formato YYYY-MM-DD
+let supEntregasEditor = []; // Buffer del editor supervisor
+
+function fechaHoy() {
+  return new Date().toISOString().slice(0,10);
+}
+
+// ── REPARTIDOR: cargar su ruta ──
+async function cargarRuta() {
+  if (repAct === null) return;
+  const nombre = reps[repAct].nombre;
+  const fecha = fechaHoy();
+  rutaFechaHoy = fecha;
+  const el = document.getElementById('ruta-content');
+  if (!el) return;
+  el.innerHTML = '<div class="ruta-empty"><div class="ei">⏳</div><div style="font-size:13px;">Cargando tu ruta...</div></div>';
+
+  try {
+    const res = await fetch('/.netlify/functions/rutty-blobs', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ op: 'get-rutas', fecha })
+    });
+    const data = await res.json();
+    const rutaRep = data.rutas && data.rutas[nombre];
+    if (!rutaRep || !rutaRep.entregas || !rutaRep.entregas.length) {
+      el.innerHTML = '<div class="ruta-empty"><div class="ei">📭</div><div style="font-size:13px;font-weight:600;">Sin ruta asignada hoy</div><div style="font-size:12px;margin-top:.4rem;">Tu supervisor la publicará antes de que salgas.</div></div>';
+      return;
+    }
+    rutaHoy = rutaRep.entregas;
+    renderRutaRepartidor();
+  } catch(e) {
+    el.innerHTML = '<div class="ruta-empty"><div class="ei">📡</div><div style="font-size:13px;">Sin conexión. Intenta de nuevo.</div></div>';
+  }
+}
+
+// ── REPARTIDOR: renderizar su lista de entregas ──
+function renderRutaRepartidor() {
+  const el = document.getElementById('ruta-content');
+  if (!el || !rutaHoy.length) return;
+
+  const total = rutaHoy.length;
+  const entregadas = rutaHoy.filter(e => e.estado === 'entregado').length;
+  const pct = Math.round(entregadas / total * 100);
+  const proxima = rutaHoy.find(e => e.estado === 'pendiente');
+
+  let html = `<div class="ruta-hero">
+    <div class="ruta-hero-num">${entregadas}/${total}</div>
+    <div class="ruta-hero-lbl">entregas completadas hoy</div>
+    <div class="ruta-progress"><div class="ruta-progress-fill" style="width:${pct}%"></div></div>
+  </div>`;
+
+  rutaHoy.forEach(e => {
+    const esProxima = proxima && e.id === proxima.id;
+    const iconoRiesgo = e.riesgo === 'critico' ? '🚨' : e.riesgo === 'alto' ? '⚠️' : '📦';
+    const ptsLabel = e.riesgo === 'critico' ? '+25 pts' : e.riesgo === 'alto' ? '+15 pts' : '+10 pts';
+
+    html += `<div class="entrega-card ${e.estado}${esProxima ? ' proxima' : ''}" id="ecard-${e.id}">
+      <div class="entrega-orden">
+        <div class="entrega-num ${e.riesgo}">${e.orden}</div>
+        <div class="entrega-nombre">${e.nombre}</div>
+        <span class="entrega-estado ${e.estado}">${e.estado === 'entregado' ? '✓ Entregado' : e.estado === 'incidencia' ? '⚠ Incidencia' : esProxima ? '▶ Siguiente' : 'Pendiente'}</span>
+      </div>
+      <div class="entrega-dir">📍 ${e.direccion}</div>
+      <div class="entrega-tags">
+        <span class="etag ${e.riesgo}">${iconoRiesgo} Riesgo ${e.riesgo}</span>
+        ${e.alergenos ? `<span class="etag alto">⚠ ${e.alergenos}</span>` : ''}
+        <span class="etag normal">${ptsLabel}</span>
+      </div>
+      ${e.notas ? `<div style="font-size:11px;color:var(--gm);margin-bottom:.4rem;">📝 ${e.notas}</div>` : ''}
+      ${e.estado === 'pendiente' ? `<div class="entrega-btns">
+        <button class="btn-confirmar" onclick="confirmarEntrega('${e.id}')">✅ Confirmar entrega</button>
+        <button class="btn-incidencia" onclick="reportarIncidencia('${e.id}')">⚠</button>
+      </div>` : e.estado === 'entregado' ? `<div style="font-size:11px;color:#0a8a4a;margin-top:.3rem;">✓ Confirmado · +${e.ptsGanados} pts ganados</div>` : ''}
+    </div>`;
+  });
+
+  if (entregadas === total && total > 0) {
+    html += `<div style="text-align:center;padding:1.5rem;background:linear-gradient(135deg,#15C76A22,#0fa85822);border-radius:var(--r2);border:.5px solid #15C76A44;">
+      <div style="font-size:32px;">🏁</div>
+      <div style="font-weight:700;margin:.4rem 0;">¡Ruta completada!</div>
+      <div style="font-size:12px;color:var(--gm);">Cierra tu jornada para registrar los puntos.</div>
+    </div>`;
+  }
+
+  el.innerHTML = html;
+
+  // Audio automático para la siguiente entrega
+  if (proxima && proxima.estado === 'pendiente') {
+    const alertas = [];
+    if (proxima.riesgo === 'critico') alertas.push('es una entrega CRÍTICA, verifica el QR y la etiqueta antes de entregar');
+    else if (proxima.riesgo === 'alto') alertas.push('contiene alérgenos, ten precaución');
+    if (proxima.alergenos) alertas.push('alergenos: ' + proxima.alergenos);
+    // Solo hablar si se acaba de cargar (no en cada re-render)
+  }
+}
+
+// ── REPARTIDOR: confirmar entrega ──
+async function confirmarEntrega(entregaId) {
+  if (repAct === null) return;
+  const nombre = reps[repAct].nombre;
+  const btn = document.querySelector(`#ecard-${entregaId} .btn-confirmar`);
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Confirmando...'; }
+
+  try {
+    const res = await fetch('/.netlify/functions/rutty-blobs', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ op: 'confirmar-entrega', fecha: rutaFechaHoy, repNombre: nombre, entregaId })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error);
+
+    // Actualizar estado local
+    const e = rutaHoy.find(x => x.id === entregaId);
+    if (e) { e.estado = 'entregado'; e.ptsGanados = data.ptsGanados; }
+
+    // Sumar puntos al repartidor
+    reps[repAct].pts += data.ptsGanados;
+    reps[repAct].total = (reps[repAct].total || 0) + 1;
+    if (e && e.riesgo === 'alto') reps[repAct].alto = (reps[repAct].alto || 0) + 1;
+    actualizarTopbar();
+
+    // Re-render
+    renderRutaRepartidor();
+
+    // Mensaje de siguiente entrega por audio
+    const siguiente = data.siguiente;
+    let msg = `Entrega confirmada. Sumaste ${data.ptsGanados} puntos.`;
+    if (siguiente) {
+      msg += ` Siguiente parada: ${siguiente.nombre}, ${siguiente.direccion}.`;
+      if (siguiente.riesgo === 'critico') msg += ' ATENCIÓN: entrega crítica, verifica QR y etiqueta.';
+      else if (siguiente.riesgo === 'alto') msg += ` Cuidado con alérgenos: ${siguiente.alergenos}.`;
+    } else {
+      msg += ' ¡Ruta completada! Cierra tu jornada cuando estés listo.';
+    }
+    hablar(msg);
+
+    // Celebración en hito
+    if (data.totalEntregadas === data.totalRuta) {
+      setTimeout(() => celeb('🏁', '¡Ruta completada!', `${reps[repAct].nombre.split(' ')[0]}, has completado las ${data.totalRuta} entregas de hoy. ¡Excelente trabajo!`), 800);
+    } else if (data.ptsGanados >= 25) {
+      setTimeout(() => celeb('🎯', '¡Entrega crítica!', `+${data.ptsGanados} puntos por gestionar una entrega de alto riesgo perfectamente.`), 600);
+    }
+
+  } catch(e) {
+    if (btn) { btn.disabled = false; btn.textContent = '✅ Confirmar entrega'; }
+    alert('Error al confirmar: ' + e.message);
+  }
+}
+
+// ── REPARTIDOR: reportar incidencia ──
+async function reportarIncidencia(entregaId) {
+  if (!confirm('¿Confirmas que hay una incidencia en esta entrega? (no entregada, daño, etc.)')) return;
+  if (repAct === null) return;
+  const nombre = reps[repAct].nombre;
+  try {
+    await fetch('/.netlify/functions/rutty-blobs', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ op: 'incidencia', fecha: rutaFechaHoy, repNombre: nombre, entregaId })
+    });
+    const e = rutaHoy.find(x => x.id === entregaId);
+    if (e) { e.estado = 'incidencia'; e.ptsGanados = 0; reps[repAct].incGraves = (reps[repAct].incGraves || 0) + 1; }
+    renderRutaRepartidor();
+    hablar('Incidencia registrada. Contacta con coordinación si lo necesitas.');
+  } catch(err) {
+    alert('Error al registrar incidencia.');
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// SUPERVISOR: gestión de rutas
+// ══════════════════════════════════════════════════════
+
+function cargarRutasSup() {
+  // Poblar selector de repartidores
+  const sel = document.getElementById('sup-ruta-rep');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">— Selecciona repartidor —</option>' +
+    reps.map(r => `<option value="${r.nombre}">${r.nombre}</option>`).join('');
+
+  // Fecha por defecto = hoy
+  const fi = document.getElementById('sup-ruta-fecha');
+  if (fi) fi.value = fechaHoy();
+
+  sel.onchange = () => supCargarEditorRuta();
+  if (fi) fi.onchange = () => supCargarEditorRuta();
+
+  document.getElementById('sup-ruta-estado').innerHTML = '';
+}
+
+async function supCargarEditorRuta() {
+  const repNombre = document.getElementById('sup-ruta-rep').value;
+  const fecha = document.getElementById('sup-ruta-fecha').value;
+  const editorEl = document.getElementById('sup-entregas-editor');
+  const addBtn = document.getElementById('sup-add-entrega-btn');
+  const saveBtn = document.getElementById('sup-save-btn');
+  const estadoEl = document.getElementById('sup-ruta-estado');
+
+  if (!repNombre) {
+    editorEl.innerHTML = '<div class="ruta-empty"><div class="ei">🚚</div><div style="font-size:13px;">Selecciona un repartidor</div></div>';
+    addBtn.style.display = 'none'; saveBtn.style.display = 'none';
+    return;
+  }
+
+  editorEl.innerHTML = '<div class="ruta-empty"><div style="font-size:13px;">⏳ Cargando...</div></div>';
+  addBtn.style.display = 'none'; saveBtn.style.display = 'none';
+
+  try {
+    const res = await fetch('/.netlify/functions/rutty-blobs', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ op: 'get-rutas', fecha })
+    });
+    const data = await res.json();
+    const rutaRep = data.rutas && data.rutas[repNombre];
+    supEntregasEditor = rutaRep ? JSON.parse(JSON.stringify(rutaRep.entregas)) : [];
+
+    // Estado en tiempo real
+    if (rutaRep && rutaRep.entregas.length) {
+      const ent = rutaRep.entregas.filter(e => e.estado === 'entregado').length;
+      const inc = rutaRep.entregas.filter(e => e.estado === 'incidencia').length;
+      estadoEl.innerHTML = `<div class="sup-ruta-block">
+        <div style="font-size:12px;font-weight:700;margin-bottom:.5rem;">📊 Estado en tiempo real</div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+          <span style="padding:4px 10px;background:#15C76A22;color:#0a8a4a;border-radius:20px;font-size:12px;font-weight:700;">✓ ${ent} entregadas</span>
+          <span style="padding:4px 10px;background:#C9303022;color:#C93030;border-radius:20px;font-size:12px;font-weight:700;">⚠ ${inc} incidencias</span>
+          <span style="padding:4px 10px;background:#1A3F6F22;color:var(--az);border-radius:20px;font-size:12px;font-weight:700;">⏳ ${rutaRep.entregas.length - ent - inc} pendientes</span>
+        </div>
+        <div style="font-size:10px;color:var(--gm);margin-top:.4rem;">Actualizado: ${rutaRep.actualizado ? new Date(rutaRep.actualizado).toLocaleTimeString('es-ES') : '—'}</div>
+      </div>`;
+    } else {
+      estadoEl.innerHTML = '';
+    }
+
+    supRenderEditorEntregas();
+    addBtn.style.display = 'block';
+    saveBtn.style.display = 'block';
+  } catch(e) {
+    editorEl.innerHTML = '<div class="ruta-empty"><div class="ei">📡</div><div style="font-size:13px;">Error de conexión</div></div>';
+  }
+}
+
+function supRenderEditorEntregas() {
+  const el = document.getElementById('sup-entregas-editor');
+  if (!el) return;
+
+  if (!supEntregasEditor.length) {
+    el.innerHTML = '<div class="ruta-empty" style="padding:1rem;"><div class="ei" style="font-size:24px;">📭</div><div style="font-size:12px;">Sin entregas. Añade la primera.</div></div>';
+    return;
+  }
+
+  el.innerHTML = supEntregasEditor.map((e, i) => `
+    <div class="sup-ruta-block" style="padding:.75rem;">
+      <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem;">
+        <span style="font-size:12px;font-weight:800;color:var(--gm);">#${i+1}</span>
+        <span style="flex:1;font-size:12px;font-weight:700;">${e.nombre || 'Sin nombre'}</span>
+        <span class="er-estado ${e.estado || 'pendiente'}">${e.estado || 'pendiente'}</span>
+        ${e.estado === 'pendiente' ? `<button onclick="supEliminarEntrega(${i})" style="background:none;border:none;color:var(--gm);cursor:pointer;font-size:16px;padding:0 4px;">×</button>` : ''}
+      </div>
+      <div class="ff" style="margin-bottom:.4rem;"><input placeholder="Nombre del destinatario" value="${e.nombre || ''}" oninput="supEntregasEditor[${i}].nombre=this.value" style="width:100%;box-sizing:border-box;padding:8px 10px;background:var(--gr);border:1.5px solid var(--bo);border-radius:8px;font-family:Outfit,sans-serif;font-size:12px;color:var(--tx);outline:none;"></div>
+      <div class="ff" style="margin-bottom:.4rem;"><input placeholder="📍 Dirección completa" value="${e.direccion || ''}" oninput="supEntregasEditor[${i}].direccion=this.value" style="width:100%;box-sizing:border-box;padding:8px 10px;background:var(--gr);border:1.5px solid var(--bo);border-radius:8px;font-family:Outfit,sans-serif;font-size:12px;color:var(--tx);outline:none;"></div>
+      <div class="ff" style="margin-bottom:.4rem;"><input placeholder="⚠ Alérgenos (ej: gluten, pescado)" value="${e.alergenos || ''}" oninput="supEntregasEditor[${i}].alergenos=this.value" style="width:100%;box-sizing:border-box;padding:8px 10px;background:var(--gr);border:1.5px solid var(--bo);border-radius:8px;font-family:Outfit,sans-serif;font-size:12px;color:var(--tx);outline:none;"></div>
+      <div style="font-size:11px;color:var(--gm);margin-bottom:.3rem;">Nivel de riesgo:</div>
+      <div style="display:flex;gap:.4rem;margin-bottom:.4rem;">
+        ${['normal','alto','critico'].map(r => `<button onclick="supEntregasEditor[${i}].riesgo='${r}';supRenderEditorEntregas()" style="flex:1;padding:6px 4px;border-radius:8px;border:1.5px solid ${e.riesgo===r?'var(--az)':'var(--bo)'};background:${e.riesgo===r?'var(--az)22':'var(--gr)'};font-family:Outfit,sans-serif;font-size:11px;font-weight:700;cursor:pointer;color:${e.riesgo===r?'var(--az)':'var(--gm)'};">${r==='normal'?'📦 Normal':r==='alto'?'⚠ Alto':'🚨 Crítico'}</button>`).join('')}
+      </div>
+      <div class="ff"><input placeholder="📝 Notas especiales" value="${e.notas || ''}" oninput="supEntregasEditor[${i}].notas=this.value" style="width:100%;box-sizing:border-box;padding:8px 10px;background:var(--gr);border:1.5px solid var(--bo);border-radius:8px;font-family:Outfit,sans-serif;font-size:12px;color:var(--tx);outline:none;"></div>
+    </div>`).join('');
+}
+
+function supAddEntrega() {
+  supEntregasEditor.push({
+    id: 'e' + Date.now(),
+    orden: supEntregasEditor.length + 1,
+    nombre: '', direccion: '', alergenos: '', riesgo: 'normal', notas: '', estado: 'pendiente'
+  });
+  supRenderEditorEntregas();
+  // Scroll al final
+  setTimeout(() => {
+    const el = document.getElementById('sup-entregas-editor');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, 100);
+}
+
+function supEliminarEntrega(i) {
+  if (!confirm('¿Eliminar esta entrega?')) return;
+  supEntregasEditor.splice(i, 1);
+  supEntregasEditor.forEach((e, j) => e.orden = j + 1);
+  supRenderEditorEntregas();
+}
+
+async function supGuardarRuta() {
+  const repNombre = document.getElementById('sup-ruta-rep').value;
+  const fecha = document.getElementById('sup-ruta-fecha').value;
+  if (!repNombre || !fecha) { alert('Selecciona repartidor y fecha.'); return; }
+  if (!supEntregasEditor.length) { alert('Añade al menos una entrega.'); return; }
+
+  // Recoger valores actuales de los inputs antes de guardar
+  const inputs = document.querySelectorAll('#sup-entregas-editor input');
+  // (Los valores ya están en supEntregasEditor via oninput)
+
+  const btn = document.querySelector('#sup-save-btn button');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Guardando...'; }
+
+  try {
+    const res = await fetch('/.netlify/functions/rutty-blobs', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ op: 'set-rutas', fecha, repNombre, entregas: supEntregasEditor })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error);
+    if (btn) { btn.disabled = false; btn.textContent = '✅ Ruta guardada (' + data.total + ' entregas)'; }
+    setTimeout(() => { if (btn) btn.textContent = '💾 Guardar ruta del día'; }, 3000);
+    supCargarEditorRuta(); // Refrescar estado
+  } catch(e) {
+    if (btn) { btn.disabled = false; btn.textContent = '💾 Guardar ruta del día'; }
+    alert('Error al guardar: ' + e.message);
+  }
+}
+
 function initApp() {
   try {
     renderBienvenida();
