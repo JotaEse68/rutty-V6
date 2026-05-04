@@ -1447,9 +1447,27 @@ function csvNormKey(str) {
 
 function csvDetectarColumna(header) {
   const h = csvNormKey(header);
+
+  // Reglas prioritarias para evitar bugs típicos:
+  // - "ORDEN RUTA" debe ser orden, no repartidor por contener la palabra ruta.
+  // - "NOMBRE CLIENTE" debe ser cliente, no repartidor.
+  if (/^(orden|orden ruta|orden reparto|parada|secuencia|seq|n pedido|numero pedido|n albaran|albaran)$/.test(h)) return 'orden';
+  if (/^(nombre cliente|cliente|destinatario|usuario|comensal|paciente|beneficiario|nombre completo|apellidos y nombre)$/.test(h)) return 'nombre';
+  if (/^(domicilio entrega|direccion entrega|direccion|domicilio|calle|lugar entrega|punto entrega|ubicacion)$/.test(h)) return 'direccion';
+  if (/^(zona|ruta|ruta reparto|ruta entrega|cod ruta|codigo ruta|repartidor|conductor|transportista|operario|asignado a)$/.test(h)) return 'repartidor';
+
+  // Primero coincidencia exacta.
   for (const [campo, aliases] of Object.entries(CSV_COLS)) {
     for (const alias of aliases) {
-      if (h === alias || h.includes(alias) || alias.includes(h)) return campo;
+      if (h === csvNormKey(alias)) return campo;
+    }
+  }
+  // Después coincidencia flexible, pero evitando que "ruta" se coma "orden ruta".
+  for (const [campo, aliases] of Object.entries(CSV_COLS)) {
+    for (const alias of aliases) {
+      const a = csvNormKey(alias);
+      if ((campo === 'repartidor' && ['ruta','zona'].includes(a)) || a.length < 4) continue;
+      if (h.includes(a) || a.includes(h)) return campo;
     }
   }
   return null;
@@ -1770,15 +1788,7 @@ function csvProcesar(texto, nombreArchivo) {
     // CSV con columna de repartidor → bloque por cada uno
     for (const [repNombre, entregas] of Object.entries(grupos)) {
       // Match flexible: nombre completo, primer apellido, o cualquier palabra
-      const repNombreLow = repNombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-      const repEncontrado = reps.find(r => {
-        const rLow = r.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-        return rLow === repNombreLow || 
-               rLow.includes(repNombreLow) || 
-               repNombreLow.includes(rLow) ||
-               rLow.split(' ').some(w => w.length > 2 && repNombreLow.includes(w)) ||
-               repNombreLow.split(' ').some(w => w.length > 2 && rLow.includes(w));
-      });
+      const repEncontrado = csvBuscarRepReal(repNombre);
       const matchClass = repEncontrado ? 'color:#0a8a4a' : 'color:var(--do)';
       // Si no hay match, mostrar selector para asignar manualmente
       const matchTxt = repEncontrado ? `✓ Asignado a: ${repEncontrado.nombre}` : `⚠ No encontrado — asigna manualmente`;
@@ -1824,13 +1834,7 @@ function csvMostrarError(msg) {
 async function csvImportarRep(repNombre) {
   if (!csvDatosImportados) return;
   const entregas = csvDatosImportados.grupos[repNombre];
-  const repNombreLow = repNombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-  const repReal = reps.find(r => {
-    const rLow = r.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-    return rLow === repNombreLow || rLow.includes(repNombreLow) || repNombreLow.includes(rLow) ||
-           rLow.split(' ').some(w => w.length > 2 && repNombreLow.includes(w)) ||
-           repNombreLow.split(' ').some(w => w.length > 2 && rLow.includes(w));
-  });
+  const repReal = csvBuscarRepReal(repNombre);
   if (!repReal || !entregas) return;
   const fecha = document.getElementById('sup-ruta-fecha')?.value || fechaHoy();
   await csvEnviarRuta(repReal.nombre, fecha, entregas);
@@ -1856,13 +1860,35 @@ async function csvImportarSinRep() {
   await csvEnviarRuta(repSel, fecha, entregas);
 }
 
+function csvBuscarRepReal(repNombre) {
+  const repLow = String(repNombre || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+  return reps.find(r => {
+    const rLow = r.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+    const zonaLow = String(r.zona || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+    return rLow === repLow || rLow.includes(repLow) || repLow.includes(rLow) ||
+           (zonaLow && (repLow.includes(zonaLow) || zonaLow.includes(repLow))) ||
+           rLow.split(' ').some(w => w.length > 2 && repLow.includes(w)) ||
+           repLow.split(' ').some(w => w.length > 2 && rLow.includes(w));
+  });
+}
+
 async function csvImportarTodos() {
   if (!csvDatosImportados) return;
   const fecha = document.getElementById('sup-ruta-fecha')?.value || fechaHoy();
+  let importados = 0;
+  let sinMatch = [];
   for (const [repNombre, entregas] of Object.entries(csvDatosImportados.grupos)) {
     if (repNombre === '__SIN_REP__') continue;
-    const repReal = reps.find(r => r.nombre.toLowerCase().includes(repNombre.toLowerCase()) || repNombre.toLowerCase().includes(r.nombre.toLowerCase().split(' ')[0]));
-    if (repReal) await csvEnviarRuta(repReal.nombre, fecha, entregas);
+    const repReal = csvBuscarRepReal(repNombre);
+    if (repReal) {
+      await csvEnviarRuta(repReal.nombre, fecha, entregas);
+      importados++;
+    } else {
+      sinMatch.push(repNombre);
+    }
+  }
+  if (!importados && sinMatch.length) {
+    alert('No se pudo asignar automáticamente. Revisa los bloques y asigna cada ruta manualmente. Rutas sin match: ' + sinMatch.join(', '));
   }
 }
 
@@ -1920,18 +1946,19 @@ async function csvEnviarRuta(repNombre, fecha, entregas) {
 
 
 function cargarDemoUcalsa() {
-  // Demo interna: simula un Excel exportado desde una app de rutas, con filas superiores y cabeceras no perfectas.
+  // Demo interna: simula un Excel exportado desde Ucalsa Connect.
+  // Importante para la demo: ya viene separado por repartidor real, no todo en una sola ruta.
   const demo = [
-    'UCALSA CONNECT - EXPORTACION DE RUTAS;;;;;;',
-    'Fecha;04/05/2026;;;;;',
-    'Zona;ORDEN RUTA;NOMBRE CLIENTE;DOMICILIO ENTREGA;MENU/DIETA;SEMÁFORO;OBSERVACIONES ENTREGA',
-    'Ruta Norte;1;María López García;Calle Mayor 12 3ºA;Basal;Verde;Timbre roto. Llamar al llegar',
-    'Ruta Norte;2;Juan Pérez Martín;Av. Constitución 45 2ºB;Sin gluten / pescado;Amarillo;Caja roja. Verificar QR',
-    'Ruta Norte;3;Carmen Ruiz Vidal;Plaza España 3 1ºC;Triturado;Verde;Dejar en portería',
-    'Ruta Centro;1;Antonio Díaz Soto;C/ Pez 7 Bajo;Sin frutos secos;Rojo;ALERTA: confirmar identidad antes de entregar',
-    'Ruta Centro;2;Rosa Sánchez Cano;Gran Vía 88 4ºD;Sin lactosa;Amarillo;Requiere llamada previa',
-    'Ruta Sur;1;Pedro Molina Alba;Calle Luna 22;Basal;Verde;',
-    'Ruta Sur;2;Luisa Navarro Gil;Paseo del Río 9;Diabético;Amarillo;Entregar antes de las 13:00'
+    'UCALSA CONNECT - EXPORTACION DE RUTAS;;;;;;;',
+    'Fecha;04/05/2026;;;;;;',
+    'Repartidor;Zona;ORDEN RUTA;NOMBRE CLIENTE;DOMICILIO ENTREGA;MENU/DIETA;SEMÁFORO;OBSERVACIONES ENTREGA',
+    'Ana García;Ruta Norte;1;María López García;Calle Mayor 12 3ºA;Basal;Verde;Timbre roto. Llamar al llegar',
+    'Ana García;Ruta Norte;2;Juan Pérez Martín;Av. Constitución 45 2ºB;Sin gluten / pescado;Amarillo;Caja roja. Verificar QR',
+    'Ana García;Ruta Norte;3;Carmen Ruiz Vidal;Plaza España 3 1ºC;Triturado;Verde;Dejar en portería',
+    'Laura Gómez;Ruta Centro;1;Antonio Díaz Soto;C/ Pez 7 Bajo;Sin frutos secos;Rojo;ALERTA: confirmar identidad antes de entregar',
+    'Laura Gómez;Ruta Centro;2;Rosa Sánchez Cano;Gran Vía 88 4ºD;Sin lactosa;Amarillo;Requiere llamada previa',
+    'Pedro Ruiz;Ruta Sur;1;Pedro Molina Alba;Calle Luna 22;Basal;Verde;',
+    'Pedro Ruiz;Ruta Sur;2;Luisa Navarro Gil;Paseo del Río 9;Diabético;Amarillo;Entregar antes de las 13:00'
   ].join('\n');
   csvProcesar(demo, 'DEMO_Ucalsa_Connect_Rutas.xlsx');
 }
