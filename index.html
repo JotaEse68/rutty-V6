@@ -400,6 +400,25 @@ canvas#cc{position:absolute;inset:0;pointer-events:none;border-radius:inherit;}
 .ruta-hero-lbl{font-size:12px;opacity:.75;margin-top:2px;}
 .ruta-progress{background:rgba(255,255,255,.15);border-radius:20px;height:8px;margin-top:.75rem;overflow:hidden;}
 .ruta-progress-fill{height:100%;background:#15C76A;border-radius:20px;transition:width .5s ease;}
+.ruta-assistant{background:#fff;border:1px solid #DDE5EF;border-radius:18px;padding:1rem;margin-bottom:1rem;box-shadow:0 10px 28px rgba(14,31,53,.08);}
+.ruta-assistant-top{display:flex;gap:.75rem;align-items:flex-start;margin-bottom:.75rem;}
+.ruta-assistant-avatar{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#1A3F6F,#0F2748);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.ruta-assistant-kicker{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#8A95A3;margin-bottom:2px;}
+.ruta-assistant-title{font-size:16px;font-weight:800;color:#0F172A;line-height:1.15;}
+.ruta-assistant-msg{font-size:13px;line-height:1.45;color:#536173;margin-top:.35rem;}
+.ruta-assistant-grid{display:grid;grid-template-columns:1fr;gap:.55rem;margin-top:.8rem;}
+.ruta-assistant-box{background:#F6F8FB;border:1px solid #E4EAF2;border-radius:13px;padding:.7rem;font-size:12px;color:#334155;}
+.ruta-assistant-box strong{display:block;color:#0F172A;font-size:11px;text-transform:uppercase;letter-spacing:.03em;margin-bottom:.2rem;}
+.ruta-assistant-box.warn{background:#FFF7E8;border-color:#FFD99A;color:#7A4B00;}
+.ruta-assistant-box.crit{background:#FFF0F0;border-color:#FFC7C7;color:#8A1F1F;}
+.ruta-assistant-actions{display:flex;gap:.5rem;margin-top:.8rem;}
+.ruta-assistant-btn{flex:1;border:none;border-radius:12px;padding:.75rem .8rem;font-family:Outfit,sans-serif;font-size:13px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#1A3F6F,#0F2748);color:#fff;}
+.ruta-assistant-btn.secondary{background:#F1F5F9;color:#1A3F6F;border:1px solid #DDE5EF;}
+.ruta-confirm-toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);width:min(510px,calc(100% - 34px));background:#0F2748;color:#fff;border-radius:18px;padding:1rem;box-shadow:0 18px 44px rgba(0,0,0,.25);z-index:90;display:none;}
+.ruta-confirm-toast.on{display:block;animation:toastIn .25s ease both;}
+.ruta-confirm-toast .t-title{font-weight:900;font-size:15px;margin-bottom:.25rem;}
+.ruta-confirm-toast .t-msg{font-size:13px;opacity:.9;line-height:1.4;}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,16px)}to{opacity:1;transform:translate(-50%,0)}}
 .entrega-card{background:var(--bl);border:.5px solid var(--bo);border-radius:var(--r2);padding:1rem;margin-bottom:.75rem;box-shadow:var(--shadow);transition:all .2s;}
 .entrega-card.entregado{border-color:#15C76A44;background:#15C76A08;opacity:.75;}
 .entrega-card.incidencia{border-color:#C9303044;background:#C9303008;}
@@ -766,6 +785,8 @@ canvas#cc{position:absolute;inset:0;pointer-events:none;border-radius:inherit;}
   </div>
 </div>
 
+<div class="ruta-confirm-toast" id="ruta-toast"><div class="t-title" id="ruta-toast-title"></div><div class="t-msg" id="ruta-toast-msg"></div></div>
+
 </div><!-- /shell -->
 <script>
 // ──────────────────────────────────────
@@ -821,6 +842,49 @@ function getMed(pts){
 function pmx(m){return m==='Rookie'?50:m==='Bronce'?200:m==='Plata'?500:1000;}
 function dias(){const h=new Date(),f=new Date(h.getFullYear(),h.getMonth()+1,0);return f.getDate()-h.getDate();}
 function getInsignias(r){return INSIGNIAS_DEF.map(i=>({...i,ganada:i.req(r)}));}
+function riesgoTexto(r){return r==='critico'?'crítica':r==='alto'?'de riesgo alto':'normal';}
+function puntosEntrega(e){return e?.riesgo==='critico'?25:e?.riesgo==='alto'?15:10;}
+function avisoEntrega(e){
+  if(!e) return '';
+  const avisos=[];
+  if(e.riesgo==='critico') avisos.push('Entrega CRÍTICA: verifica QR, etiqueta y destinatario antes de entregar.');
+  else if(e.riesgo==='alto') avisos.push('Entrega de riesgo alto: revisa alérgenos y etiqueta.');
+  if(e.alergenos) avisos.push('Alérgenos / dieta: '+e.alergenos+'.');
+  if(e.notas) avisos.push('Nota operativa: '+e.notas+'.');
+  return avisos.join(' ');
+}
+function motivacionRuta(){
+  const msgs=[
+    'Buen trabajo. Vamos ordenados y seguros.',
+    'Seguimos: una entrega bien hecha vale más que correr.',
+    'Vas bien. Rutty te acompaña en la siguiente parada.',
+    'Perfecto. Mantén el ritmo y revisa cada etiqueta.',
+    'Seguimos fuertes: seguridad primero, ruta adelante.'
+  ];
+  return msgs[Math.floor(Math.random()*msgs.length)];
+}
+function mensajeAsistenteSiguiente(e, ptsGanados){
+  if(!e) return `Entrega confirmada. Sumaste ${ptsGanados} puntos. Ruta completada. Cierra tu jornada cuando estés listo.`;
+  let msg=`Entrega confirmada. Sumaste ${ptsGanados} puntos. ${motivacionRuta()} Vamos por la próxima entrega: ${e.nombre}, en ${e.direccion}.`;
+  const aviso=avisoEntrega(e);
+  if(aviso) msg+=' Advertencia: '+aviso;
+  return msg;
+}
+function mostrarToastRuta(titulo,msg,ms=5200){
+  const box=document.getElementById('ruta-toast');
+  if(!box) return;
+  document.getElementById('ruta-toast-title').textContent=titulo;
+  document.getElementById('ruta-toast-msg').textContent=msg;
+  box.classList.add('on');
+  clearTimeout(window.__rutaToastTimer);
+  window.__rutaToastTimer=setTimeout(()=>box.classList.remove('on'),ms);
+}
+function hablarSiguienteEntrega(id){
+  const e=rutaHoy.find(x=>x.id===id);
+  if(!e) return;
+  hablar(`Próxima entrega: ${e.nombre}, dirección ${e.direccion}. ${avisoEntrega(e)} ${motivacionRuta()}`);
+}
+
 
 // ──────────────────────────────────────
 // NAVEGACIÓN
@@ -2115,6 +2179,30 @@ function renderRutaRepartidor() {
     <div class="ruta-progress"><div class="ruta-progress-fill" style="width:${pct}%"></div></div>
   </div>`;
 
+  if (proxima) {
+    const aviso = avisoEntrega(proxima);
+    const claseAviso = proxima.riesgo === 'critico' ? 'crit' : proxima.riesgo === 'alto' ? 'warn' : '';
+    html += `<div class="ruta-assistant" id="ruta-assistant">
+      <div class="ruta-assistant-top">
+        <div class="ruta-assistant-avatar">🤖</div>
+        <div>
+          <div class="ruta-assistant-kicker">Asistente de ruta</div>
+          <div class="ruta-assistant-title">Vamos por la próxima entrega</div>
+          <div class="ruta-assistant-msg">${motivacionRuta()} Confirma la entrega anterior, revisa esta parada y avanza sin saltarte el protocolo.</div>
+        </div>
+      </div>
+      <div class="ruta-assistant-grid">
+        <div class="ruta-assistant-box"><strong>Próxima parada</strong>${proxima.orden}. ${proxima.nombre}<br>📍 ${proxima.direccion}</div>
+        <div class="ruta-assistant-box ${claseAviso}"><strong>Advertencia de entrega</strong>${aviso || 'Entrega normal. Mantén temperatura y comprueba destinatario.'}</div>
+        <div class="ruta-assistant-box"><strong>Puntos al confirmar</strong>+${puntosEntrega(proxima)} puntos · Riesgo ${riesgoTexto(proxima.riesgo)}</div>
+      </div>
+      <div class="ruta-assistant-actions">
+        <button class="ruta-assistant-btn" onclick="hablarSiguienteEntrega('${proxima.id}')">🔊 Escuchar instrucciones</button>
+        <button class="ruta-assistant-btn secondary" onclick="document.getElementById('ecard-${proxima.id}')?.scrollIntoView({behavior:'smooth',block:'center'})">Ver entrega</button>
+      </div>
+    </div>`;
+  }
+
   rutaHoy.forEach(e => {
     const esProxima = proxima && e.id === proxima.id;
     const iconoRiesgo = e.riesgo === 'critico' ? '🚨' : e.riesgo === 'alto' ? '⚠️' : '📦';
@@ -2218,7 +2306,10 @@ async function confirmarEntrega(entregaId) {
       if (eLocal && eLocal.riesgo === 'alto') reps[repAct].alto = (reps[repAct].alto || 0) + 1;
       actualizarTopbar();
       renderRutaRepartidor();
-      hablar('Entrega confirmada en modo demo local.');
+      const siguienteLocal = data.siguiente || rutaHoy.find(x => x.estado === 'pendiente');
+      const msgLocal = mensajeAsistenteSiguiente(siguienteLocal, data.ptsGanados);
+      mostrarToastRuta(`✅ +${data.ptsGanados} puntos`, msgLocal);
+      hablar(msgLocal);
     } catch(errLocal) {
       if (btn) { btn.disabled = false; btn.textContent = '✅ Confirmar entrega'; }
       alert('Error al confirmar: ' + errLocal.message);
