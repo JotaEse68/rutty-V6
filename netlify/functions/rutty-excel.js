@@ -23,7 +23,7 @@ function decode(s) {
 function norm(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim(); }
 function col2n(c){let n=0;for(const ch of c)n=n*26+(ch.charCodeAt(0)-64);return n;}
 
-const KEYWORDS=['repartidor','rep','conductor','driver','responsable','nombre','destinatario','cliente','usuario','comensal','paciente','direccion','address','domicilio','orden','numero','parada','alergeno','alergia','intolerancia','riesgo','prioridad','notas','observaciones'];
+const KEYWORDS=['repartidor','rep','conductor','driver','responsable','nombre','destinatario','cliente','usuario','comensal','paciente','direccion','address','domicilio','orden','numero','parada','alergeno','alergia','intolerancia','riesgo','prioridad','cajas','caja','cantidad','bultos','notas','observaciones'];
 function esCabecera(fila){
   const hits=fila.filter(c=>KEYWORDS.some(k=>norm(c).includes(k)));
   return hits.length>=2 && fila.length>=2;
