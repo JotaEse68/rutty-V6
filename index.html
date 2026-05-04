@@ -1901,8 +1901,20 @@ async function csvEnviarRuta(repNombre, fecha, entregas) {
       prev.innerHTML += `<div class="csv-ok" style="margin-top:.5rem;">✓ ${entregas.length} entregas guardadas para ${repNombre}</div>`;
     }
   } catch(e) {
+    // Modo demo: si Netlify Blobs no está configurado, guardar en localStorage para que la demo funcione.
+    const data = ruttyLocalSetRuta(fecha, repNombre, entregas);
+    const prev = document.getElementById('csv-preview');
+    const bloques = prev ? prev.querySelectorAll('.csv-rep-block') : [];
+    bloques.forEach(b => {
+      if (b.textContent.includes(repNombre)) {
+        const btn = b.querySelector('.btn-csv-import');
+        if (btn) btn.outerHTML = `<span class="csv-ok">✓ Importado en modo demo local — ${data.total} entregas</span>`;
+      }
+    });
+    if (prev && !bloques.length) {
+      prev.innerHTML += `<div class="csv-ok" style="margin-top:.5rem;">✓ ${entregas.length} entregas guardadas para ${repNombre} en modo demo local</div>`;
+    }
     btns.forEach(b => b.disabled = false);
-    csvMostrarError('Error al guardar: ' + e.message);
   }
 }
 
@@ -1960,6 +1972,69 @@ function fechaHoy() {
   return new Date().toISOString().slice(0,10);
 }
 
+
+// ── DEMO FALLBACK: persistencia local si Netlify Blobs no está configurado ──
+// Permite hacer la demo sin NETLIFY_AUTH_TOKEN / SITE_ID. En producción se usará Netlify Blobs.
+const RUTTY_LOCAL_STORE_KEY = 'rutty-local-demo-store-v1';
+function ruttyLocalRead(){
+  try { return JSON.parse(localStorage.getItem(RUTTY_LOCAL_STORE_KEY) || '{}'); }
+  catch(e){ return {}; }
+}
+function ruttyLocalWrite(data){
+  localStorage.setItem(RUTTY_LOCAL_STORE_KEY, JSON.stringify(data || {}));
+}
+function ruttyLocalGetRutas(fecha){
+  const data = ruttyLocalRead();
+  return data['rutas-' + fecha] || {};
+}
+function ruttyLocalSetRuta(fecha, repNombre, entregas){
+  const data = ruttyLocalRead();
+  const key = 'rutas-' + fecha;
+  data[key] = data[key] || {};
+  data[key][repNombre] = {
+    actualizado: new Date().toISOString(),
+    demoLocal: true,
+    entregas: (entregas || []).map((e, i) => ({
+      id: e.id || ('e' + Date.now() + i),
+      orden: i + 1,
+      nombre: e.nombre || '',
+      direccion: e.direccion || '',
+      alergenos: e.alergenos || '',
+      riesgo: e.riesgo || 'normal',
+      notas: e.notas || '',
+      estado: e.estado || 'pendiente',
+      confirmadoEn: e.confirmadoEn || null,
+      ptsGanados: e.ptsGanados || 0
+    }))
+  };
+  ruttyLocalWrite(data);
+  return { ok: true, total: data[key][repNombre].entregas.length, local: true };
+}
+function ruttyLocalConfirmarEntrega(fecha, repNombre, entregaId, pts){
+  const data = ruttyLocalRead();
+  const key = 'rutas-' + fecha;
+  const ruta = data[key]?.[repNombre];
+  if (!ruta) throw new Error('Sin ruta local para este repartidor.');
+  const entrega = ruta.entregas.find(e => e.id === entregaId);
+  if (!entrega) throw new Error('Entrega no encontrada.');
+  const ptsEntrega = pts || (entrega.riesgo === 'critico' ? 25 : entrega.riesgo === 'alto' ? 15 : 10);
+  entrega.estado = 'entregado';
+  entrega.confirmadoEn = new Date().toISOString();
+  entrega.ptsGanados = ptsEntrega;
+  data[key][repNombre] = ruta;
+  ruttyLocalWrite(data);
+  const totalEntregadas = ruta.entregas.filter(e => e.estado === 'entregado').length;
+  const siguiente = ruta.entregas.find(e => e.estado === 'pendiente');
+  return { ok: true, ptsGanados: ptsEntrega, puntosDelMes: 0, totalEntregadas, totalRuta: ruta.entregas.length, siguiente: siguiente || null, local: true };
+}
+function ruttyLocalIncidencia(fecha, repNombre, entregaId){
+  const data = ruttyLocalRead();
+  const key = 'rutas-' + fecha;
+  const e = data[key]?.[repNombre]?.entregas?.find(x => x.id === entregaId);
+  if (e) { e.estado = 'incidencia'; e.confirmadoEn = new Date().toISOString(); e.ptsGanados = 0; ruttyLocalWrite(data); }
+  return { ok: true, local: true };
+}
+
 // ── REPARTIDOR: cargar su ruta ──
 async function cargarRuta() {
   if (repAct === null) return;
@@ -1977,6 +2052,7 @@ async function cargarRuta() {
       body: JSON.stringify({ op: 'get-rutas', fecha })
     });
     const data = await res.json();
+    if (data.error) throw new Error(data.error);
     const rutaRep = data.rutas && data.rutas[nombre];
     if (!rutaRep || !rutaRep.entregas || !rutaRep.entregas.length) {
       el.innerHTML = '<div class="ruta-empty"><div class="ei">📭</div><div style="font-size:13px;font-weight:600;">Sin ruta asignada hoy</div><div style="font-size:12px;margin-top:.4rem;">Tu supervisor la publicará antes de que salgas.</div></div>';
@@ -1985,7 +2061,14 @@ async function cargarRuta() {
     rutaHoy = rutaRep.entregas;
     renderRutaRepartidor();
   } catch(e) {
-    el.innerHTML = '<div class="ruta-empty"><div class="ei">📡</div><div style="font-size:13px;">Sin conexión. Intenta de nuevo.</div></div>';
+    const rutasLocal = ruttyLocalGetRutas(fecha);
+    const rutaRep = rutasLocal && rutasLocal[nombre];
+    if (rutaRep && rutaRep.entregas && rutaRep.entregas.length) {
+      rutaHoy = rutaRep.entregas;
+      renderRutaRepartidor();
+      return;
+    }
+    el.innerHTML = '<div class="ruta-empty"><div class="ei">📭</div><div style="font-size:13px;font-weight:600;">Sin ruta asignada hoy</div><div style="font-size:12px;margin-top:.4rem;">Demo local activa. Importa una ruta desde el panel supervisor.</div></div>';
   }
 }
 
@@ -2099,8 +2182,20 @@ async function confirmarEntrega(entregaId) {
     }
 
   } catch(e) {
-    if (btn) { btn.disabled = false; btn.textContent = '✅ Confirmar entrega'; }
-    alert('Error al confirmar: ' + e.message);
+    try {
+      const data = ruttyLocalConfirmarEntrega(rutaFechaHoy, nombre, entregaId);
+      const eLocal = rutaHoy.find(x => x.id === entregaId);
+      if (eLocal) { eLocal.estado = 'entregado'; eLocal.ptsGanados = data.ptsGanados; }
+      reps[repAct].pts += data.ptsGanados;
+      reps[repAct].total = (reps[repAct].total || 0) + 1;
+      if (eLocal && eLocal.riesgo === 'alto') reps[repAct].alto = (reps[repAct].alto || 0) + 1;
+      actualizarTopbar();
+      renderRutaRepartidor();
+      hablar('Entrega confirmada en modo demo local.');
+    } catch(errLocal) {
+      if (btn) { btn.disabled = false; btn.textContent = '✅ Confirmar entrega'; }
+      alert('Error al confirmar: ' + errLocal.message);
+    }
   }
 }
 
@@ -2120,7 +2215,10 @@ async function reportarIncidencia(entregaId) {
     renderRutaRepartidor();
     hablar('Incidencia registrada. Contacta con coordinación si lo necesitas.');
   } catch(err) {
-    alert('Error al registrar incidencia.');
+    ruttyLocalIncidencia(rutaFechaHoy, nombre, entregaId);
+    const e = rutaHoy.find(x => x.id === entregaId);
+    if (e) { e.estado = 'incidencia'; e.ptsGanados = 0; reps[repAct].incGraves = (reps[repAct].incGraves || 0) + 1; }
+    renderRutaRepartidor();
   }
 }
 
@@ -2168,6 +2266,7 @@ async function supCargarEditorRuta() {
       body: JSON.stringify({ op: 'get-rutas', fecha })
     });
     const data = await res.json();
+    if (data.error) throw new Error(data.error);
     const rutaRep = data.rutas && data.rutas[repNombre];
     supEntregasEditor = rutaRep ? JSON.parse(JSON.stringify(rutaRep.entregas)) : [];
 
@@ -2192,7 +2291,19 @@ async function supCargarEditorRuta() {
     addBtn.style.display = 'block';
     saveBtn.style.display = 'block';
   } catch(e) {
-    editorEl.innerHTML = '<div class="ruta-empty"><div class="ei">📡</div><div style="font-size:13px;">Error de conexión</div></div>';
+    const rutasLocal = ruttyLocalGetRutas(fecha);
+    const rutaRep = rutasLocal && rutasLocal[repNombre];
+    supEntregasEditor = rutaRep ? JSON.parse(JSON.stringify(rutaRep.entregas)) : [];
+    if (rutaRep && rutaRep.entregas.length) {
+      const ent = rutaRep.entregas.filter(e => e.estado === 'entregado').length;
+      const inc = rutaRep.entregas.filter(e => e.estado === 'incidencia').length;
+      estadoEl.innerHTML = `<div class="sup-ruta-block"><div style="font-size:12px;font-weight:700;margin-bottom:.5rem;">📊 Estado demo local</div><div style="display:flex;gap:.5rem;flex-wrap:wrap;"><span style="padding:4px 10px;background:#15C76A22;color:#0a8a4a;border-radius:20px;font-size:12px;font-weight:700;">✓ ${ent} entregadas</span><span style="padding:4px 10px;background:#C9303022;color:#C93030;border-radius:20px;font-size:12px;font-weight:700;">⚠ ${inc} incidencias</span><span style="padding:4px 10px;background:#1A3F6F22;color:var(--az);border-radius:20px;font-size:12px;font-weight:700;">⏳ ${rutaRep.entregas.length - ent - inc} pendientes</span></div></div>`;
+    } else {
+      estadoEl.innerHTML = '<div class="sup-ruta-block" style="font-size:12px;color:var(--gm);">Modo demo local activo. Todavía no hay ruta guardada para este repartidor y fecha.</div>';
+    }
+    supRenderEditorEntregas();
+    addBtn.style.display = 'block';
+    saveBtn.style.display = 'block';
   }
 }
 
@@ -2269,8 +2380,10 @@ async function supGuardarRuta() {
     setTimeout(() => { if (btn) btn.textContent = '💾 Guardar ruta del día'; }, 3000);
     supCargarEditorRuta(); // Refrescar estado
   } catch(e) {
-    if (btn) { btn.disabled = false; btn.textContent = '💾 Guardar ruta del día'; }
-    alert('Error al guardar: ' + e.message);
+    const data = ruttyLocalSetRuta(fecha, repNombre, supEntregasEditor);
+    if (btn) { btn.disabled = false; btn.textContent = '✅ Ruta guardada en modo demo (' + data.total + ')'; }
+    setTimeout(() => { if (btn) btn.textContent = '💾 Guardar ruta del día'; }, 3000);
+    supCargarEditorRuta();
   }
 }
 
