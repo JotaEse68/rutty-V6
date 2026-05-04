@@ -1,6 +1,3 @@
-// rutty-excel.js — Convierte .xlsx a CSV en el servidor
-// Maneja inlineStr, sharedStrings y entidades HTML correctamente
-
 const zlib = require('zlib');
 const { promisify } = require('util');
 const inflateRaw = promisify(zlib.inflateRaw);
@@ -12,153 +9,120 @@ const CORS = {
 };
 const json = (s, d) => ({ statusCode: s, headers: { 'Content-Type': 'application/json', ...CORS }, body: JSON.stringify(d) });
 
-function decodeEntidades(s) {
-  return s
-    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"').replace(/&apos;/g, "'")
-    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(parseInt(n)))
-    .replace(/&#x([0-9a-fA-F]+);/g, (_, h) => String.fromCodePoint(parseInt(h, 16)));
+function decode(s) {
+  return (s||'')
+    .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>')
+    .replace(/&quot;/g,'"').replace(/&apos;/g,"'")
+    .replace(/&#(\d+);/g,(_,n)=>String.fromCodePoint(+n))
+    .replace(/&#x([0-9a-fA-F]+);/g,(_,h)=>String.fromCodePoint(parseInt(h,16)));
 }
 
-function colLetraANum(letra) {
-  let n = 0;
-  for (let i = 0; i < letra.length; i++) n = n * 26 + (letra.charCodeAt(i) - 64);
-  return n;
-}
+function col2n(c){let n=0;for(const ch of c)n=n*26+(ch.charCodeAt(0)-64);return n;}
 
-async function leerEntradaZip(buf, buscar) {
-  let i = 0;
-  while (i < buf.length - 4) {
-    if (buf[i] === 0x50 && buf[i+1] === 0x4B && buf[i+2] === 0x03 && buf[i+3] === 0x04) {
-      const compression = buf.readUInt16LE(i + 8);
-      const compSize    = buf.readUInt32LE(i + 18);
-      const fnLen       = buf.readUInt16LE(i + 26);
-      const extraLen    = buf.readUInt16LE(i + 28);
-      const name        = buf.slice(i + 30, i + 30 + fnLen).toString('utf8');
-      const dataStart   = i + 30 + fnLen + extraLen;
-      const compData    = buf.slice(dataStart, dataStart + compSize);
-      if (name === buscar) {
-        if (compression === 0) return compData.toString('utf8');
-        if (compression === 8) {
-          try { return (await inflateRaw(compData)).toString('utf8'); } catch(e) { return null; }
-        }
+async function leerZip(buf, buscar) {
+  let i=0;
+  while(i<buf.length-4){
+    if(buf[i]===0x50&&buf[i+1]===0x4B&&buf[i+2]===0x03&&buf[i+3]===0x04){
+      const comp=buf.readUInt16LE(i+8),csz=buf.readUInt32LE(i+18);
+      const fnl=buf.readUInt16LE(i+26),exl=buf.readUInt16LE(i+28);
+      const nm=buf.slice(i+30,i+30+fnl).toString('utf8');
+      const ds=i+30+fnl+exl;
+      const cd=buf.slice(ds,ds+csz);
+      if(nm===buscar){
+        if(comp===0)return cd.toString('utf8');
+        if(comp===8){try{return(await inflateRaw(cd)).toString('utf8');}catch(e){return null;}}
       }
-      i = dataStart + compSize;
-    } else { i++; }
+      i=ds+csz;
+    }else{i++;}
   }
   return null;
 }
 
-function extraerSharedStrings(xml) {
-  if (!xml) return [];
-  const strings = [];
-  const re = /<si>([\s\S]*?)<\/si>/g;
-  let m;
-  while ((m = re.exec(xml)) !== null) {
-    const ts = [];
-    const tr = /<t[^>]*>([^<]*)<\/t>/g;
-    let tm;
-    while ((tm = tr.exec(m[1])) !== null) ts.push(decodeEntidades(tm[1]));
-    strings.push(ts.join(''));
-  }
-  return strings;
-}
-
 function parsearHoja(xml, strings) {
-  const filas = [];
-  const rowRe = /<row[^>]*>([\s\S]*?)<\/row>/g;
-  let rowM;
-  while ((rowM = rowRe.exec(xml)) !== null) {
-    const celdas = {};
-    const cellRe = /<c r="([A-Z]+)\d+"([^>]*)>([\s\S]*?)<\/c>/g;
+  const filas=[];
+  const rowRe=/<row[^>]*>([\s\S]*?)<\/row>/g;
+  let rm;
+  while((rm=rowRe.exec(xml))!==null){
+    const celdas={};
+    const cellRe=/<c r="([A-Z]+)\d+"([^>]*)>([\s\S]*?)<\/c>/g;
     let cm;
-    while ((cm = cellRe.exec(rowM[1])) !== null) {
-      const colIdx  = colLetraANum(cm[1]);
-      const attrs   = cm[2];
-      const inner   = cm[3];
-      const tipoM   = attrs.match(/t="([^"]+)"/);
-      const tipo    = tipoM ? tipoM[1] : '';
-      const valM    = inner.match(/<v>([^<]*)<\/v>/);
-      const inlM    = inner.match(/<t[^>]*>([^<]*)<\/t>/);
-      let val = '';
-      if (tipo === 's' && valM) {
-        val = strings[parseInt(valM[1])] || '';
-      } else if (tipo === 'inlineStr' && inlM) {
-        val = decodeEntidades(inlM[1]);
-      } else if (inlM) {
-        val = decodeEntidades(inlM[1]);
-      } else if (valM) {
-        val = valM[1];
-      }
-      if (val.trim()) celdas[colIdx] = val.trim();
+    while((cm=cellRe.exec(rm[1]))!==null){
+      const col=col2n(cm[1]),attrs=cm[2],inner=cm[3];
+      const tipo=(attrs.match(/t="([^"]+)"/)??[])[1]||'';
+      const valM=inner.match(/<v>([^<]*)<\/v>/);
+      const tM=inner.match(/<t[^>]*>([^<]*)<\/t>/);
+      let val='';
+      if(tipo==='s'&&valM) val=strings[+valM[1]]||'';
+      else if(tM) val=decode(tM[1]);
+      else if(valM) val=valM[1];
+      val=val.trim();
+      if(val) celdas[col]=val;
     }
-    if (Object.keys(celdas).length > 0) {
-      const maxCol = Math.max(...Object.keys(celdas).map(Number));
-      const fila = [];
-      for (let c = 1; c <= maxCol; c++) fila.push(celdas[c] || '');
-      filas.push(fila);
+    if(Object.keys(celdas).length){
+      const mx=Math.max(...Object.keys(celdas).map(Number));
+      filas.push(Array.from({length:mx},(_,i)=>celdas[i+1]||''));
     }
   }
   return filas;
 }
 
-// Detectar qué fila es la cabecera real (tiene palabras clave de columnas conocidas)
-function detectarFilaCabecera(filas) {
-  const keywords = ['repartidor','nombre','direccion','dirección','orden','alergeno','riesgo','comensal','destinatario'];
-  for (let i = 0; i < Math.min(5, filas.length); i++) {
-    const fila = filas[i];
-    const hits = fila.filter(c => keywords.some(k => c.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(k)));
-    if (hits.length >= 2) return i;
+function extraerSS(xml){
+  if(!xml)return[];
+  const s=[];
+  const re=/<si>([\s\S]*?)<\/si>/g;let m;
+  while((m=re.exec(xml))!==null){
+    const ts=[];const tr=/<t[^>]*>([^<]*)<\/t>/g;let tm;
+    while((tm=tr.exec(m[1]))!==null)ts.push(decode(tm[1]));
+    s.push(ts.join(''));
   }
-  return 0;
+  return s;
 }
 
-exports.handler = async function(event) {
-  if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: CORS, body: '' };
-  if (event.httpMethod !== 'POST') return json(405, { error: 'Method Not Allowed' });
+const KEYWORDS=['repartidor','nombre','direccion','dirección','comensal','destinatario','orden','alergeno','riesgo'];
+function esCabecera(fila){
+  const hits=fila.filter(c=>KEYWORDS.some(k=>c.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(k)));
+  return hits.length>=2;
+}
+function esTotalOVacia(fila){
+  const txt=fila[0]||'';
+  return txt.toLowerCase().includes('total')||fila.every(c=>!c);
+}
 
-  let body = {};
-  try { body = JSON.parse(event.body || '{}'); } catch(e) { return json(400, { error: 'Bad JSON' }); }
+exports.handler=async function(event){
+  if(event.httpMethod==='OPTIONS')return{statusCode:200,headers:CORS,body:''};
+  if(event.httpMethod!=='POST')return json(405,{error:'Method Not Allowed'});
+  let body={};
+  try{body=JSON.parse(event.body||'{}');}catch(e){return json(400,{error:'Bad JSON'});}
+  const{base64}=body;
+  if(!base64)return json(400,{error:'base64 requerido'});
+  try{
+    const buf=Buffer.from(base64,'base64');
+    if(buf[0]!==0x50||buf[1]!==0x4B)return json(400,{error:'No es un xlsx válido'});
+    const[ssXml,sh1]=await Promise.all([leerZip(buf,'xl/sharedStrings.xml'),leerZip(buf,'xl/worksheets/sheet1.xml')]);
+    if(!sh1)return json(400,{error:'No se encontró la hoja Excel'});
+    const strings=extraerSS(ssXml);
+    const todas=parsearHoja(sh1,strings);
+    if(todas.length<2)return json(400,{error:'Excel sin datos suficientes'});
 
-  const { base64 } = body;
-  if (!base64) return json(400, { error: 'base64 requerido' });
-
-  try {
-    const buf = Buffer.from(base64, 'base64');
-    if (buf[0] !== 0x50 || buf[1] !== 0x4B) {
-      return json(400, { error: 'El archivo no es un Excel válido (.xlsx)' });
+    // Encontrar fila de cabecera
+    let idxCab=-1;
+    for(let i=0;i<Math.min(6,todas.length);i++){
+      if(esCabecera(todas[i])){idxCab=i;break;}
     }
+    if(idxCab<0)return json(400,{error:'No se encontró cabecera (Repartidor, Nombre, Dirección...) en las primeras filas'});
 
-    const [ssXml, sheet1Xml] = await Promise.all([
-      leerEntradaZip(buf, 'xl/sharedStrings.xml'),
-      leerEntradaZip(buf, 'xl/worksheets/sheet1.xml'),
-    ]);
+    // Tomar cabecera + datos, ignorar filas de total/vacías al final
+    const filas=[todas[idxCab],...todas.slice(idxCab+1).filter(f=>!esTotalOVacia(f))];
 
-    if (!sheet1Xml) return json(400, { error: 'No se encontró la hoja en el Excel' });
+    const csv=filas.map(f=>f.map(v=>{
+      const s=String(v||'');
+      return(s.includes(';')||s.includes('"')||s.includes('\n'))?`"${s.replace(/"/g,'""')}"`:s;
+    }).join(';')).join('\n');
 
-    const strings = extraerSharedStrings(ssXml);
-    const todasFilas = parsearHoja(sheet1Xml, strings);
-
-    if (todasFilas.length < 2) return json(400, { error: 'El Excel no tiene datos suficientes' });
-
-    // Detectar y saltar filas de título hasta la cabecera real
-    const idxCabecera = detectarFilaCabecera(todasFilas);
-    const filas = todasFilas.slice(idxCabecera);
-
-    // Convertir a CSV separado por ;
-    const csv = filas.map(fila =>
-      fila.map(v => {
-        const s = String(v || '');
-        return (s.includes(';') || s.includes('"') || s.includes('\n'))
-          ? `"${s.replace(/"/g, '""')}"` : s;
-      }).join(';')
-    ).join('\n');
-
-    console.log(`✅ Excel convertido: ${filas.length-1} filas de datos, cabecera: ${filas[0]?.join(', ')}`);
-    return json(200, { csv, filas: filas.length - 1, cabecera: filas[0] });
-
-  } catch(e) {
-    console.error('Error Excel:', e.message);
-    return json(500, { error: 'Error procesando Excel: ' + e.message });
+    console.log(`✅ Excel: ${filas.length-1} filas, cabecera: ${filas[0].join(', ')}`);
+    return json(200,{csv,filas:filas.length-1,cabecera:filas[0]});
+  }catch(e){
+    console.error('Error:',e.message);
+    return json(500,{error:'Error procesando Excel: '+e.message});
   }
 };
