@@ -1,0 +1,10 @@
+﻿UCALSA CONNECT - EXPORTACION DE RUTAS;;;;;;;;
+Fecha;04/05/2026;;;;;;;
+Repartidor;Zona;ORDEN RUTA;NOMBRE CLIENTE;DOMICILIO ENTREGA;CAJAS;MENU/DIETA;SEMÁFORO;OBSERVACIONES ENTREGA
+Ana García;Ruta Norte;1;María López García;Calle Mayor 12 3ºA;2;Basal;Verde;Timbre roto. Llamar al llegar
+Ana García;Ruta Norte;2;Juan Pérez Martín;Av. Constitución 45 2ºB;1;Sin gluten / pescado;Amarillo;Caja roja. Verificar QR
+Ana García;Ruta Norte;3;Carmen Ruiz Vidal;Plaza España 3 1ºC;3;Triturado;Verde;Dejar en portería
+Laura Gómez;Ruta Centro;1;Antonio Díaz Soto;C/ Pez 7 Bajo;1;Sin frutos secos;Rojo;ALERTA: confirmar identidad antes de entregar
+Laura Gómez;Ruta Centro;2;Rosa Sánchez Cano;Gran Vía 88 4ºD;2;Sin lactosa;Amarillo;Requiere llamada previa
+Pedro Ruiz;Ruta Sur;1;Pedro Molina Alba;Calle Luna 22;1;Basal;Verde;
+Pedro Ruiz;Ruta Sur;2;Luisa Navarro Gil;Paseo del Río 9;2;Diabético;Amarillo;Entregar antes de las 13:00
